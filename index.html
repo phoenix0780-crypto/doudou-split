@@ -55,6 +55,15 @@
   .sdot.on{background:var(--ok)} .sdot.busy{background:var(--ember)} .sdot.err{background:var(--bad)}
   .syncbar{display:flex;align-items:center;gap:9px;margin:0 0 14px;padding:9px 12px;background:var(--ember-soft);border:1px solid var(--ember);border-radius:10px;font-size:13px;color:var(--forest)}
   .syncbar span{flex:1}
+  .ilist{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .ibtn{font:inherit;font-size:14px;padding:8px 13px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--forest);cursor:pointer}
+  .ibtn[aria-pressed="true"]{background:var(--stream-soft);border-color:var(--stream);color:var(--stream);font-weight:700}
+  #iOther{width:100%;font:inherit;font-size:14px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--forest)}
+  .llist{max-height:46vh;overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .lrowi{padding:9px 11px;border-bottom:1px solid var(--moss);font-size:13px;line-height:1.6}
+  .lrowi:last-child{border-bottom:0}
+  .lrowi .lmeta{display:block;font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
+  .lempty{padding:16px;text-align:center;color:var(--ink-soft);font-size:13px}
   .flabel{display:block;font-size:12px;color:var(--ink-soft);margin:10px 0 4px}
   #sUrl,#sBook,#sWho{width:100%;font:inherit;font-size:13px;font-family:var(--mono);padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--forest)}
   .locktoggle{display:flex;align-items:center;gap:5px}
@@ -331,6 +340,7 @@
 
     <div class="tools">
       <button class="btn" id="copy">複製結算文字</button>
+      <button class="btn ghost" id="history">異動歷程</button>
       <button class="btn ghost" id="clear">清空這次金額</button>
       <button class="btn warn" id="delTrip">刪除這次紀錄</button>
     </div>
@@ -340,6 +350,25 @@
   <div class="sec" style="margin-top:32px">
     <h2>歷史紀錄</h2>
     <ul class="hist" id="hist"></ul>
+  </div>
+</div>
+
+<div class="modal" id="imodal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="iTitle">
+    <div class="mtitle" id="iTitle">你是哪一家？</div>
+    <div class="mtext">選一個，之後大家在異動歷程裡就知道是誰改的。選錯可以到右上角設定改。</div>
+    <div id="iList" class="ilist"></div>
+    <input id="iOther" spellcheck="false" placeholder="不在上面就自己打，例如：品睿家">
+    <div class="mbtns"><button class="btn" id="iOk" style="flex:1">就是我</button></div>
+  </div>
+</div>
+
+<div class="modal" id="lmodal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="lTitle">
+    <div class="mtitle" id="lTitle">異動歷程</div>
+    <div class="mtext">這本帳最近的修改紀錄，來自雲端。</div>
+    <div id="lList" class="llist">讀取中…</div>
+    <div class="mbtns"><button class="btn warn" id="lClose" style="flex:1">關閉</button></div>
   </div>
 </div>
 
@@ -1357,6 +1386,66 @@ document.getElementById('syncForce').onclick = async () => {
   } catch (e) { setSync('err', '離線'); flash('連不上雲端，稍後再試'); }
 };
 
+/* 一進來先問是哪一家 */
+let iPick = '';
+function askWho(){
+  const box = document.getElementById('iList');
+  box.innerHTML = '';
+  const names = [];
+  state.trips.forEach(t => t.families.forEach(f => {
+    const n = (f.name || '').trim();
+    if (n && !names.includes(n)) names.push(n);
+  }));
+  names.forEach(n => {
+    const b = document.createElement('button');
+    b.className = 'ibtn'; b.textContent = n; b.setAttribute('aria-pressed', 'false');
+    b.onclick = () => {
+      iPick = n;
+      document.getElementById('iOther').value = '';
+      box.querySelectorAll('.ibtn').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    };
+    box.appendChild(b);
+  });
+  document.getElementById('iOther').value = '';
+  iPick = '';
+  document.getElementById('imodal').hidden = false;
+}
+document.getElementById('iOther').oninput = () => {
+  iPick = '';
+  document.getElementById('iList').querySelectorAll('.ibtn').forEach(x => x.setAttribute('aria-pressed', 'false'));
+};
+document.getElementById('iOk').onclick = async () => {
+  const other = document.getElementById('iOther').value.trim();
+  const who = other || iPick;
+  if (!who) { flash('先選一家，或自己打一個名字'); return; }
+  sync.who = who;
+  await saveSyncCfg();
+  document.getElementById('imodal').hidden = true;
+  flash('哈囉 ' + who + '，開始記帳吧');
+};
+
+/* 異動歷程 */
+document.getElementById('history').onclick = async () => {
+  const box = document.getElementById('lList');
+  box.innerHTML = '<div class="lempty">讀取中…</div>';
+  document.getElementById('lmodal').hidden = false;
+  if (!syncOn()) { box.innerHTML = '<div class="lempty">目前是單機模式，沒有雲端異動紀錄。</div>'; return; }
+  try {
+    const url = sync.url + (sync.url.includes('?') ? '&' : '?') +
+      'book=' + encodeURIComponent(sync.book) + '&log=1&n=30';
+    const json = await (await fetch(url, { method: 'GET', redirect: 'follow' })).json();
+    if (!json.ok || !json.log) { box.innerHTML = '<div class="lempty">讀不到異動紀錄。</div>'; return; }
+    if (!json.log.length) { box.innerHTML = '<div class="lempty">還沒有任何異動紀錄。</div>'; return; }
+    box.innerHTML = json.log.map(r =>
+      '<div class="lrowi">' + esc(r.what) + '<span class="lmeta">' + esc(r.at) + '　' + esc(r.who) + '</span></div>'
+    ).join('');
+  } catch (e) {
+    box.innerHTML = '<div class="lempty">連不上雲端，稍後再試。</div>';
+  }
+};
+document.getElementById('lClose').onclick = () => { document.getElementById('lmodal').hidden = true; };
+document.getElementById('lmodal').onclick = e => { if (e.target.id === 'lmodal') e.currentTarget.hidden = true; };
+
 /* 設定視窗 */
 document.getElementById('syncBtn').onclick = () => {
   document.getElementById('sUrl').value = sync.url || DEFAULT_SYNC.url;
@@ -1468,6 +1557,8 @@ document.getElementById('nextTrip').onclick = () => stepTrip(-1);
 document.addEventListener('click', closePanel);
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
+  if (!document.getElementById('imodal').hidden) return;
+  if (!document.getElementById('lmodal').hidden) { document.getElementById('lmodal').hidden = true; return; }
   if (!document.getElementById('modal').hidden) closeModal();
   else if (!document.getElementById('smodal').hidden) closeSync();
   else if (!document.getElementById('bmodal').hidden) closeBackup();
@@ -1531,6 +1622,10 @@ document.getElementById('delTrip').onclick = () => {
   await load();
   await loadSyncCfg();
   render();
-  if (syncOn()) { setSync('busy', '連線中…'); pull(true); } else { setSync('', '單機'); }
+  if (syncOn()) {
+    setSync('busy', '連線中…');
+    await pull(true);
+    if (!sync.who) askWho();
+  } else { setSync('', '單機'); }
 })();
 </script>
