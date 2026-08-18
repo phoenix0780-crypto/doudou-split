@@ -92,6 +92,7 @@
   .lempty{padding:16px;text-align:center;color:var(--ink-soft);font-size:13px}
   .fcheck{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-soft);margin-top:10px}
   .fcheck input{width:16px;height:16px}
+  .syncerr{margin:0 0 10px;padding:9px 11px;background:var(--ember-soft);border-left:3px solid var(--ember);border-radius:0 8px 8px 0;font-size:12px;font-family:var(--mono);color:var(--forest);word-break:break-all}
   .flabel{display:block;font-size:12px;color:var(--ink-soft);margin:10px 0 4px}
   #sUrl,#sBook,#sWho{width:100%;font:inherit;font-size:13px;font-family:var(--mono);padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--forest)}
   .locktoggle{display:flex;align-items:center;gap:5px}
@@ -426,15 +427,18 @@
 <div class="modal" id="imodal" hidden>
   <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="iTitle">
     <div class="mtitle" id="iTitle">你是哪一家？</div>
-    <div class="mtext">
-      選一個，之後所有修改都會記在你名下。<br>
-      · 你可以編輯<b>任何一家</b>的金額，不只自己那一家。<br>
-      · 幫別家填的時候，異動歷程會寫成「幫『言琳家』｜營位費：$6,000 → $6,500」，看得出是誰代填的。<br>
-      · 選錯了，右上角同步設定裡可以改。
-    </div>
+    <div class="mtext">選一個，之後所有修改都會記在你名下。選錯了到右上角同步設定可以改。</div>
     <div id="iList" class="ilist"></div>
-    <input id="iOther" spellcheck="false" placeholder="不在上面就自己打，例如：品睿家">
+    <input id="iOther" spellcheck="false" placeholder="不在上面就自己打，例如：以佳家">
     <div class="mbtns"><button class="btn" id="iOk" style="flex:1">開始</button></div>
+  </div>
+</div>
+
+<div class="modal" id="pmodal" hidden>
+  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="pTitle">
+    <div class="mtitle" id="pTitle">你正在幫別家填</div>
+    <div class="mtext" id="pText"></div>
+    <div class="mbtns"><button class="btn" id="pOk" style="flex:1">知道了</button></div>
   </div>
 </div>
 
@@ -451,6 +455,7 @@
   <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="sTitle">
     <div class="mtitle" id="sTitle">共用帳本</div>
     <div class="mtext">貼上 Apps Script 部署後的網址，設定同一組帳本代碼，大家就會看到同一份帳。</div>
+    <p class="syncerr" id="syncErr" hidden></p>
     <label class="flabel">Apps Script 網址</label>
     <input id="sUrl" spellcheck="false" placeholder="https://script.google.com/macros/s/.../exec">
     <label class="flabel">帳本代碼</label>
@@ -624,7 +629,7 @@ function seedDemos(){
       F('晨宇家', [['飲料、冰塊', 680], ['炭火組', 320]]),
       F('惟剴家', [['水果', 450]]),
       F('硯承家', [['早餐三明治', 540], ['停車費', 200]]),
-      F('品睿家', [['甜點、零食', 380]])
+      F('以佳家', [['甜點、零食', 380]])
     ]
   }, {
     id: uid(), name: '（測試）阿里山二日遊', date: dayOff(21), mode: 'min', demo: true, locked: true,
@@ -634,7 +639,7 @@ function seedDemos(){
       F('晨宇家', [['油錢、過路費', 1250]]),
       F('惟剴家', [['小火車門票', 1800]]),
       F('硯承家', [['', '']]),
-      F('品睿家', [['晚餐合菜', 3600]])
+      F('以佳家', [['晚餐合菜', 3600]])
     ]
   }];
 }
@@ -972,6 +977,7 @@ function render(){
 
     const saveAcc = () => {
       const key = (f.name || '').trim();
+      noticeProxy(key);
       if (!key) return;
       state.accounts = state.accounts || {};
       const v = (bankIn.value.trim() + ' ' + numIn.value.trim()).trim();
@@ -1007,12 +1013,13 @@ function render(){
       const note = document.createElement('input');
       note.className = 'note'; note.value = it.note; note.placeholder = '先墊了什麼錢？（例：營位費）';
       note.readOnly = isLocked(t);
-      note.oninput = e => { it.note = e.target.value; save(); };
+      note.oninput = e => { noticeProxy((f.name || '').trim()); it.note = e.target.value; save(); };
       const amt = document.createElement('input');
       amt.className = 'amt'; amt.value = it.amount; amt.placeholder = '0';
       amt.inputMode = 'decimal'; amt.setAttribute('aria-label', '金額');
       amt.readOnly = isLocked(t);
       amt.oninput = e => {
+        noticeProxy((f.name || '').trim());
         const clean = e.target.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
         if (clean !== e.target.value) e.target.value = clean;
         it.amount = clean; save(); updateDerived();
@@ -1416,7 +1423,7 @@ const DEFAULT_SYNC = {
   book: 'doudou2026'
 };
 let sync = { url: DEFAULT_SYNC.url, book: DEFAULT_SYNC.book, who: '', rev: 0, onlyMine: true };
-let dirty = false, pushTimer = null, pulling = false, pushing = false, conflictData = null;
+let dirty = false, pushTimer = null, pulling = false, pushing = false, conflictData = null, lastSyncError = '';
 const syncOn = () => !!(sync.url && sync.book);
 
 async function loadSyncCfg(){
@@ -1478,7 +1485,12 @@ async function pull(auto){
   pulling = true;
   try {
     const json = await remoteGet();
-    if (!json.ok) { setSync('err', '連線異常'); return; }
+    if (!json.ok) {
+      setSync('err', '連線異常');
+      document.getElementById('syncDot').parentElement.title = '雲端回報：' + (json.error || '未知錯誤');
+      lastSyncError = json.error || '未知錯誤';
+      return;
+    }
     if (!json.exists) { setSync('on', '雲端空的'); return; }
     if (json.updatedAt === sync.rev) { setSync('on', '已同步'); return; }
     if (dirty) {
@@ -1506,7 +1518,9 @@ async function push(){
       showSyncBar((json.updatedBy ? json.updatedBy + ' ' : '有人') + '在你之前更新了這份帳。', true);
       setSync('busy', '有衝突');
     } else {
+      lastSyncError = json.error || '未知錯誤';
       setSync('err', json.error === 'too big' ? '資料太大' : '存檔失敗');
+      document.getElementById('syncDot').parentElement.title = '雲端回報：' + lastSyncError;
     }
   } catch (e) {
     setSync('err', '離線，稍後重試');
@@ -1532,6 +1546,20 @@ document.getElementById('syncForce').onclick = async () => {
     else setSync('err', '覆蓋失敗');
   } catch (e) { setSync('err', '離線'); flash('連不上雲端，稍後再試'); }
 };
+
+/* 第一次幫別家編輯時，說明一次代填規則 */
+function noticeProxy(famName){
+  if (!sync.who || !famName || famName === sync.who) return;
+  if (sync.proxyNoticed) return;
+  sync.proxyNoticed = true; saveSyncCfg();
+  document.getElementById('pText').innerHTML =
+    '這一欄是「<b>' + esc(famName) + '</b>」的，你還是可以幫忙填。<br><br>' +
+    '只是異動歷程會記成<br>「' + esc(sync.who) + ' → 幫『' + esc(famName) + '』｜品名：$舊金額 → $新金額」，' +
+    '讓大家知道這筆是誰代填的。';
+  document.getElementById('pmodal').hidden = false;
+}
+document.getElementById('pOk').onclick = () => { document.getElementById('pmodal').hidden = true; };
+document.getElementById('pmodal').onclick = e => { if (e.target.id === 'pmodal') e.currentTarget.hidden = true; };
 
 /* 一進來先問是哪一家 */
 let iPick = '';
@@ -1600,6 +1628,9 @@ document.getElementById('syncBtn').onclick = () => {
   document.getElementById('sUrl').value = sync.url || DEFAULT_SYNC.url;
   document.getElementById('sBook').value = sync.book || DEFAULT_SYNC.book;
   document.getElementById('sWho').value = sync.who;
+  const errBox = document.getElementById('syncErr');
+  errBox.hidden = !lastSyncError;
+  errBox.textContent = lastSyncError ? '雲端最後回報的錯誤：' + lastSyncError : '';
   document.getElementById('smodal').hidden = false;
 };
 const closeSync = () => { document.getElementById('smodal').hidden = true; };
