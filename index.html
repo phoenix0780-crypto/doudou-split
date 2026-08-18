@@ -16,6 +16,31 @@
   h1{font-size:25px;line-height:1.2;margin:6px 0 0;font-weight:800;letter-spacing:-.01em}
   .topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
   .topbtns{display:flex;gap:6px;flex:none}
+  .toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+  .lockbtn{margin-left:auto;display:flex;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:700;
+    padding:8px 14px;border-radius:9px;cursor:pointer;border:1.5px solid var(--forest);background:var(--forest);color:var(--moss)}
+  .lockbtn .ico{width:16px;height:16px;line-height:0;flex:none}
+  .lockbtn .ico svg{width:100%;height:100%;display:block}
+  .lockbtn.open{background:#fff;border-color:var(--stream);color:var(--stream)}
+  .admin{margin-top:26px;padding-top:14px;border-top:1px dashed var(--line)}
+  .adminhead{font-size:11px;letter-spacing:.14em;color:var(--ink-soft);margin-bottom:6px}
+  .adminnote{font-size:12px;color:var(--ink-soft);line-height:1.6;margin:0 0 10px}
+  .adminbtns{display:flex;gap:6px;flex-wrap:wrap}
+  .topbtn.danger{color:var(--bad);border-color:#E2C6C1}
+  .topbtn.danger:hover{border-color:var(--bad);color:var(--bad);background:#fff}
+  .toolbar .topbtn{flex:0 0 auto}
+  .more{position:relative}
+  .moremenu{position:absolute;z-index:30;top:calc(100% + 5px);right:0;min-width:170px;background:var(--paper);border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 28px rgba(23,52,42,.16);padding:5px}
+  .moremenu button{display:block;width:100%;text-align:left;font:inherit;font-size:13px;padding:9px 10px;border:0;background:transparent;color:var(--forest);border-radius:7px;cursor:pointer}
+  .moremenu button:hover{background:var(--moss)}
+  .moremenu button#delTrip{color:var(--bad)}
+  #tripName{font:inherit;font-size:15px;font-weight:700;color:var(--forest);background:#fff;border:1px solid var(--stream);border-radius:6px;padding:3px 6px;flex:1;min-width:0}
+  #tripDate{font-family:var(--mono);font-size:12px;color:var(--forest);background:#fff;border:1px solid var(--stream);border-radius:6px;padding:3px 5px;flex:none}
+  .switchbtn{user-select:none}
+  .switchbtn.editing{cursor:default}
+  .mine{position:absolute;top:5px;left:10px;font-size:10px;font-weight:700;color:#fff;background:var(--fc,var(--stream));border-radius:999px;padding:2px 8px}
+  .fam.notmine{opacity:.86}
+  .fam.notmine .famhead{cursor:default}
   .topbtn{flex:none;font:inherit;font-size:13px;padding:8px 13px;border-radius:9px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft)}
   .topbtn:hover{border-color:var(--stream);color:var(--stream);background:#fff}
 
@@ -61,9 +86,12 @@
   #iOther{width:100%;font:inherit;font-size:14px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--forest)}
   .llist{max-height:46vh;overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
   .lrowi{padding:9px 11px;border-bottom:1px solid var(--moss);font-size:13px;line-height:1.6}
+  .lrowi .lwho{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--stream);border-radius:999px;padding:1px 8px;margin-right:7px;vertical-align:1px}
   .lrowi:last-child{border-bottom:0}
   .lrowi .lmeta{display:block;font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
   .lempty{padding:16px;text-align:center;color:var(--ink-soft);font-size:13px}
+  .fcheck{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-soft);margin-top:10px}
+  .fcheck input{width:16px;height:16px}
   .flabel{display:block;font-size:12px;color:var(--ink-soft);margin:10px 0 4px}
   #sUrl,#sBook,#sWho{width:100%;font:inherit;font-size:13px;font-family:var(--mono);padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--forest)}
   .locktoggle{display:flex;align-items:center;gap:5px}
@@ -103,6 +131,7 @@
   .sec{margin-bottom:30px}
 
   .fam{position:relative;background:#fff;border:1px solid var(--line);border-left:4px solid var(--fc,var(--line));border-radius:12px;padding:32px 12px 8px;margin-bottom:10px}
+  .fam .famhead{margin-top:0}
   .famx{position:absolute;top:0;right:0;width:26px;height:26px;padding:0;border:0;background:transparent;color:var(--line);font:inherit;font-size:16px;line-height:26px;text-align:center;border-radius:0 11px 0 8px;cursor:pointer}
   .famx:hover{background:var(--moss);color:var(--bad)}
   .famname{color:var(--fc,var(--forest))}
@@ -164,6 +193,27 @@
   .lrow .nm{font-weight:700;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .lrow .lno{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--fc,var(--ink-soft));opacity:.85;margin-right:5px}
   .lrow:not(.lhead){box-shadow:inset 3px 0 0 var(--fc,transparent)}
+  .accbtn{flex:none;font:inherit;font-size:11px;color:var(--line);background:transparent;border:1px solid var(--line);
+    border-radius:999px;padding:2px 8px;margin-left:7px;cursor:pointer}
+  .accbtn:hover{color:var(--stream);border-color:var(--stream)}
+  .accbtn.on{color:var(--stream);border-color:var(--stream);background:var(--stream-soft)}
+  .accrow{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin:8px 0 2px;padding-right:34px}
+  .accbank,.accnumin{font:inherit;font-family:var(--mono);font-size:13px;color:var(--forest);
+    background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0}
+  .accbank{width:64px;text-align:center}
+  .accnumin{flex:1}
+  .accbank:focus,.accnumin:focus{outline:none;border-color:var(--stream);background:#fff}
+  .acccopy{flex:none;font:inherit;font-size:12px;color:var(--ink-soft);background:transparent;border:1px solid var(--line);
+    border-radius:7px;padding:5px 9px;cursor:pointer}
+  .acccopy:hover{color:var(--stream);border-color:var(--stream)}
+  .legacc{flex:none;font:inherit;font-size:11px;color:var(--line);background:transparent;border:1px solid var(--line);
+    border-radius:999px;padding:2px 8px;margin-left:8px;cursor:pointer}
+  .legacc:hover,.legacc.on{color:var(--stream);border-color:var(--stream)}
+  .legacc.on{background:var(--stream-soft)}
+  .legaccrow{grid-column:1/-1;margin:2px 0 10px;padding:9px 11px;background:var(--moss);border-radius:8px;font-size:12.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .legaccrow .accpair{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 6px 4px 9px}
+  .legaccrow .acclab{font-size:10px;color:var(--ink-soft)}
+  .legaccrow .accnum{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.02em}
   .caption{font-size:12px;color:var(--ink-soft);margin:8px 2px 0;line-height:1.6}
   .lrow .num{font-family:var(--mono);font-size:13px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
   .lrow .res{font-family:var(--mono);font-size:13px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
@@ -236,7 +286,8 @@
   [hidden]{display:none!important}
   .mbox{background:var(--paper);border-radius:14px;padding:20px;max-width:340px;width:100%;box-shadow:0 20px 50px rgba(23,52,42,.3)}
   .mtitle{font-size:17px;font-weight:800;margin-bottom:6px}
-  .mtext{font-size:13px;color:var(--ink-soft);line-height:1.6;margin-bottom:14px}
+  .mtext{font-size:13px;color:var(--ink-soft);line-height:1.75;margin-bottom:14px}
+  .mtext b{color:var(--forest)}
   .mcode{font-family:var(--mono);font-size:30px;font-weight:800;letter-spacing:.28em;text-align:center;background:var(--forest);color:var(--moss);border-radius:10px;padding:12px 0 12px 10px;user-select:none}
   .mhint{font-size:12px;color:var(--ink-soft);text-align:center;margin:8px 0 10px}
   #mInput{width:100%;font:inherit;font-family:var(--mono);font-size:20px;text-align:center;letter-spacing:.2em;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--forest)}
@@ -248,9 +299,25 @@
   .btn.danger{background:var(--bad);border-color:var(--bad);color:#fff}
   .btn:disabled{opacity:.4;cursor:not-allowed}
   button:focus-visible,input:focus-visible{outline:2px solid var(--stream);outline-offset:2px}
+  @media (max-width:520px){
+    .topbar{align-items:center}
+    h1{font-size:21px}
+    .toolbar{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .toolbar::-webkit-scrollbar{display:none}
+    .toolbar .topbtn{white-space:nowrap}
+    .switchbtn{padding:10px 12px}
+    .switchbtn .sn{font-size:14px}
+    .block{padding:0 9px 10px}
+    .blockhead{margin:0 -9px 10px;padding:10px 11px}
+    .fam{padding:30px 10px 8px}
+    .amt{width:88px}
+    .item input{font-size:14px}
+  }
   @media (max-width:420px){
-    .lrow{grid-template-columns:1.2fr .9fr 1.1fr}
-    .lrow .share,.lrow .op{display:none}
+    .lrow{grid-template-columns:1fr .82fr .82fr 1fr;gap:4px;padding:9px 8px;font-size:12px}
+    .lrow .op{display:none}
+    .lrow .num,.lrow .res{font-size:12px}
+    .lrow .nm{font-size:13px}
     .legamt{font-size:16px}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -259,23 +326,28 @@
 <div class="wrap">
   <div class="topbar">
     <div><div class="eyebrow">荳荳團</div><h1>分帳計算器</h1></div>
-    <div class="topbtns">
-      <button class="topbtn locktoggle" id="lockToggle"><span class="ico" id="lockIco"></span><span id="lockMsg">鎖定中</span></button>
-      <button class="topbtn synctoggle" id="syncBtn"><span class="sdot" id="syncDot"></span><span id="syncMsg">單機</span></button>
-      <button class="topbtn" id="backup">下載備份</button>
-      <button class="topbtn" id="restore">還原</button>
-    </div>
+    <button class="topbtn synctoggle" id="syncBtn"><span class="sdot" id="syncDot"></span><span id="syncMsg">單機</span></button>
+  </div>
+
+  <div class="toolbar">
+    <button class="topbtn" id="copy">複製結算</button>
+    <button class="topbtn" id="pdf">下載 PDF</button>
+    <button class="topbtn" id="history">異動歷程</button>
+    <button class="lockbtn" id="lockToggle"><span class="ico" id="lockIco"></span><span id="lockMsg">鎖定中</span></button>
   </div>
 
   <div class="nav">
     <button class="navarrow" id="prevTrip" title="前一次（較早）" aria-label="前一次出遊">‹</button>
     <div class="switch">
-      <button class="switchbtn" id="switchBtn" aria-haspopup="true" aria-expanded="false">
+      <div class="switchbtn" id="switchBtn" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false"
+           title="點一下換一次出遊，連點兩下改名稱">
         <span class="no" id="switchNo"></span>
         <span class="sn" id="switchName">—</span>
+        <input id="tripName" aria-label="這次出遊的名稱" placeholder="這次去哪" hidden>
         <span class="sd" id="switchDate"></span>
-        <span class="caret">▾</span>
-      </button>
+        <input id="tripDate" type="date" aria-label="日期" hidden>
+        <span class="caret" id="caretIco">▾</span>
+      </div>
       <div class="panel" id="panel" hidden>
         <input id="tripSearch" placeholder="搜尋編號、出遊名稱或家庭" aria-label="搜尋出遊紀錄">
         <div class="plist" id="panelList"></div>
@@ -291,13 +363,6 @@
       <button class="topbtn" id="syncReload">重新載入</button>
       <button class="topbtn" id="syncForce" hidden>用我的版本覆蓋</button>
     </div>
-    <div class="meta">
-      <span class="tno" id="tripNo">01</span>
-      <button class="lock" id="tripEdit"></button>
-      <input id="tripName" aria-label="這次出遊的名稱" placeholder="這次去哪">
-      <input id="tripDate" type="date" aria-label="日期">
-    </div>
-
     <div class="summary">
       <div class="sum"><div class="k">總花費</div><div class="v" id="sTotal">$0</div></div>
       <div class="sum"><div class="k">分攤家數</div><div class="v" id="sCount">0</div></div>
@@ -338,12 +403,6 @@
       <div class="checks" id="checks"></div>
     </div>
 
-    <div class="tools">
-      <button class="btn" id="copy">複製結算文字</button>
-      <button class="btn ghost" id="history">異動歷程</button>
-      <button class="btn ghost" id="clear">清空這次金額</button>
-      <button class="btn warn" id="delTrip">刪除這次紀錄</button>
-    </div>
     <div class="saved" id="saved"></div>
   </div>
 
@@ -351,15 +410,31 @@
     <h2>歷史紀錄</h2>
     <ul class="hist" id="hist"></ul>
   </div>
+
+  <div class="admin">
+    <div class="adminhead">管理（通常只有記帳的人會用到）</div>
+    <p class="adminnote">「下載備份／還原備份」是整個網頁資料結構的備份檔，給架設這個網頁的人維護用；一般記帳不需要動它。</p>
+    <div class="adminbtns">
+      <button class="topbtn" id="backup">下載備份</button>
+      <button class="topbtn" id="restore">還原備份</button>
+      <button class="topbtn" id="clear">清空這次金額</button>
+      <button class="topbtn danger" id="delTrip">刪除這次紀錄</button>
+    </div>
+  </div>
 </div>
 
 <div class="modal" id="imodal" hidden>
   <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="iTitle">
     <div class="mtitle" id="iTitle">你是哪一家？</div>
-    <div class="mtext">選一個，之後大家在異動歷程裡就知道是誰改的。選錯可以到右上角設定改。</div>
+    <div class="mtext">
+      選一個，之後所有修改都會記在你名下。<br>
+      · 你可以編輯<b>任何一家</b>的金額，不只自己那一家。<br>
+      · 幫別家填的時候，異動歷程會寫成「幫『言琳家』｜營位費：$6,000 → $6,500」，看得出是誰代填的。<br>
+      · 選錯了，右上角同步設定裡可以改。
+    </div>
     <div id="iList" class="ilist"></div>
     <input id="iOther" spellcheck="false" placeholder="不在上面就自己打，例如：品睿家">
-    <div class="mbtns"><button class="btn" id="iOk" style="flex:1">就是我</button></div>
+    <div class="mbtns"><button class="btn" id="iOk" style="flex:1">開始</button></div>
   </div>
 </div>
 
@@ -422,6 +497,19 @@
 
 <script>
 const KEY = 'doudou-split-v3';
+/* 在 Claude 產物裡用 window.storage，放到一般網站（GitHub Pages）時用 localStorage */
+const store = {
+  async get(k){
+    if (window.storage) { try { return await window.storage.get(k); } catch (e) { return null; } }
+    const v = localStorage.getItem(k);
+    return v ? { key: k, value: v } : null;
+  },
+  async set(k, v){
+    if (window.storage) return window.storage.set(k, v);
+    localStorage.setItem(k, v);
+    return { key: k };
+  }
+};
 const uid = () => Math.random().toString(36).slice(2, 9);
 const nt  = n => '$' + Math.round(n).toLocaleString('en-US');
 const dayOff = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
@@ -481,6 +569,9 @@ const PAD_SVG = {
       '<rect x="4.8" y="10.4" width="14.4" height="9.4" rx="2.4" fill="currentColor" fill-opacity=".16"/><path d="M8.4 10.4V7.4a3.6 3.6 0 0 1 6.9-1.3"/></svg>'
 };
 const isLocked = t => (t || trip()).locked !== false;
+/* 每個人都能編輯任何一家；改到別家時，異動歷程會標明是誰幫誰改的 */
+let onlyMine = false;
+function canEdit(){ return true; }
 
 const CARET_SVG =
   '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
@@ -494,6 +585,17 @@ const TRASH_SVG =
     '<path d="M6.6 6.8 L7.5 19.6 H16.5 L17.4 6.8"/>' +
     '<path d="M10.4 10.4 V16.2 M13.6 10.4 V16.2" stroke-width="1.4" opacity=".7"/>' +
   '</svg>';
+
+const accOf = name => (state.accounts && state.accounts[(name || '').trim()]) || '';
+const cleanAcc = v => v.replace(/[^0-9\s]/g, '').replace(/\s+/g, ' ').replace(/^\s+/, '').slice(0, 30);
+async function copyText(txt, msg){
+  try { await navigator.clipboard.writeText(txt); flash(msg); }
+  catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = txt; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove(); flash(msg);
+  }
+}
 
 const dot = c => '<span class="dot" style="background:' + c + '"></span>';
 
@@ -537,7 +639,12 @@ function seedDemos(){
   }];
 }
 
-let state = { trips: [seedReal(), ...seedDemos()], currentId: null, seed: 3 };
+const DEFAULT_ACCOUNTS = {
+  '語安家': '822 245540246943',
+  '言琳家': '812 20351000054333',
+  '惟剴家': '812 28881001553521'
+};
+let state = { trips: [seedReal(), ...seedDemos()], currentId: null, seed: 3, accounts: Object.assign({}, DEFAULT_ACCOUNTS) };
 state.currentId = state.trips[0].id;
 const trip = () => state.trips.find(t => t.id === state.currentId) || state.trips[0];
 
@@ -552,7 +659,7 @@ let saveTimer;
 function save(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
-    try { await window.storage.set(KEY, JSON.stringify(state)); if (!syncOn()) flash('已儲存'); }
+    try { await store.set(KEY, JSON.stringify(state)); if (!syncOn()) flash('已儲存'); }
     catch (e) { flash('這台裝置無法儲存，關掉頁面資料會消失'); }
     schedulePush();
   }, 400);
@@ -565,12 +672,14 @@ function flash(msg){
 }
 async function load(){
   try {
-    const r = await window.storage.get(KEY);
+    const r = await store.get(KEY);
     if (r && r.value) {
       const s = JSON.parse(r.value);
       if (s && Array.isArray(s.trips) && s.trips.length) state = s;
       if (!trip()) state.currentId = state.trips[0].id;
       if ((state.seed || 0) < 3) { state.trips.push(...seedDemos()); state.seed = 3; save(); }
+      if (!state.accounts) state.accounts = {};
+      Object.keys(DEFAULT_ACCOUNTS).forEach(k => { if (!state.accounts[k]) state.accounts[k] = DEFAULT_ACCOUNTS[k]; });
     }
   } catch (e) {}
 }
@@ -688,7 +797,6 @@ function renderNav(){
   document.getElementById('switchNo').textContent = tripNo(t);
   document.getElementById('switchName').textContent = t.name || '未命名';
   document.getElementById('switchDate').textContent = t.date || '';
-  document.getElementById('tripNo').textContent = tripNo(t);
   const list = sortedTrips();
   const i = list.findIndex(x => x.id === state.currentId);
   document.getElementById('prevTrip').disabled = i >= list.length - 1;
@@ -767,9 +875,7 @@ let famRefs = [];
 function render(){
   const t = trip();
   renderNav();
-  document.getElementById('tripName').value = t.name || '';
-  document.getElementById('tripDate').value = t.date || today();
-  if (typeof setTripEdit === 'function') setTripEdit(false);
+  if (typeof titleEditing !== 'undefined' && titleEditing) setTitleEdit(false);
   applyLock();
 
   const { paid } = calc(t);
@@ -782,6 +888,12 @@ function render(){
     const card = document.createElement('div');
     card.className = 'fam';
     card.style.setProperty('--fc', colors[fi]);
+    const isMine = !!sync.who && (f.name || '').trim() === sync.who;
+
+    const mineTag = document.createElement('span');
+    mineTag.className = 'mine'; mineTag.textContent = '我家'; mineTag.hidden = true;
+    card.appendChild(mineTag);
+
     const head = document.createElement('div');
     head.className = 'famhead';
     const nameIn = document.createElement('input');
@@ -796,34 +908,26 @@ function render(){
     nameIn.oninput = e => { f.name = e.target.value; fitName(); save(); refreshSettle(); checkDupNames(); };
     fitName();
 
-    const lock = document.createElement('button');
-    lock.className = 'lock';
-    const setLock = open => {
-      nameIn.readOnly = !open;
-      lock.classList.toggle('open', open);
-      lock.innerHTML = open ? LOCK_SVG.open : LOCK_SVG.closed;
-      lock.title = open ? '編輯中，點一下或移開游標即結束編輯' : '點鉛筆才能改名稱';
-      lock.setAttribute('aria-label', (open ? '結束編輯' : '編輯') + '家庭名稱');
-      lock.setAttribute('aria-pressed', String(open));
+    nameIn.readOnly = true;
+    nameIn.title = '連點兩下改名稱';
+    const startEdit = () => {
+      if (isLocked(t)) { flash('這次紀錄已鎖定，先按左上角解鎖'); return; }
+      nameIn.readOnly = false; nameIn.focus(); nameIn.select();
     };
-    setLock(!isLocked(t) && (unlocked.has(f.id) || !(f.name || '').trim()));
-    lock.onclick = () => {
-      const open = !nameIn.readOnly;
-      if (open) { unlocked.delete(f.id); setLock(false); }
-      else { unlocked.add(f.id); setLock(true); nameIn.focus(); nameIn.select(); }
-    };
-    nameIn.onblur = () => { if ((f.name || '').trim()) { unlocked.delete(f.id); setLock(false); } };
+    nameIn.ondblclick = startEdit;
+    nameIn.onblur = () => { nameIn.readOnly = true; };
+
     const tot = document.createElement('div');
     tot.className = 'famtotal';
     tot.innerHTML = '<span class="tlabel">總計</span>' + nt(paid[fi]);
     tot.title = '這一家所有代墊項目的加總';
+
     const del = document.createElement('button');
     del.className = 'famx'; del.textContent = '×'; del.title = '移除這一家';
     del.setAttribute('aria-label', '移除這一家');
     del.onclick = () => {
       const filled = f.items.filter(i => parseFloat(i.amount) || (i.note || '').trim());
       const named = (f.name || '').trim();
-      // 名稱、金額、備註全空才算沒資料，可直接移除
       if (!named && !filled.length) { t.families.splice(fi, 1); save(); render(); return; }
       askCode('移除一家',
         '要把「' + (named || '這一家') + '」從「' + (t.name || '這次出遊') + '」移除，' +
@@ -831,6 +935,7 @@ function render(){
         '平均金額會重算。',
         () => { t.families.splice(fi, 1); save(); render(); });
     };
+
     const caret = document.createElement('button');
     caret.className = 'caretbtn';
     caret.innerHTML = CARET_SVG;
@@ -838,13 +943,58 @@ function render(){
     const no = document.createElement('div');
     no.className = 'famno';
     no.textContent = String(fi + 1);
+
     const nameWrap = document.createElement('div');
     nameWrap.className = 'namewrap';
-    nameWrap.append(no, lock, nameIn);
+    nameWrap.append(no, nameIn);
+
+    const accBtn = document.createElement('button');
+    accBtn.className = 'accbtn'; accBtn.textContent = '帳號';
+    accBtn.title = '點一下顯示或填寫匯款帳號';
+    nameWrap.append(accBtn);
+
     const cnt = document.createElement('span');
     cnt.className = 'famcount'; cnt.hidden = true;
     nameWrap.append(tot, cnt);
     head.append(nameWrap);
+
+    const accRow = document.createElement('div');
+    accRow.className = 'accrow'; accRow.hidden = true;
+    const cur = accOf(f.name).split(/\s+/);
+    const bankIn = document.createElement('input');
+    bankIn.className = 'accbank'; bankIn.value = cur[0] || ''; bankIn.placeholder = '銀行';
+    bankIn.inputMode = 'numeric'; bankIn.maxLength = 3; bankIn.setAttribute('aria-label', '銀行代碼三碼');
+    const numIn = document.createElement('input');
+    numIn.className = 'accnumin'; numIn.value = cur.slice(1).join('') || ''; numIn.placeholder = '帳號';
+    numIn.inputMode = 'numeric'; numIn.setAttribute('aria-label', '帳號');
+    const ro = isLocked(t);
+    bankIn.readOnly = ro; numIn.readOnly = ro;
+
+    const saveAcc = () => {
+      const key = (f.name || '').trim();
+      if (!key) return;
+      state.accounts = state.accounts || {};
+      const v = (bankIn.value.trim() + ' ' + numIn.value.trim()).trim();
+      if (bankIn.value.trim() || numIn.value.trim()) state.accounts[key] = v; else delete state.accounts[key];
+      save(); refreshSettle();
+    };
+    bankIn.oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); saveAcc(); };
+    numIn.oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 20); saveAcc(); };
+
+    const copyBank = document.createElement('button');
+    copyBank.className = 'acccopy'; copyBank.textContent = '複製代碼';
+    copyBank.onclick = () => bankIn.value.trim() ? copyText(bankIn.value.trim(), '已複製銀行代碼') : flash('還沒填銀行代碼');
+    const copyNum = document.createElement('button');
+    copyNum.className = 'acccopy'; copyNum.textContent = '複製帳號';
+    copyNum.onclick = () => numIn.value.trim() ? copyText(numIn.value.trim(), '已複製帳號') : flash('還沒填帳號');
+
+    accRow.append(bankIn, copyBank, numIn, copyNum);
+    card.appendChild(accRow);
+    accBtn.onclick = () => {
+      accRow.hidden = !accRow.hidden;
+      accBtn.classList.toggle('on', !accRow.hidden);
+      if (!accRow.hidden && !bankIn.readOnly && !bankIn.value) bankIn.focus();
+    };
     card.append(del, caret);
     card.appendChild(head);
 
@@ -855,7 +1005,7 @@ function render(){
       const ino = document.createElement('span');
       ino.className = 'itemno'; ino.textContent = String(ii + 1);
       const note = document.createElement('input');
-      note.className = 'note'; note.value = it.note; note.placeholder = '付了什麼（例：營位費）';
+      note.className = 'note'; note.value = it.note; note.placeholder = '先墊了什麼錢？（例：營位費）';
       note.readOnly = isLocked(t);
       note.oninput = e => { it.note = e.target.value; save(); };
       const amt = document.createElement('input');
@@ -893,10 +1043,12 @@ function render(){
       caret.setAttribute('aria-label', caret.title);
       caret.setAttribute('aria-expanded', String(!shut));
     };
+    mineTag.hidden = !(sync.who && (f.name || '').trim() === sync.who);
     applyFold();
     caret.onclick = () => {
       collapsed.has(f.id) ? collapsed.delete(f.id) : collapsed.add(f.id);
-      applyFold();
+      mineTag.hidden = !(sync.who && (f.name || '').trim() === sync.who);
+    applyFold();
       document.getElementById('foldAll').textContent =
         trip().families.every(x => collapsed.has(x.id)) ? '全部展開' : '全部收合';
     };
@@ -1020,10 +1172,30 @@ function refreshSettle(){
       dot(colors[l.from]) + esc(t.families[l.from].name) +
       '</span><span class="arrow">匯給</span><span class="t" style="color:' + colors[l.to] + '">' +
       dot(colors[l.to]) + esc(t.families[l.to].name) +
-      '</span><small>' + (l.kind === 'out' ? '代收方把多的錢轉出' : '補齊自己的分攤') +
+      '</span><button class="legacc" data-i="' + i + '">帳號</button><small>' +
+      (l.kind === 'out' ? '代收方把多的錢轉出' : '補齊自己的分攤') +
       '　<span class="why">怎麼算的 ▾</span></small></div>' +
       '<div class="legamt">' + nt(l.amt) + '</div>' +
+      '<div class="legaccrow" hidden>' + (accOf(t.families[l.to].name)
+        ? '匯給 <b>' + esc(t.families[l.to].name) + '</b>' +
+          '<span class="accpair"><span class="acclab">銀行</span><span class="accnum">' + esc(accOf(t.families[l.to].name).split(/\s+/)[0] || '') +
+          '</span><button class="acccopy" data-acc="' + esc(accOf(t.families[l.to].name).split(/\s+/)[0] || '') + '">複製</button></span>' +
+          '<span class="accpair"><span class="acclab">帳號</span><span class="accnum">' + esc(accOf(t.families[l.to].name).split(/\s+/).slice(1).join('')) +
+          '</span><button class="acccopy" data-acc="' + esc(accOf(t.families[l.to].name).split(/\s+/).slice(1).join('')) + '">複製</button></span>'
+        : esc(t.families[l.to].name) + ' 還沒填匯款帳號，可以在上方「各家代墊」點名字旁的「帳號」補上。') +
+      '</div>' +
       '<div class="legdetail" hidden>' + legWhy(t, l) + '</div></div>').join('');
+    route.querySelectorAll('.legacc').forEach(btn => {
+      btn.onclick = e => {
+        e.stopPropagation();
+        const row = btn.closest('.leg').querySelector('.legaccrow');
+        row.hidden = !row.hidden;
+        btn.classList.toggle('on', !row.hidden);
+      };
+    });
+    route.querySelectorAll('.legaccrow .acccopy').forEach(btn => {
+      btn.onclick = e => { e.stopPropagation(); copyText(btn.dataset.acc, '已複製帳號'); };
+    });
     route.querySelectorAll('.leg').forEach(el => {
       const toggle = () => {
         const d = el.querySelector('.legdetail');
@@ -1229,41 +1401,12 @@ function applyLock(){
   document.getElementById('lockIco').innerHTML = shut ? PAD_SVG.closed : PAD_SVG.open;
   document.getElementById('lockMsg').textContent = shut ? '鎖定中' : '可編輯';
   document.querySelectorAll('#fams input').forEach(el => { el.readOnly = shut || el.readOnly; });
-  if (shut) {
-    document.getElementById('tripName').readOnly = true;
-    document.getElementById('tripDate').disabled = true;
-  }
 }
 document.getElementById('lockToggle').onclick = () => {
   const t = trip(), shut = isLocked(t);
   t.locked = !shut; save(); render();
   flash(shut ? '已解鎖，可以編輯了' : '已鎖定，避免誤改');
 };
-
-/* ---------- 出遊標題與日期的編輯鎖 ---------- */
-const tripName = document.getElementById('tripName');
-const tripDate = document.getElementById('tripDate');
-const tripEdit = document.getElementById('tripEdit');
-function setTripEdit(open){
-  tripName.readOnly = !open;
-  tripDate.disabled = !open;
-  tripEdit.classList.toggle('open', open);
-  tripEdit.innerHTML = open ? LOCK_SVG.open : LOCK_SVG.closed;
-  tripEdit.title = open ? '編輯中，點一下或移開游標即結束編輯' : '點鉛筆才能改出遊名稱與日期';
-  tripEdit.setAttribute('aria-label', (open ? '結束編輯' : '編輯') + '出遊名稱與日期');
-}
-tripEdit.onclick = () => {
-  if (isLocked()) { flash('這次紀錄已鎖定，先按上方解鎖'); return; }
-  const open = !tripName.readOnly;
-  if (open) { setTripEdit(false); return; }
-  setTripEdit(true); tripName.focus(); tripName.select();
-};
-const maybeLockTrip = () => setTimeout(() => {
-  const a = document.activeElement;
-  if (a !== tripName && a !== tripDate && a !== tripEdit) setTripEdit(false);
-}, 60);
-tripName.addEventListener('blur', maybeLockTrip);
-tripDate.addEventListener('blur', maybeLockTrip);
 
 /* ---------- 共用帳本（Google Apps Script） ---------- */
 const SYNC_KEY = 'doudou-sync-v1';
@@ -1272,18 +1415,19 @@ const DEFAULT_SYNC = {
   url: 'https://script.google.com/macros/s/AKfycbyedhoyjN6mvj7bwJjKjEoPZ6mf0kWHq1_V0IAEtRozL1ch5w4yr5bINNslzQ57F0lz/exec',
   book: 'doudou2026'
 };
-let sync = { url: DEFAULT_SYNC.url, book: DEFAULT_SYNC.book, who: '', rev: 0 };
+let sync = { url: DEFAULT_SYNC.url, book: DEFAULT_SYNC.book, who: '', rev: 0, onlyMine: true };
 let dirty = false, pushTimer = null, pulling = false, pushing = false, conflictData = null;
 const syncOn = () => !!(sync.url && sync.book);
 
 async function loadSyncCfg(){
   try {
-    const r = await window.storage.get(SYNC_KEY);
+    const r = await store.get(SYNC_KEY);
     if (r && r.value) sync = Object.assign(sync, JSON.parse(r.value));
+    if (typeof sync.onlyMine === 'boolean') onlyMine = sync.onlyMine;
   } catch (e) {}
 }
 async function saveSyncCfg(){
-  try { await window.storage.set(SYNC_KEY, JSON.stringify(sync)); } catch (e) {}
+  try { await store.set(SYNC_KEY, JSON.stringify(sync)); } catch (e) {}
 }
 function setSync(kind, msg){
   const dot = document.getElementById('syncDot');
@@ -1314,12 +1458,18 @@ async function remotePut(force){
 function applyRemote(json){
   const incoming = JSON.parse(json.data);
   if (!incoming || !Array.isArray(incoming.trips) || !incoming.trips.length) return false;
-  const keep = state.currentId;
+  if (!incoming.accounts) incoming.accounts = {};
+  const same = JSON.stringify(state) === json.data;
+  sync.rev = json.updatedAt; saveSyncCfg();
+  if (same) return true;                       /* 內容一樣就不重畫，避免畫面跳動 */
+  const active = document.activeElement;
+  if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return true;  /* 正在打字先不動 */
+  const keep = state.currentId, y = window.scrollY;
   state = incoming;
   if (state.trips.some(t => t.id === keep)) state.currentId = keep;
   else if (!trip()) state.currentId = state.trips[0].id;
-  sync.rev = json.updatedAt; saveSyncCfg();
   save(); render();
+  window.scrollTo(0, y);
   return true;
 }
 
@@ -1337,10 +1487,7 @@ async function pull(auto){
       setSync('busy', '有更新');
       return;
     }
-    if (applyRemote(json)) {
-      setSync('on', '已同步');
-      flash((json.updatedBy ? json.updatedBy : '有人') + ' 更新了這份帳，已載入最新版');
-    }
+    if (applyRemote(json)) setSync('on', '已同步');
   } catch (e) {
     setSync('err', '離線');
   } finally { pulling = false; }
@@ -1375,7 +1522,7 @@ function schedulePush(){
 
 document.getElementById('syncReload').onclick = () => {
   if (conflictData && applyRemote(conflictData)) {
-    dirty = false; conflictData = null; hideSyncBar(); setSync('on', '已同步'); flash('已載入雲端最新版');
+    dirty = false; conflictData = null; hideSyncBar(); setSync('on', '已同步');
   } else { hideSyncBar(); pull(); }
 };
 document.getElementById('syncForce').onclick = async () => {
@@ -1421,6 +1568,7 @@ document.getElementById('iOk').onclick = async () => {
   sync.who = who;
   await saveSyncCfg();
   document.getElementById('imodal').hidden = true;
+  render();
   flash('哈囉 ' + who + '，開始記帳吧');
 };
 
@@ -1437,7 +1585,8 @@ document.getElementById('history').onclick = async () => {
     if (!json.ok || !json.log) { box.innerHTML = '<div class="lempty">讀不到異動紀錄。</div>'; return; }
     if (!json.log.length) { box.innerHTML = '<div class="lempty">還沒有任何異動紀錄。</div>'; return; }
     box.innerHTML = json.log.map(r =>
-      '<div class="lrowi">' + esc(r.what) + '<span class="lmeta">' + esc(r.at) + '　' + esc(r.who) + '</span></div>'
+      '<div class="lrowi"><span class="lwho">' + esc(r.who) + '</span>' + esc(r.what) +
+      '<span class="lmeta">' + esc(r.at) + '</span></div>'
     ).join('');
   } catch (e) {
     box.innerHTML = '<div class="lempty">連不上雲端，稍後再試。</div>';
@@ -1470,7 +1619,7 @@ document.getElementById('sConnect').onclick = async () => {
     const json = await remoteGet();
     if (!json.ok) { setSync('err', '連線異常'); flash('連不上，請確認網址與部署權限'); return; }
     closeSync();
-    if (json.exists && applyRemote(json)) { setSync('on', '已同步'); flash('已載入雲端帳本'); }
+    if (json.exists && applyRemote(json)) { setSync('on', '已同步'); render(); flash('已載入雲端帳本'); }
     else { setSync('on', '雲端空的'); flash('雲端還沒有這本帳，可以按「上傳目前資料」建立'); }
   } catch (e) { setSync('err', '連線失敗'); flash('連不上，請確認網址與網路'); }
 };
@@ -1482,12 +1631,12 @@ document.getElementById('sUpload').onclick = async () => {
   setSync('busy', '上傳中…');
   try {
     const json = await remotePut(true);
-    if (json.ok) { sync.rev = json.updatedAt; await saveSyncCfg(); dirty = false; setSync('on', '已同步'); flash('已上傳到雲端帳本'); }
+    if (json.ok) { sync.rev = json.updatedAt; await saveSyncCfg(); dirty = false; setSync('on', '已同步'); render(); flash('已上傳到雲端帳本'); }
     else { setSync('err', '上傳失敗'); flash('上傳失敗，請確認網址與部署權限'); }
   } catch (e) { setSync('err', '離線'); flash('連不上雲端，請確認網址與網路'); }
 };
 document.getElementById('sOff').onclick = async () => {
-  sync = { url: '', book: '', who: sync.who, rev: 0 };
+  sync = { url: '', book: '', who: sync.who, rev: 0, onlyMine: onlyMine };
   await saveSyncCfg(); closeSync(); hideSyncBar();
   setSync('', '單機'); flash('已改回單機模式，資料只存在這台裝置');
 };
@@ -1496,6 +1645,48 @@ setInterval(() => {
   if (syncOn() && document.visibilityState === 'visible' && !dirty) pull(true);
 }, 8000);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pull(true); });
+
+/* ---------- 出遊標題：單擊換紀錄、連點兩下改名 ---------- */
+const tripName = document.getElementById('tripName');
+const tripDate = document.getElementById('tripDate');
+const switchBtn = document.getElementById('switchBtn');
+let titleEditing = false, clickTimer = null;
+
+function setTitleEdit(on){
+  if (on && isLocked()) { flash('這次紀錄已鎖定，先按左上角解鎖'); return; }
+  titleEditing = on;
+  switchBtn.classList.toggle('editing', on);
+  document.getElementById('switchName').hidden = on;
+  document.getElementById('switchDate').hidden = on;
+  document.getElementById('caretIco').hidden = on;
+  tripName.hidden = !on;
+  tripDate.hidden = !on;
+  if (on) {
+    tripName.value = trip().name || '';
+    tripDate.value = trip().date || today();
+    closePanel();
+    tripName.focus(); tripName.select();
+  }
+}
+switchBtn.onclick = e => {
+  if (titleEditing) return;
+  clearTimeout(clickTimer);
+  clickTimer = setTimeout(() => {
+    e.stopPropagation();
+    document.getElementById('panel').hidden ? openPanel() : closePanel();
+  }, 220);
+};
+switchBtn.ondblclick = () => { clearTimeout(clickTimer); setTitleEdit(true); };
+switchBtn.onkeydown = e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.getElementById('panel').hidden ? openPanel() : closePanel(); }
+};
+const leaveTitle = () => setTimeout(() => {
+  const a = document.activeElement;
+  if (a !== tripName && a !== tripDate) setTitleEdit(false);
+}, 60);
+tripName.addEventListener('blur', leaveTitle);
+tripDate.addEventListener('blur', leaveTitle);
+tripName.addEventListener('keydown', e => { if (e.key === 'Enter') tripName.blur(); });
 
 /* ---------- 備份（下載檔案）／還原 ---------- */
 document.getElementById('backup').onclick = () => {
@@ -1544,6 +1735,60 @@ document.getElementById('bRestore').onclick = () => {
     });
 };
 
+/* ---------- 下載 PDF（用瀏覽器列印，可另存 PDF） ---------- */
+document.getElementById('pdf').onclick = () => {
+  const t = trip();
+  const { paid, total, avg, bal } = calc(t);
+  const legs = transfers(t, bal);
+  const cr = bal.filter(v => v > 0).reduce((a, b) => a + b, 0);
+  const rows = t.families.map((f, i) =>
+    '<tr><td>' + (i + 1) + '. ' + esc(f.name) + '</td><td class="n">' + nt(paid[i]) +
+    '</td><td class="n">' + nt(avg) + '</td><td class="n ' + (bal[i] >= 0 ? 'g' : 'r') + '">' +
+    (bal[i] >= 0 ? '應收 ' + nt(bal[i]) : '應付 ' + nt(-bal[i])) + '</td></tr>').join('');
+  const items = t.families.map((f, i) => {
+    const list = f.items.filter(it => parseFloat(it.amount) || (it.note || '').trim());
+    if (!list.length) return '';
+    return '<div class="fam"><h3>' + (i + 1) + '. ' + esc(f.name) + '　<span class="sub">總計 ' + nt(paid[i]) + '</span></h3><table>' +
+      list.map((it, k) => '<tr><td>' + (k + 1) + '</td><td>' + esc(it.note || '（未填品名）') +
+        '</td><td class="n">' + nt(parseFloat(it.amount) || 0) + '</td></tr>').join('') + '</table></div>';
+  }).join('');
+  const pay = legs.length
+    ? '<ol>' + legs.map(l => '<li>' + esc(t.families[l.from].name) + ' 匯給 ' + esc(t.families[l.to].name) + '　<b>' + nt(l.amt) + '</b>' +
+        (accOf(t.families[l.to].name) ? '<br><span class="acc">帳號 ' + esc(accOf(t.families[l.to].name)) + '</span>' : '') + '</li>').join('') + '</ol>'
+    : '<p>大家付的剛好一樣，不用互相匯款。</p>';
+
+  const html = '<!doctype html><meta charset="utf-8"><title>荳荳團分帳 ' + esc(t.name) + '</title>' +
+    '<style>body{font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;color:#17342A;margin:28px;line-height:1.6}' +
+    'h1{font-size:20px;margin:0 0 2px}h2{font-size:14px;margin:22px 0 8px;padding-bottom:4px;border-bottom:1px solid #C6CEC4}' +
+    'h3{font-size:13px;margin:12px 0 4px}.sub{font-weight:400;color:#5A6B60;font-size:12px}' +
+    '.meta{color:#5A6B60;font-size:12px;margin-bottom:14px}table{width:100%;border-collapse:collapse;font-size:12.5px}' +
+    'td,th{padding:5px 6px;border-bottom:1px solid #E7EBE3;text-align:left}.n{text-align:right;font-variant-numeric:tabular-nums}' +
+    '.g{color:#2C6E7F;font-weight:700}.r{color:#C8791B;font-weight:700}thead th{background:#E7EBE3;font-size:11px}' +
+    'ol{padding-left:18px}li{margin:6px 0}.acc{font-family:ui-monospace,monospace;font-size:12px;color:#5A6B60}.sum{display:flex;gap:22px;font-size:13px;margin:10px 0 4px}' +
+    '@media print{body{margin:12mm}}</style>' +
+    '<h1>荳荳團分帳　' + esc(t.name) + '</h1>' +
+    '<div class="meta">No.' + tripNo(t) + '　' + (t.date || '') + '　列印於 ' + today() + '</div>' +
+    '<div class="sum"><span>總花費 <b>' + nt(total) + '</b></span><span>' + t.families.length +
+    ' 家平分，每家 <b>' + nt(avg) + '</b></span></div>' +
+    '<h2>一、各家代墊明細</h2>' + (items || '<p>尚未記錄任何花費。</p>') +
+    '<h2>二、應收／應付</h2><table><thead><tr><th>家庭</th><th class="n">代墊</th><th class="n">應攤</th><th class="n">結果</th></tr></thead>' +
+    rows + '</table><p class="meta">驗算：應收回總額 ' + nt(cr) + ' ＝ 應補交總額 ' + nt(cr) + '，帳務平衡。</p>' +
+    '<h2>三、匯款方式（' + (t.mode === 'hub' ? '集中匯' : '彼此匯') + '）</h2>' + pay;
+
+  const fr = document.createElement('iframe');
+  fr.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  document.body.appendChild(fr);
+  const doc = fr.contentDocument;
+  doc.open(); doc.write(html); doc.close();
+  fr.onload = () => {
+    fr.contentWindow.focus();
+    fr.contentWindow.print();
+    setTimeout(() => fr.remove(), 60000);
+  };
+  if (doc.readyState === 'complete') fr.onload();
+  flash('選「另存為 PDF」就能存檔');
+};
+
 /* ---------- 事件 ---------- */
 document.getElementById('switchBtn').onclick = e => {
   e.stopPropagation();
@@ -1564,8 +1809,8 @@ document.addEventListener('keydown', e => {
   else if (!document.getElementById('bmodal').hidden) closeBackup();
   else closePanel();
 });
-document.getElementById('tripName').oninput = e => { trip().name = e.target.value; save(); renderNav(); renderHistory(); };
-document.getElementById('tripDate').onchange = e => {
+tripName.oninput = e => { trip().name = e.target.value; save(); renderNav(); renderHistory(); };
+tripDate.onchange = e => {
   if (!e.target.value) { e.target.value = trip().date || today(); flash('日期不能空白，編號和歷史紀錄要靠它排序'); return; }
   trip().date = e.target.value; save(); renderNav(); renderHistory();
 };
