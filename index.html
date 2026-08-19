@@ -1462,23 +1462,141 @@ async function remotePut(force){
   return res.json();
 }
 
+/* ---------- 三方合併：以「上次雙方一致的版本」為基準，逐欄併起來 ---------- */
+const BASE_KEY = 'doudou-base-v1';
+let baseSnapshot = '';        /* 上次與雲端一致的內容（跨重新整理保留，合併要靠它） */
+function setBase(str){
+  baseSnapshot = str || '';
+  try { store.set(BASE_KEY, baseSnapshot); } catch (e) {}
+}
+async function loadBase(){
+  try { const r = await store.get(BASE_KEY); if (r && r.value) baseSnapshot = r.value; } catch (e) {}
+}
+let pendingRemote = null;     /* 使用者正在打字時，先擱著的雲端更新 */
+
+const idMap = arr => { const m = {}; (arr || []).forEach(x => { if (x && x.id) m[x.id] = x; }); return m; };
+const same = (a, b) => JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b);
+/* 只有我改 → 用我的；只有對方改 → 用對方的；兩邊都改同一格 → 用雲端的 */
+function pick(b, m, t){
+  if (same(m, t)) return m;
+  if (same(m, b)) return t;
+  if (same(t, b)) return m;
+  return t;
+}
+
+function mergeItems(bArr, mArr, tArr){
+  const B = idMap(bArr), M = idMap(mArr), out = [], seen = {};
+  (tArr || []).forEach(t => {
+    const b = B[t.id], m = M[t.id];
+    seen[t.id] = 1;
+    if (!m) { if (b && same(b, t)) return; out.push(t); return; }   /* 我刪掉、對方沒動 → 維持刪除 */
+    out.push({ id: t.id, note: pick(b && b.note, m.note, t.note), amount: pick(b && b.amount, m.amount, t.amount) });
+  });
+  (mArr || []).forEach(m => {
+    if (seen[m.id]) return;
+    if (B[m.id]) return;                                            /* 對方刪掉、我沒動 → 維持刪除 */
+    out.push(m);                                                    /* 我新增的 */
+  });
+  return out.length ? out : [{ id: uid(), note: '', amount: '' }];
+}
+
+function mergeFamilies(bArr, mArr, tArr){
+  const B = idMap(bArr), M = idMap(mArr), out = [], seen = {};
+  (tArr || []).forEach(t => {
+    const b = B[t.id], m = M[t.id];
+    seen[t.id] = 1;
+    if (!m) { if (b && same(b, t)) return; out.push(t); return; }
+    out.push({
+      id: t.id,
+      name: pick(b && b.name, m.name, t.name),
+      items: mergeItems(b && b.items, m.items, t.items)
+    });
+  });
+  (mArr || []).forEach(m => { if (!seen[m.id] && !B[m.id]) out.push(m); });
+  return out;
+}
+
+function mergeTrips(bArr, mArr, tArr){
+  const B = idMap(bArr), M = idMap(mArr), out = [], seen = {};
+  (tArr || []).forEach(t => {
+    const b = B[t.id], m = M[t.id];
+    seen[t.id] = 1;
+    if (!m) { if (b && same(b, t)) return; out.push(t); return; }
+    out.push({
+      id: t.id,
+      name: pick(b && b.name, m.name, t.name),
+      date: pick(b && b.date, m.date, t.date),
+      mode: pick(b && b.mode, m.mode, t.mode),
+      auto: pick(b && b.auto, m.auto, t.auto),
+      locked: pick(b && b.locked, m.locked, t.locked),
+      demo: t.demo || m.demo,
+      families: mergeFamilies(b && b.families, m.families, t.families)
+    });
+  });
+  (mArr || []).forEach(m => { if (!seen[m.id] && !B[m.id]) out.push(m); });
+  return out;
+}
+
+function mergeAccounts(b, m, t){
+  const out = {}, keys = {};
+  [b || {}, m || {}, t || {}].forEach(o => Object.keys(o).forEach(k => keys[k] = 1));
+  Object.keys(keys).forEach(k => {
+    const v = pick((b || {})[k], (m || {})[k], (t || {})[k]);
+    if (v) out[k] = v;
+  });
+  return out;
+}
+
+function merge3(baseStr, mine, theirs){
+  let base = { trips: [], accounts: {} };
+  try { if (baseStr) base = JSON.parse(baseStr); } catch (e) {}
+  const merged = {
+    trips: mergeTrips(base.trips, mine.trips, theirs.trips),
+    accounts: mergeAccounts(base.accounts, mine.accounts, theirs.accounts),
+    seed: Math.max(mine.seed || 0, theirs.seed || 0),
+    currentId: mine.currentId
+  };
+  if (!merged.trips.length) merged.trips = theirs.trips.length ? theirs.trips : mine.trips;
+  if (!merged.trips.some(t => t.id === merged.currentId)) merged.currentId = merged.trips[0].id;
+  return merged;
+}
+
+const isTyping = () => {
+  const a = document.activeElement;
+  return !!a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA');
+};
+
 function applyRemote(json){
-  const incoming = JSON.parse(json.data);
-  if (!incoming || !Array.isArray(incoming.trips) || !incoming.trips.length) return false;
-  if (!incoming.accounts) incoming.accounts = {};
-  const same = JSON.stringify(state) === json.data;
-  sync.rev = json.updatedAt; saveSyncCfg();
-  if (same) return true;                       /* 內容一樣就不重畫，避免畫面跳動 */
-  const active = document.activeElement;
-  if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return true;  /* 正在打字先不動 */
-  const keep = state.currentId, y = window.scrollY;
-  state = incoming;
-  if (state.trips.some(t => t.id === keep)) state.currentId = keep;
-  else if (!trip()) state.currentId = state.trips[0].id;
-  save(); render();
+  let theirs;
+  try { theirs = JSON.parse(json.data); } catch (e) { return false; }
+  if (!theirs || !Array.isArray(theirs.trips) || !theirs.trips.length) return false;
+  if (!theirs.accounts) theirs.accounts = {};
+
+  if (JSON.stringify(state) === json.data) {          /* 完全一樣就什麼都不用做 */
+    sync.rev = json.updatedAt; setBase(json.data); saveSyncCfg();
+    return true;
+  }
+  if (isTyping()) { pendingRemote = json; return true; }   /* 正在打字，先擱著 */
+
+  /* 沒有共同基準（第一次連線、或換裝置）就直接採用雲端版本，避免把兩份不同來源的資料併成雙份 */
+  const merged = baseSnapshot ? merge3(baseSnapshot, state, theirs) : theirs;
+  const y = window.scrollY;
+  state = merged;
+  sync.rev = json.updatedAt;
+  setBase(json.data);
+  saveSyncCfg(); save(); render();
   window.scrollTo(0, y);
   return true;
 }
+
+/* 使用者打完字放開欄位後，補上剛才擱著的雲端更新 */
+document.addEventListener('focusout', () => {
+  setTimeout(() => {
+    if (!pendingRemote || isTyping()) return;
+    const json = pendingRemote; pendingRemote = null;
+    applyRemote(json);
+  }, 200);
+});
 
 async function pull(auto){
   if (!syncOn() || pulling || pushing) return;
@@ -1492,14 +1610,9 @@ async function pull(auto){
       return;
     }
     if (!json.exists) { setSync('on', '雲端空的'); return; }
-    if (json.updatedAt === sync.rev) { setSync('on', '已同步'); return; }
-    if (dirty) {
-      conflictData = json;
-      showSyncBar((json.updatedBy ? json.updatedBy + ' ' : '有人') + '更新了雲端的帳，你也有還沒存的修改。', true);
-      setSync('busy', '有更新');
-      return;
-    }
-    if (applyRemote(json)) setSync('on', '已同步');
+    if (json.updatedAt === sync.rev) { if (!dirty) setSync('on', '已同步'); return; }
+    if (applyRemote(json)) setSync(dirty ? 'busy' : 'on', dirty ? '同步中…' : '已同步');
+    if (dirty) schedulePush();
   } catch (e) {
     setSync('err', '離線');
   } finally { pulling = false; }
@@ -1511,12 +1624,24 @@ async function push(){
   try {
     const json = await remotePut(false);
     if (json.ok) {
-      sync.rev = json.updatedAt; saveSyncCfg();
+      sync.rev = json.updatedAt;
+      setBase(JSON.stringify(state));
+      push.retry = 0; saveSyncCfg();
       dirty = false; conflictData = null; hideSyncBar(); setSync('on', '已同步');
     } else if (json.conflict) {
-      conflictData = json;
-      showSyncBar((json.updatedBy ? json.updatedBy + ' ' : '有人') + '在你之前更新了這份帳。', true);
-      setSync('busy', '有衝突');
+      /* 別人先存了：把兩邊的修改合併起來，再送一次，使用者不需要處理 */
+      let theirs = null;
+      try { theirs = JSON.parse(json.data); } catch (e) {}
+      if (theirs) {
+        state = baseSnapshot ? merge3(baseSnapshot, state, theirs) : theirs;
+        sync.rev = json.updatedAt;
+        setBase(json.data);
+        saveSyncCfg(); save();
+        if (!isTyping()) { const y = window.scrollY; render(); window.scrollTo(0, y); }
+      }
+      pushing = false;
+      if ((push.retry = (push.retry || 0) + 1) <= 4) { setTimeout(push, 400); return; }
+      setSync('err', '同步忙碌，稍後重試');
     } else {
       lastSyncError = json.error || '未知錯誤';
       setSync('err', json.error === 'too big' ? '資料太大' : '存檔失敗');
@@ -1650,7 +1775,7 @@ document.getElementById('sConnect').onclick = async () => {
     const json = await remoteGet();
     if (!json.ok) { setSync('err', '連線異常'); flash('連不上，請確認網址與部署權限'); return; }
     closeSync();
-    if (json.exists && applyRemote(json)) { setSync('on', '已同步'); render(); flash('已載入雲端帳本'); }
+    if (json.exists) { setBase(''); applyRemote(json); setSync('on', '已同步'); render(); flash('已載入雲端帳本'); }
     else { setSync('on', '雲端空的'); flash('雲端還沒有這本帳，可以按「上傳目前資料」建立'); }
   } catch (e) { setSync('err', '連線失敗'); flash('連不上，請確認網址與網路'); }
 };
@@ -1662,7 +1787,7 @@ document.getElementById('sUpload').onclick = async () => {
   setSync('busy', '上傳中…');
   try {
     const json = await remotePut(true);
-    if (json.ok) { sync.rev = json.updatedAt; await saveSyncCfg(); dirty = false; setSync('on', '已同步'); render(); flash('已上傳到雲端帳本'); }
+    if (json.ok) { sync.rev = json.updatedAt; setBase(JSON.stringify(state)); await saveSyncCfg(); dirty = false; setSync('on', '已同步'); render(); flash('已上傳到雲端帳本'); }
     else { setSync('err', '上傳失敗'); flash('上傳失敗，請確認網址與部署權限'); }
   } catch (e) { setSync('err', '離線'); flash('連不上雲端，請確認網址與網路'); }
 };
@@ -1897,6 +2022,7 @@ document.getElementById('delTrip').onclick = () => {
 (async () => {
   await load();
   await loadSyncCfg();
+  await loadBase();
   render();
   if (syncOn()) {
     setSync('busy', '連線中…');
