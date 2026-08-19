@@ -34,7 +34,7 @@
   .moremenu button{display:block;width:100%;text-align:left;font:inherit;font-size:13px;padding:9px 10px;border:0;background:transparent;color:var(--forest);border-radius:7px;cursor:pointer}
   .moremenu button:hover{background:var(--moss)}
   .moremenu button#delTrip{color:var(--bad)}
-  #tripName{font:inherit;font-size:15px;font-weight:700;color:var(--forest);background:#fff;border:1px solid var(--stream);border-radius:6px;padding:3px 6px;flex:1;min-width:0}
+  #tripName{font-family:var(--sans);font-size:19px;font-weight:800;line-height:1.2;color:var(--forest);background:#fff;border:1px solid var(--stream);border-radius:6px;padding:3px 6px;flex:1;min-width:0}
   #tripDate{font-family:var(--mono);font-size:12px;color:var(--forest);background:#fff;border:1px solid var(--stream);border-radius:6px;padding:3px 5px;flex:none}
   .switchbtn{user-select:none}
   .switchbtn.editing{cursor:default}
@@ -50,9 +50,9 @@
   .navarrow:disabled{opacity:.3;cursor:default}
   .navarrow:not(:disabled):hover{border-color:var(--stream);color:var(--stream)}
   .switch{position:relative;flex:1;min-width:0}
-  .switchbtn{width:100%;display:flex;align-items:baseline;gap:8px;text-align:left;cursor:pointer;font:inherit;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--forest)}
-  .switchbtn .no{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--stream);flex:none}
-  .switchbtn .sn{font-weight:700;font-size:15px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .switchbtn{width:100%;display:flex;align-items:baseline;gap:9px;text-align:left;cursor:pointer;font:inherit;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:12px 14px;color:var(--forest)}
+  .switchbtn .no{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--stream);flex:none}
+  .switchbtn .sn{font-weight:800;font-size:19px;letter-spacing:-.01em;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .switchbtn .sd{font-family:var(--mono);font-size:11px;color:var(--ink-soft);flex:none}
   .switchbtn .caret{color:var(--ink-soft);font-size:11px;flex:none}
   .panel{position:absolute;z-index:20;top:calc(100% + 6px);left:0;right:0;background:var(--paper);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 28px rgba(23,52,42,.16);padding:8px}
@@ -110,16 +110,10 @@
   .sheet.locked .item input:hover{background:transparent}
   .sheet{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px}
   .meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-  .meta .tno{font-family:var(--mono);font-size:13px;font-weight:800;color:#fff;background:var(--forest);border-radius:6px;padding:2px 7px;flex:none}
-  .meta input{font:inherit;color:var(--forest);background:transparent;border:0;border-bottom:1px dashed var(--line);padding:3px 0}
-  #tripName{font-size:19px;font-weight:800;flex:1;min-width:150px}
-  #tripDate{font-size:13px;color:var(--ink-soft);font-family:var(--mono)}
-  .meta input:focus{outline:none;border-bottom-color:var(--stream);border-bottom-style:solid}
-
-  .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:26px}
-  .sum{background:#fff;padding:13px 8px;text-align:center}
-  .sum .k{font-size:11px;color:var(--ink-soft);letter-spacing:.06em}
-  .sum .v{font-family:var(--mono);font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:2px}
+  .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:22px}
+  .sum{background:#fff;padding:9px 8px;text-align:center}
+  .sum .k{font-size:10px;color:var(--ink-soft);letter-spacing:.06em}
+  .sum .v{font-family:var(--mono);font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:1px}
 
   h2{font-size:12px;letter-spacing:.2em;color:var(--ink-soft);font-weight:700;margin:0 0 10px}
   .block{background:var(--moss);border:1px solid var(--line);border-radius:14px;padding:0 12px 12px;margin-bottom:18px}
@@ -203,12 +197,33 @@
     border-radius:999px;padding:2px 8px;margin-left:7px;cursor:pointer}
   .accbtn:hover{color:var(--stream);border-color:var(--stream)}
   .accbtn.on{color:var(--stream);border-color:var(--stream);background:var(--stream-soft)}
+  .accbox{margin:2px 0 14px}
+  .acchead{display:flex;align-items:center;gap:7px;width:100%;font:inherit;font-size:13px;font-weight:700;color:var(--forest);
+    background:transparent;border:1px solid var(--line);border-radius:9px;padding:9px 11px;cursor:pointer;text-align:left}
+  .acchead:hover{border-color:var(--stream)}
+  .acchead .accarrow{font-size:10px;color:var(--ink-soft);transition:transform .15s;display:inline-block;transform:rotate(-90deg)}
+  .acchead.open .accarrow{transform:rotate(0)}
+  .acchead .accstat{margin-left:auto;font-size:11px;font-weight:400;color:var(--ink-soft);font-family:var(--mono)}
+  .acclist{margin-top:8px}
+  .accnote{font-size:12px;color:var(--ink-soft);line-height:1.6;margin:0 0 8px}
+  .accnote b{color:var(--forest)}
+  .accrow2{display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--line);
+    border-left:3px solid var(--fc,var(--line));border-radius:10px;padding:8px 10px;margin-bottom:7px}
+  .accname{flex:0 0 96px;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .accno{flex:none;width:18px;height:18px;border-radius:50%;background:var(--fc,var(--ink-soft));color:#fff;
+    font-family:var(--mono);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
   .accrow{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin:8px 0 2px;padding-right:34px}
   .accbank,.accnumin{font:inherit;font-family:var(--mono);font-size:13px;color:var(--forest);
     background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0}
   .accbank{width:64px;text-align:center}
-  .accok{flex:none;font:inherit;font-size:12px;font-weight:700;color:#fff;background:var(--forest);border:1px solid var(--forest);border-radius:8px;padding:6px 12px;cursor:pointer}
-  .accok:hover{background:var(--stream);border-color:var(--stream)}
+  .accok{flex:none;display:inline-flex;align-items:center;gap:5px;font:inherit;font-size:12px;font-weight:700;
+    color:var(--ember);background:var(--ember-soft);border:1px solid #E6C79A;border-radius:8px;padding:6px 11px;cursor:pointer}
+  .accok:hover{border-color:var(--ember)}
+  .accok.done{color:var(--ok);background:#E7F2EA;border-color:#BFDCC8}
+  .accok .tick{font-size:12px}
+  .acchint{flex:0 0 100%;font-size:11px;color:var(--ink-soft);margin-top:2px}
+  .acccopy:disabled{opacity:.45;cursor:not-allowed}
+  .acccopy:disabled:hover{color:var(--ink-soft);border-color:var(--line)}
   .acctag{flex:none;display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:var(--ok);background:#E7F2EA;border:1px solid #BFDCC8;border-radius:8px;padding:6px 11px;cursor:pointer}
   .acctag .tick{font-size:13px}
   .accnumin{flex:1}
@@ -216,14 +231,19 @@
   .acccopy{flex:none;font:inherit;font-size:12px;color:var(--ink-soft);background:transparent;border:1px solid var(--line);
     border-radius:7px;padding:5px 9px;cursor:pointer}
   .acccopy:hover{color:var(--stream);border-color:var(--stream)}
-  .legacc{flex:none;font:inherit;font-size:11px;color:var(--line);background:transparent;border:1px solid var(--line);
-    border-radius:999px;padding:2px 8px;margin-left:8px;cursor:pointer}
+  .toacc{color:var(--line);font-size:12px;margin:0 5px}
+  .legacc{flex:none;font:inherit;font-size:11px;color:var(--ink-soft);background:transparent;border:1px solid var(--line);
+    border-radius:999px;padding:3px 9px;cursor:pointer;vertical-align:1px}
   .legacc:hover,.legacc.on{color:var(--stream);border-color:var(--stream)}
   .legacc.on{background:var(--stream-soft)}
-  .legaccrow{grid-column:1/-1;margin:2px 0 10px;padding:9px 11px;background:var(--moss);border-radius:8px;font-size:12.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .legacc.confirmed{color:var(--ok);border-color:#BFDCC8;background:#E7F2EA}
+  .legacc.confirmed::before{content:'✓ '}
+  .accttl{flex:0 0 100%;font-size:12px;font-weight:700;color:var(--forest);margin-bottom:2px}
+  .legaccrow{grid-column:1/-1;margin:2px 0 10px;padding:10px 11px;background:var(--moss);border-radius:8px;font-size:12.5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
   .legaccrow .accpair{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 6px 4px 9px}
   .legaccrow .acclab{font-size:10px;color:var(--ink-soft)}
   .legaccrow .okmini{font-size:11px;font-weight:700;color:var(--ok);background:#E7F2EA;border-radius:999px;padding:2px 7px}
+  .legaccrow .warnmini{font-size:11px;font-weight:700;color:var(--ember);background:var(--ember-soft);border-radius:999px;padding:2px 7px}
   .legaccrow .accnum{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.02em}
   .caption{font-size:12px;color:var(--ink-soft);margin:8px 2px 0;line-height:1.6}
   .lrow .num{font-family:var(--mono);font-size:13px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft)}
@@ -241,9 +261,9 @@
   .autoback{font:inherit;font-size:12px;background:transparent;border:0;color:var(--stream);text-decoration:underline;cursor:pointer;padding:4px}
   .mode{font:inherit;font-size:13px;padding:7px 12px;border-radius:999px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink-soft)}
   .mode[aria-pressed="true"]{background:var(--stream-soft);border-color:var(--stream);color:var(--stream);font-weight:700}
-  .modehint{font-size:12px;color:var(--ink-soft);margin:0 0 12px}
   .route{background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px 14px}
   .leg{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:13px 0;border-bottom:1px dashed var(--line)}
+  .legright{display:flex;align-items:center;gap:8px;justify-content:flex-end}
   .leg:last-child{border-bottom:0}
   .step{width:26px;height:26px;border-radius:50%;background:#fff;border:1.5px solid currentColor;font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
   .who{font-size:14px;line-height:1.4}
@@ -316,8 +336,10 @@
     .toolbar{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .toolbar::-webkit-scrollbar{display:none}
     .toolbar .topbtn{white-space:nowrap}
-    .switchbtn{padding:10px 12px}
-    .switchbtn .sn{font-size:14px}
+    .switchbtn{padding:11px 12px}
+    .switchbtn .sn{font-size:17px}
+    #tripName{font-size:17px}
+    .sum .v{font-size:14px}
     .block{padding:0 9px 10px}
     .blockhead{margin:0 -9px 10px;padding:10px 11px;flex-wrap:wrap}
     .bsum{white-space:normal;font-size:12px;width:100%;margin:4px 0 0}
@@ -330,6 +352,8 @@
     .lrow .op{display:none}
     .lrow .num,.lrow .res{font-size:12px}
     .lrow .nm{font-size:13px}
+    .accname{flex:0 0 100%}
+    .accnumin{flex:1 1 120px}
     .legamt{font-size:16px}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -399,13 +423,11 @@
     <div class="block">
       <div class="blockhead"><span class="bno">3</span><span class="btitle">匯款方式</span>
         <span class="bmeta" id="mPay"></span></div>
-      <p class="advice" id="advice"></p>
       <div class="modes">
-        <button class="mode" data-mode="hub">集中匯<span class="tag">建議</span></button>
-        <button class="mode" data-mode="min">彼此匯<span class="tag">建議</span></button>
-        <button class="autoback" id="autoBack" hidden>改回自動建議</button>
+        <button class="mode" data-mode="hub">集中匯</button>
+        <button class="mode" data-mode="min">彼此匯</button>
+        <button class="autoback" id="autoBack" hidden></button>
       </div>
-      <p class="modehint" id="modeHint"></p>
       <div id="route"></div>
     </div>
 
@@ -662,7 +684,7 @@ function seedDemos(){
       F('以佳家', [['甜點、零食', 380]])
     ]
   }, {
-    id: uid(), name: '（測試）阿里山二日遊', date: dayOff(21), mode: 'min', demo: true, locked: true,
+    id: uid(), name: '（測試）阿里山二日遊', date: dayOff(21), mode: 'hub', demo: true, locked: true,
     families: [
       F('語安家', [['民宿兩晚', 8400]]),
       F('言琳家', [['早餐', 620], ['伴手禮', 480]]),
@@ -897,7 +919,7 @@ function closePanel(){
 function newTrip(){
   const last = sortedTrips()[0];
   state.trips.push({
-    id: uid(), name: '', date: today(), mode: last ? last.mode : 'hub', locked: false,
+    id: uid(), name: '', date: today(), mode: 'hub', locked: false,
     families: (last ? last.families : []).map(f => ({ id: uid(), name: f.name, items: [{ id: uid(), note: '', amount: '' }] }))
   });
   state.currentId = state.trips[state.trips.length - 1].id;
@@ -923,8 +945,6 @@ function render(){
     const card = document.createElement('div');
     card.className = 'fam';
     card.style.setProperty('--fc', colors[fi]);
-    const isMine = !!sync.who && (f.name || '').trim() === sync.who;
-
     const mineTag = document.createElement('span');
     mineTag.className = 'mine'; mineTag.textContent = '我家'; mineTag.hidden = true;
     card.appendChild(mineTag);
@@ -983,76 +1003,10 @@ function render(){
     nameWrap.className = 'namewrap';
     nameWrap.append(no, nameIn);
 
-    const accBtn = document.createElement('button');
-    accBtn.className = 'accbtn'; accBtn.textContent = '帳號';
-    accBtn.title = '點一下顯示或填寫匯款帳號';
-    nameWrap.append(accBtn);
-
     const cnt = document.createElement('span');
     cnt.className = 'famcount'; cnt.hidden = true;
     nameWrap.append(tot, cnt);
     head.append(nameWrap);
-
-    const accRow = document.createElement('div');
-    accRow.className = 'accrow'; accRow.hidden = true;
-    const cur = accOf(f.name).split(/\s+/);
-    const bankIn = document.createElement('input');
-    bankIn.className = 'accbank'; bankIn.value = cur[0] || ''; bankIn.placeholder = '銀行';
-    bankIn.inputMode = 'numeric'; bankIn.maxLength = 3; bankIn.setAttribute('aria-label', '銀行代碼三碼');
-    const numIn = document.createElement('input');
-    numIn.className = 'accnumin'; numIn.value = cur.slice(1).join('') || ''; numIn.placeholder = '帳號';
-    numIn.inputMode = 'numeric'; numIn.setAttribute('aria-label', '帳號');
-    const ro = isLocked(t);
-    bankIn.readOnly = ro; numIn.readOnly = ro;
-
-    const saveAcc = () => {
-      const key = (f.name || '').trim();
-      noticeProxy(key);
-      if (!key) return;
-      state.accounts = state.accounts || {};
-      const v = (bankIn.value.trim() + ' ' + numIn.value.trim()).trim();
-      if (bankIn.value.trim() || numIn.value.trim()) state.accounts[key] = v; else delete state.accounts[key];
-      if (state.accOk && state.accOk[key]) { delete state.accOk[key]; paintOk(); }
-      save(); refreshSettle();
-    };
-    bankIn.oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); saveAcc(); };
-    numIn.oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 20); saveAcc(); };
-
-    const okBtn = document.createElement('button');
-    okBtn.className = 'accok'; okBtn.textContent = '確認';
-    const okTag = document.createElement('span');
-    okTag.className = 'acctag';
-    const paintOk = () => {
-      const key = (f.name || '').trim();
-      const done = !!(state.accOk && state.accOk[key]);
-      okBtn.hidden = done;
-      okTag.hidden = !done;
-      okTag.innerHTML = '<span class="tick">✓</span>' + esc(key || '這一家') + '已確認';
-    };
-    okBtn.onclick = () => {
-      const key = (f.name || '').trim();
-      if (!key) { flash('先填家庭名稱'); return; }
-      if (!bankIn.value.trim() || !numIn.value.trim()) { flash('銀行代碼和帳號都要填'); return; }
-      state.accOk = state.accOk || {};
-      state.accOk[key] = true;
-      save(); paintOk(); refreshSettle();
-    };
-    okTag.onclick = () => {                       /* 點綠勾可以取消確認、重新編輯 */
-      const key = (f.name || '').trim();
-      if (isLocked(t)) return;
-      if (state.accOk) delete state.accOk[key];
-      save(); paintOk(); refreshSettle();
-    };
-
-    accRow.append(bankIn, numIn, okBtn, okTag);
-    paintOk();
-    card.appendChild(accRow);
-    accBtn.onclick = () => {
-      accRow.hidden = !accRow.hidden;
-      accBtn.classList.toggle('on', !accRow.hidden);
-      if (!accRow.hidden && !bankIn.readOnly && !bankIn.value) bankIn.focus();
-    };
-    card.append(del, caret);
     card.appendChild(head);
 
     const body = document.createElement('div');
@@ -1082,11 +1036,11 @@ function render(){
       row.append(ino, note, amt, rm);
       body.appendChild(row);
     });
+    card.appendChild(body);
 
     const add = document.createElement('button');
     add.className = 'add'; add.textContent = '＋ 再記一筆';
     add.onclick = () => { collapsed.delete(f.id); f.items.push({ id: uid(), note: '', amount: '' }); save(); render(); };
-    card.appendChild(body);
     card.appendChild(add);
 
     const applyFold = () => {
@@ -1105,12 +1059,12 @@ function render(){
     applyFold();
     caret.onclick = () => {
       collapsed.has(f.id) ? collapsed.delete(f.id) : collapsed.add(f.id);
-      mineTag.hidden = !(sync.who && (f.name || '').trim() === sync.who);
-    applyFold();
+      applyFold();
       document.getElementById('foldAll').textContent =
         trip().families.every(x => collapsed.has(x.id)) ? '全部展開' : '全部收合';
     };
 
+    card.append(del, caret);
     famRefs[fi] = { total: tot };
     box.appendChild(card);
   });
@@ -1150,24 +1104,22 @@ function updateDerived(){
   renderHistory();
 }
 
+/* ---------- 匯款帳號設定（在計算結果區） ---------- */
 /* ---------- 結算結果 ---------- */
 function refreshSettle(){
   const t = trip();
   const { paid, total, avg, bal } = calc(t);
 
   const colors = famColors(t);
-  const best = total > 0 ? bestMode(t, bal) : 'hub';
-  if (t.auto !== false) t.mode = best;
-  document.getElementById('autoBack').hidden = (t.auto !== false);
+  if (t.auto !== false) t.mode = 'hub';        /* 沒手動選過就用集中匯 */
+  document.getElementById('autoBack').hidden = true;
   document.querySelectorAll('.mode').forEach(b => {
     b.setAttribute('aria-pressed', b.dataset.mode === t.mode);
-    b.classList.toggle('best', total > 0 && b.dataset.mode === best);
+    b.classList.remove('best');
+    b.title = b.dataset.mode === 'hub'
+      ? '欠錢的各家都匯給代墊最多的那一家，再由他把多的轉給其他人'
+      : '兩兩配對直接匯款，錢不經過第三人手上';
   });
-  document.getElementById('modeHint').textContent = t.mode === 'hub'
-    ? '欠錢的各家都匯給代墊最多的那一家，再由他把多的轉給其他人。對帳最單純，適合大家不熟悉彼此帳號時。'
-    : '兩兩配對直接匯款，錢不經過第三人手上，也不用有人先墊著等別人匯進來。';
-  renderAdvice(t, bal, total, best);
-
   const legs = total > 0 ? transfers(t, bal) : [];
   const ledger = document.getElementById('ledger');
   const head = document.getElementById('headline');
@@ -1214,30 +1166,92 @@ function refreshSettle(){
       dot(colors[l.from]) + esc(t.families[l.from].name) +
       '</span><span class="arrow">匯給</span><span class="t" style="color:' + colors[l.to] + '">' +
       dot(colors[l.to]) + esc(t.families[l.to].name) +
-      '</span><button class="legacc" data-i="' + i + '">帳號</button><small>' +
-      (l.kind === 'out' ? '代收方把多的錢轉出' : '補齊自己的分攤') +
+      '</span><span class="toacc">→</span><button class="legacc" data-to="' + l.to + '">帳號</button>' +
+      '<small>' + (l.kind === 'out' ? '代收方把多的錢轉出' : '補齊自己的分攤') +
       '　<span class="why">怎麼算的 ▾</span></small></div>' +
       '<div class="legamt">' + nt(l.amt) + '</div>' +
-      '<div class="legaccrow" hidden>' + (accOf(t.families[l.to].name)
-        ? '匯給 <b>' + esc(t.families[l.to].name) + '</b>' +
-          ((state.accOk && state.accOk[(t.families[l.to].name || '').trim()]) ? '<span class="okmini">✓ 已確認</span>' : '') +
-          '<span class="accpair"><span class="acclab">銀行</span><span class="accnum">' + esc(accOf(t.families[l.to].name).split(/\s+/)[0] || '') +
-          '</span><button class="acccopy" data-acc="' + esc(accOf(t.families[l.to].name).split(/\s+/)[0] || '') + '">複製</button></span>' +
-          '<span class="accpair"><span class="acclab">帳號</span><span class="accnum">' + esc(accOf(t.families[l.to].name).split(/\s+/).slice(1).join('')) +
-          '</span><button class="acccopy" data-acc="' + esc(accOf(t.families[l.to].name).split(/\s+/).slice(1).join('')) + '">複製</button></span>'
-        : esc(t.families[l.to].name) + ' 還沒填匯款帳號，可以在上方「各家代墊」點名字旁的「帳號」補上。') +
-      '</div>' +
+      '<div class="legaccrow" hidden></div>' +
       '<div class="legdetail" hidden>' + legWhy(t, l) + '</div></div>').join('');
     route.querySelectorAll('.legacc').forEach(btn => {
+      const fi = Number(btn.dataset.to);
+      const f = t.families[fi];
+      const key = (f.name || '').trim();
+      const row = btn.closest('.leg').querySelector('.legaccrow');
+
+      const build = () => {
+        row.innerHTML = '';
+        const title = document.createElement('div');
+        title.className = 'accttl';
+        title.textContent = esc(f.name) + ' 的收款帳號';
+
+        const cur = accOf(f.name).split(/\s+/);
+        const bankIn = document.createElement('input');
+        bankIn.className = 'accbank'; bankIn.placeholder = '銀行'; bankIn.maxLength = 3;
+        bankIn.inputMode = 'numeric'; bankIn.value = cur[0] || '';
+        const numIn = document.createElement('input');
+        numIn.className = 'accnumin'; numIn.placeholder = '帳號';
+        numIn.inputMode = 'numeric'; numIn.value = cur.slice(1).join('') || '';
+        bankIn.readOnly = numIn.readOnly = isLocked(t);
+
+        const okBtn = document.createElement('button');
+        okBtn.className = 'accok';
+        const copyB = document.createElement('button');
+        copyB.className = 'acccopy'; copyB.textContent = '複製';
+        const copyN = document.createElement('button');
+        copyN.className = 'acccopy'; copyN.textContent = '複製';
+
+        const paint = () => {
+          const ok = !!(state.accOk && state.accOk[key]);
+          okBtn.innerHTML = ok ? '<span class="tick">✓</span>已確認' : '<span class="tick">◻</span>待確認';
+          okBtn.className = 'accok' + (ok ? ' done' : '');
+          okBtn.title = ok ? '點一下取消確認、重新編輯' : '確認帳號正確後點一下，其他人才能複製';
+          copyB.disabled = copyN.disabled = !ok;
+          btn.classList.toggle('confirmed', ok);
+        };
+        const saveAcc = () => {
+          if (!key) return;
+          noticeProxy(key);
+          state.accounts = state.accounts || {};
+          const v = (bankIn.value.trim() + ' ' + numIn.value.trim()).trim();
+          if (v) state.accounts[key] = v; else delete state.accounts[key];
+          if (state.accOk && state.accOk[key]) delete state.accOk[key];
+          paint(); save();
+        };
+        bankIn.oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3); saveAcc(); };
+        numIn.oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 20); saveAcc(); };
+        okBtn.onclick = e => {
+          e.stopPropagation();
+          if (isLocked(t)) { flash('這次紀錄已鎖定，先解鎖'); return; }
+          const ok = !!(state.accOk && state.accOk[key]);
+          if (ok) { delete state.accOk[key]; paint(); save(); return; }
+          if (!bankIn.value.trim() || !numIn.value.trim()) { flash('銀行代碼和帳號都要填'); return; }
+          noticeProxy(key);
+          state.accOk = state.accOk || {};
+          state.accOk[key] = true;
+          paint(); save();
+        };
+        const guard = (val, what) => e => {
+          e.stopPropagation();
+          if (!(state.accOk && state.accOk[key])) { flash('請 ' + (f.name || '這一家') + ' 確認帳號是否正確'); return; }
+          if (!val()) { flash('還沒填' + what); return; }
+          copyText(val(), '已複製 ' + (f.name || '') + ' 的' + what);
+        };
+        copyB.onclick = guard(() => bankIn.value.trim(), '銀行代碼');
+        copyN.onclick = guard(() => numIn.value.trim(), '帳號');
+
+        const hint = document.createElement('div');
+        hint.className = 'acchint';
+        hint.textContent = '帳號正確請按「待確認」變成已確認，確認後才能複製。';
+        row.append(title, okBtn, bankIn, copyB, numIn, copyN, hint);
+        paint();
+      };
+
+      if (state.accOk && state.accOk[key]) btn.classList.add('confirmed');
       btn.onclick = e => {
         e.stopPropagation();
-        const row = btn.closest('.leg').querySelector('.legaccrow');
-        row.hidden = !row.hidden;
-        btn.classList.toggle('on', !row.hidden);
+        if (row.hidden) { build(); row.hidden = false; btn.classList.add('on'); }
+        else { row.hidden = true; btn.classList.remove('on'); }
       };
-    });
-    route.querySelectorAll('.legaccrow .acccopy').forEach(btn => {
-      btn.onclick = e => { e.stopPropagation(); copyText(btn.dataset.acc, '已複製帳號'); };
     });
     route.querySelectorAll('.leg').forEach(el => {
       const toggle = () => {
@@ -1252,32 +1266,6 @@ function refreshSettle(){
   }
   document.getElementById('mPay').textContent = legs.length ? legs.length + ' 筆匯款' : '';
   renderChecks(legs);
-}
-
-function renderAdvice(t, bal, total, best){
-  const el = document.getElementById('advice');
-  if (total <= 0) { el.textContent = '記了金額之後，這裡會算出最省事的匯款方式。'; return; }
-  const h = modeScore(t, bal, 'hub'), m = modeScore(t, bal, 'min');
-  const pick = best === 'hub' ? h : m, other = best === 'hub' ? m : h;
-  if (!pick.n) { el.textContent = '大家付的剛好一樣，不用互相匯款。'; return; }
-
-  const busy = {};
-  pick.legs.forEach(l => { busy[l.from] = (busy[l.from] || 0) + 1; busy[l.to] = (busy[l.to] || 0) + 1; });
-  const heavy = Object.keys(busy).filter(k => busy[k] === pick.max)
-    .map(k => t.families[k].name || '未命名').join('、');
-  const hubName = best === 'hub'
-    ? (t.families[bal.indexOf(Math.max(...bal))].name || '代墊最多的那家') : '';
-
-  let txt = '建議用<b>「' + MODE_NAME[best] + '」</b>：全部 <b>' + pick.n +
-    '</b> 筆匯款，每家最多只要處理 <b>' + pick.max + '</b> 次';
-  txt += best === 'hub'
-    ? '，錢統一經過 ' + hubName + '，其他家各匯一次就結束。'
-    : '，各家自己對自己的對象匯，不用有人先墊著等錢進來。';
-  txt += '<span class="alt">另一種「' + MODE_NAME[best === 'hub' ? 'min' : 'hub'] + '」：' +
-    other.n + ' 筆，單一家最多要處理 ' + other.max + ' 次。' +
-    (other.n === pick.n ? '筆數一樣，但有人要多跑幾趟。' : '筆數較多。') +
-    '（' + (pick.max <= 1 ? '目前每家都只需一次匯款' : '負擔最重的是 ' + heavy) + '）</span>';
-  el.innerHTML = txt;
 }
 
 /* ---------- 驗算 ---------- */
@@ -1383,56 +1371,27 @@ function text(){
   L.push('一、各家代墊');
   t.families.forEach((f, i) => {
     const parts = f.items.filter(it => parseFloat(it.amount)).map(it => (it.note || '項目') + ' ' + nt(parseFloat(it.amount)));
-    L.push('・' + (f.name || '未命名') + '：' + (parts.length ? parts.join(' + ') + (parts.length > 1 ? ' = ' + nt(paid[i]) : '') : '未代墊'));
+    L.push((i + 1) + '. ' + (f.name || '未命名') + '：' + (parts.length ? parts.join(' + ') + (parts.length > 1 ? ' = ' + nt(paid[i]) : '') : '未代墊'));
   });
   L.push('');
-  L.push('總花費：' + nt(total));
-  L.push('每家平均：' + nt(total) + ' ÷ ' + t.families.length + ' 家 = ' + nt(avg));
+  L.push('總花費：' + nt(total) + '　' + t.families.length + ' 家平分，每家 ' + nt(avg));
   L.push('');
-  L.push('二、應收／應付');
-  t.families.forEach((f, i) => L.push('・' + (f.name || '未命名') + '：' + (bal[i] >= 0 ? '應收回 ' + nt(bal[i]) : '應補交 ' + nt(-bal[i]))));
+  L.push('二、應收／應付（代墊 − 應攤 = 結果）');
+  t.families.forEach((f, i) => {
+    L.push((i + 1) + '. ' + (f.name || '未命名') + '：' + nt(paid[i]) + ' − ' + nt(avg) + ' = ' +
+      (bal[i] >= 0 ? '應收 ' + nt(bal[i]) : '應付 ' + nt(-bal[i])));
+  });
   L.push('（驗算：應收回 ' + nt(cr) + '＝應補交 ' + nt(db) + '，帳務平衡）');
   L.push('');
-  L.push('三、怎麼匯');
-  transfers(t, bal).forEach((l, i) => L.push((i + 1) + '. ' + (t.families[l.from].name || '未命名') + ' 匯給 ' + (t.families[l.to].name || '未命名') + ' ' + nt(l.amt)));
+  L.push('三、怎麼匯（' + (t.mode === 'hub' ? '集中匯' : '彼此匯') + '）');
+  transfers(t, bal).forEach((l, i) => {
+    const to = t.families[l.to].name || '未命名';
+    const acc = accOf(to);
+    L.push((i + 1) + '. ' + (t.families[l.from].name || '未命名') + ' 匯給 ' + to + '　' + nt(l.amt) +
+      '　' + (acc ? acc + ((state.accOk && state.accOk[to.trim()]) ? '（已確認）' : '（尚未確認）') : '（未填帳號）'));
+  });
   return L.join('\n');
 }
-
-/* ---------- 需要輸入數字的確認 ---------- */
-let pendingAction = null, pendingCode = '';
-function askCode(title, msg, action){
-  pendingAction = action;
-  pendingCode = String(Math.floor(1000 + Math.random() * 9000));
-  document.getElementById('mTitle').textContent = title;
-  document.getElementById('mText').textContent = msg;
-  document.getElementById('mCode').textContent = pendingCode;
-  const inp = document.getElementById('mInput');
-  inp.value = ''; inp.classList.remove('wrong');
-  document.getElementById('mOk').disabled = true;
-  document.getElementById('modal').hidden = false;
-  setTimeout(() => inp.focus(), 30);
-}
-function closeModal(){
-  document.getElementById('modal').hidden = true;
-  pendingAction = null; pendingCode = '';
-}
-document.getElementById('mInput').oninput = e => {
-  const v = e.target.value.replace(/\D/g, '').slice(0, 4);
-  e.target.value = v;
-  const ok = v === pendingCode;
-  document.getElementById('mOk').disabled = !ok;
-  e.target.classList.toggle('wrong', v.length === 4 && !ok);
-};
-document.getElementById('mInput').onkeydown = e => {
-  if (e.key === 'Enter' && !document.getElementById('mOk').disabled) document.getElementById('mOk').click();
-};
-document.getElementById('mCancel').onclick = closeModal;
-document.getElementById('modal').onclick = e => { if (e.target.id === 'modal') closeModal(); };
-document.getElementById('mOk').onclick = () => {
-  const act = pendingAction;
-  closeModal();
-  if (act) act();
-};
 
 /* ---------- 整筆紀錄的鎖定 ---------- */
 function applyLock(){
@@ -1713,8 +1672,8 @@ document.getElementById('syncForce').onclick = async () => {
 /* 第一次幫別家編輯時，說明一次代填規則 */
 function noticeProxy(famName){
   if (!sync.who || !famName || famName === sync.who) return;
-  if (sync.proxyNoticed) return;
-  sync.proxyNoticed = true; saveSyncCfg();
+  if (sync.proxyNoticed === sync.who) return;   /* 每個身分各提醒一次；換身分後會再提醒 */
+  sync.proxyNoticed = sync.who; saveSyncCfg();
   document.getElementById('pText').innerHTML =
     '這一欄是「<b>' + esc(famName) + '</b>」的，你還是可以幫忙填。<br><br>' +
     '只是異動歷程會記成<br>「' + esc(sync.who) + ' → 幫『' + esc(famName) + '』｜品名：$舊金額 → $新金額」，' +
@@ -1944,39 +1903,78 @@ document.getElementById('pdf').onclick = () => {
   const t = trip();
   const { paid, total, avg, bal } = calc(t);
   const legs = transfers(t, bal);
+  const colors = famColors(t);
   const cr = bal.filter(v => v > 0).reduce((a, b) => a + b, 0);
+  const db = -bal.filter(v => v < 0).reduce((a, b) => a + b, 0);
+
   const rows = t.families.map((f, i) =>
-    '<tr><td>' + (i + 1) + '. ' + esc(f.name) + '</td><td class="n">' + nt(paid[i]) +
-    '</td><td class="n">' + nt(avg) + '</td><td class="n ' + (bal[i] >= 0 ? 'g' : 'r') + '">' +
+    '<tr><td class="nm" style="border-left:4px solid ' + colors[i] + '"><b style="color:' + colors[i] + '">' +
+    (i + 1) + '</b> ' + esc(f.name) + '</td>' +
+    '<td class="n">' + nt(paid[i]) + '</td><td class="op">−</td>' +
+    '<td class="n">' + nt(avg) + '</td><td class="op">=</td>' +
+    '<td class="n ' + (bal[i] >= 0 ? 'g' : 'r') + '">' +
     (bal[i] >= 0 ? '應收 ' + nt(bal[i]) : '應付 ' + nt(-bal[i])) + '</td></tr>').join('');
+
   const items = t.families.map((f, i) => {
     const list = f.items.filter(it => parseFloat(it.amount) || (it.note || '').trim());
     if (!list.length) return '';
-    return '<div class="fam"><h3>' + (i + 1) + '. ' + esc(f.name) + '　<span class="sub">總計 ' + nt(paid[i]) + '</span></h3><table>' +
-      list.map((it, k) => '<tr><td>' + (k + 1) + '</td><td>' + esc(it.note || '（未填品名）') +
+    return '<div class="fam" style="border-left:4px solid ' + colors[i] + '">' +
+      '<h3><span class="dot" style="background:' + colors[i] + '">' + (i + 1) + '</span>' + esc(f.name) +
+      '<span class="sub">總計 ' + nt(paid[i]) + '</span></h3><table class="items">' +
+      list.map((it, k) => '<tr><td class="k">' + (k + 1) + '</td><td>' + esc(it.note || '（未填品名）') +
         '</td><td class="n">' + nt(parseFloat(it.amount) || 0) + '</td></tr>').join('') + '</table></div>';
   }).join('');
+
   const pay = legs.length
-    ? '<ol>' + legs.map(l => '<li>' + esc(t.families[l.from].name) + ' 匯給 ' + esc(t.families[l.to].name) + '　<b>' + nt(l.amt) + '</b>' +
-        (accOf(t.families[l.to].name) ? '<br><span class="acc">帳號 ' + esc(accOf(t.families[l.to].name)) + '</span>' : '') + '</li>').join('') + '</ol>'
+    ? '<table class="pay">' + legs.map((l, i) => {
+        const acc = accOf(t.families[l.to].name);
+        const ok = !!(state.accOk && state.accOk[(t.families[l.to].name || '').trim()]);
+        return '<tr><td class="k">' + (i + 1) + '</td>' +
+          '<td><b style="color:' + colors[l.from] + '">' + esc(t.families[l.from].name) + '</b>' +
+          '<span class="arrow">匯給</span><b style="color:' + colors[l.to] + '">' + esc(t.families[l.to].name) + '</b></td>' +
+          '<td class="n amt">' + nt(l.amt) + '</td>' +
+          '<td class="acc">' + (acc ? esc(acc) + (ok ? ' <span class="ok">✓</span>' : '') : '<span class="muted">未填帳號</span>') + '</td></tr>';
+      }).join('') + '</table>'
     : '<p>大家付的剛好一樣，不用互相匯款。</p>';
 
   const html = '<!doctype html><meta charset="utf-8"><title>荳荳團分帳 ' + esc(t.name) + '</title>' +
-    '<style>body{font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;color:#17342A;margin:28px;line-height:1.6}' +
-    'h1{font-size:20px;margin:0 0 2px}h2{font-size:14px;margin:22px 0 8px;padding-bottom:4px;border-bottom:1px solid #C6CEC4}' +
-    'h3{font-size:13px;margin:12px 0 4px}.sub{font-weight:400;color:#5A6B60;font-size:12px}' +
-    '.meta{color:#5A6B60;font-size:12px;margin-bottom:14px}table{width:100%;border-collapse:collapse;font-size:12.5px}' +
-    'td,th{padding:5px 6px;border-bottom:1px solid #E7EBE3;text-align:left}.n{text-align:right;font-variant-numeric:tabular-nums}' +
-    '.g{color:#2C6E7F;font-weight:700}.r{color:#C8791B;font-weight:700}thead th{background:#E7EBE3;font-size:11px}' +
-    'ol{padding-left:18px}li{margin:6px 0}.acc{font-family:ui-monospace,monospace;font-size:12px;color:#5A6B60}.sum{display:flex;gap:22px;font-size:13px;margin:10px 0 4px}' +
+    '<style>' +
+    'body{font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;color:#17342A;margin:26px;line-height:1.6}' +
+    '.top{background:#17342A;color:#E7EBE3;border-radius:10px;padding:14px 16px;margin-bottom:16px}' +
+    '.top h1{font-size:19px;margin:0 0 3px}.top .meta{font-size:12px;color:#B9C7BD}' +
+    '.cards{display:flex;gap:8px;margin-bottom:20px}' +
+    '.card{flex:1;border:1px solid #C6CEC4;border-radius:9px;padding:8px 10px;text-align:center}' +
+    '.card .k{font-size:10px;color:#5A6B60}.card .v{font-size:15px;font-weight:800;color:#17342A}' +
+    'h2{font-size:13px;margin:20px 0 9px;padding:6px 10px;background:#E7EBE3;border-left:4px solid #2C6E7F;border-radius:0 6px 6px 0}' +
+    'h3{font-size:12.5px;margin:0 0 4px;display:flex;align-items:center;gap:6px}' +
+    'h3 .dot{width:16px;height:16px;border-radius:50%;color:#fff;font-size:10px;display:inline-flex;align-items:center;justify-content:center}' +
+    '.sub{margin-left:auto;font-weight:400;color:#5A6B60;font-size:11.5px}' +
+    '.fam{padding:8px 10px;margin-bottom:7px;background:#FAFAF7;border:1px solid #E7EBE3;border-radius:0 8px 8px 0}' +
+    'table{width:100%;border-collapse:collapse;font-size:12.5px}' +
+    'td,th{padding:5px 7px;border-bottom:1px solid #E7EBE3}' +
+    '.items td{border-bottom:1px dashed #E7EBE3}.items tr:last-child td{border-bottom:0}' +
+    '.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}' +
+    '.op{text-align:center;color:#8A968D;width:14px}.k{width:20px;color:#8A968D;font-size:11px}' +
+    '.nm{font-weight:700;padding-left:9px}' +
+    '.g{color:#2C6E7F;font-weight:800}.r{color:#C8791B;font-weight:800}' +
+    'thead th{background:#E7EBE3;font-size:11px;color:#5A6B60;text-align:right}thead th:first-child{text-align:left}' +
+    '.pay .amt{font-size:14px;font-weight:800;color:#17342A}' +
+    '.pay .arrow{color:#8A968D;margin:0 7px;font-size:11px}' +
+    '.pay .acc{font-family:ui-monospace,monospace;font-size:12px;color:#17342A;text-align:right;white-space:nowrap}' +
+    '.pay .ok{color:#2F7A4F;font-weight:800}.muted{color:#A8B3AA}' +
+    '.foot{margin-top:8px;font-size:11.5px;color:#5A6B60}' +
     '@media print{body{margin:12mm}}</style>' +
-    '<h1>荳荳團分帳　' + esc(t.name) + '</h1>' +
-    '<div class="meta">No.' + tripNo(t) + '　' + (t.date || '') + '　列印於 ' + today() + '</div>' +
-    '<div class="sum"><span>總花費 <b>' + nt(total) + '</b></span><span>' + t.families.length +
-    ' 家平分，每家 <b>' + nt(avg) + '</b></span></div>' +
+    '<div class="top"><h1>荳荳團分帳　' + esc(t.name) + '</h1>' +
+    '<div class="meta">No.' + tripNo(t) + '　' + (t.date || '') + '　列印於 ' + today() + '</div></div>' +
+    '<div class="cards">' +
+    '<div class="card"><div class="k">總花費</div><div class="v">' + nt(total) + '</div></div>' +
+    '<div class="card"><div class="k">分攤家數</div><div class="v">' + t.families.length + ' 家</div></div>' +
+    '<div class="card"><div class="k">每家平均</div><div class="v">' + nt(avg) + '</div></div></div>' +
     '<h2>一、各家代墊明細</h2>' + (items || '<p>尚未記錄任何花費。</p>') +
-    '<h2>二、應收／應付</h2><table><thead><tr><th>家庭</th><th class="n">代墊</th><th class="n">應攤</th><th class="n">結果</th></tr></thead>' +
-    rows + '</table><p class="meta">驗算：應收回總額 ' + nt(cr) + ' ＝ 應補交總額 ' + nt(cr) + '，帳務平衡。</p>' +
+    '<h2>二、應收／應付</h2><table><thead><tr><th>家庭</th><th>代墊</th><th></th><th>應攤</th><th></th><th>結果</th></tr></thead>' +
+    rows + '</table>' +
+    '<p class="foot">應攤 = 總花費 ' + nt(total) + ' ÷ ' + t.families.length + ' 家 = ' + nt(avg) +
+    '　｜　驗算：應收回 ' + nt(cr) + ' ＝ 應補交 ' + nt(db) + '，帳務平衡。</p>' +
     '<h2>三、匯款方式（' + (t.mode === 'hub' ? '集中匯' : '彼此匯') + '）</h2>' + pay;
 
   const fr = document.createElement('iframe');
@@ -2036,7 +2034,6 @@ document.getElementById('addFam').onclick = () => {
 document.querySelectorAll('.mode').forEach(b => b.onclick = () => {
   const t = trip(); t.auto = false; t.mode = b.dataset.mode; save(); refreshSettle();
 });
-document.getElementById('autoBack').onclick = () => { trip().auto = true; save(); refreshSettle(); };
 document.getElementById('copy').onclick = async () => {
   const s = text();
   try { await navigator.clipboard.writeText(s); flash('結算文字已複製，可以貼到群組了'); }
