@@ -1579,6 +1579,7 @@ function applyRemote(json){
   if (isTyping()) { pendingRemote = json; return true; }   /* 正在打字，先擱著 */
 
   /* 沒有共同基準（第一次連線、或換裝置）就直接採用雲端版本，避免把兩份不同來源的資料併成雙份 */
+  markActive();
   const merged = baseSnapshot ? merge3(baseSnapshot, state, theirs) : theirs;
   const y = window.scrollY;
   state = merged;
@@ -1654,6 +1655,7 @@ async function push(){
 
 function schedulePush(){
   if (!syncOn()) return;
+  markActive();
   dirty = true;
   clearTimeout(pushTimer);
   pushTimer = setTimeout(push, 1500);
@@ -1797,10 +1799,23 @@ document.getElementById('sOff').onclick = async () => {
   setSync('', '單機'); flash('已改回單機模式，資料只存在這台裝置');
 };
 
-setInterval(() => {
-  if (syncOn() && document.visibilityState === 'visible' && !dirty) pull(true);
-}, 8000);
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pull(true); });
+/* 有人正在編輯時每 2 秒同步一次，安靜 10 秒後回到 5 秒，兼顧即時與配額 */
+const POLL_IDLE = 5000, POLL_ACTIVE = 2000, ACTIVE_WINDOW = 10000;
+let lastActivity = 0, pollTimer = null;
+const markActive = () => { lastActivity = Date.now(); };
+
+function schedulePoll(){
+  clearTimeout(pollTimer);
+  const active = Date.now() - lastActivity < ACTIVE_WINDOW;
+  pollTimer = setTimeout(async () => {
+    if (syncOn() && document.visibilityState === 'visible' && !isTyping()) await pull(true);
+    schedulePoll();
+  }, active ? POLL_ACTIVE : POLL_IDLE);
+}
+schedulePoll();
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') { markActive(); pull(true); schedulePoll(); }
+});
 
 /* ---------- 出遊標題：單擊換紀錄、連點兩下改名 ---------- */
 const tripName = document.getElementById('tripName');
