@@ -566,7 +566,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-19d</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20a</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -668,7 +668,7 @@
     <div class="mtitle" id="mTitle"></div>
     <div class="mtext" id="mText"></div>
     <div class="mcode" id="mCode">0000</div>
-    <div class="mhint">請輸入上面的四位數字才能執行</div>
+    <div class="mhint" id="mHint">請輸入上面的四位數字才能執行</div>
     <input id="mInput" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="確認數字">
     <div class="mbtns">
       <button class="btn ghost" id="mCancel">取消</button>
@@ -1177,7 +1177,14 @@ function render(){
       const rm = document.createElement('button');
       rm.className = 'x'; rm.innerHTML = TRASH_SVG; rm.title = '刪除這筆';
       rm.setAttribute('aria-label', '刪除這筆');
-      rm.onclick = () => { f.items.splice(ii, 1); save(); render(); };
+      rm.onclick = () => {
+        const hasNote = (it.note || '').trim(), hasAmt = parseFloat(it.amount) || 0;
+        if (!hasNote && !hasAmt) { f.items.splice(ii, 1); save(); render(); return; }
+        askSure('刪除這筆',
+          '要刪掉「' + ((f.name || '').trim() || '這一家') + '」的「' + (hasNote || '未命名項目') + '」' +
+          (hasAmt ? '（' + moneyTxt(hasAmt) + '）' : '') + '，平均金額會重算。',
+          () => { f.items.splice(ii, 1); save(); render(); });
+      };
       row.append(ino, note, amt, rm);
       body.appendChild(row);
     });
@@ -2303,9 +2310,23 @@ document.getElementById('clear').onclick = () => {
 };
 /* ---------- 需要輸入數字的確認 ---------- */
 let pendingAction = null, pendingCode = '';
+function setCodeUI(on){
+  ['mCode','mHint','mInput'].forEach(id => { document.getElementById(id).hidden = !on; });
+}
+/* 輕量確認：只要按「確認執行」，不用輸入數字 */
+function askSure(title, msg, action){
+  pendingAction = action;
+  pendingCode = '';
+  document.getElementById('mTitle').textContent = title;
+  document.getElementById('mText').textContent = msg;
+  setCodeUI(false);
+  document.getElementById('mOk').disabled = false;
+  document.getElementById('modal').hidden = false;
+}
 function askCode(title, msg, action){
   pendingAction = action;
   pendingCode = String(Math.floor(1000 + Math.random() * 9000));
+  setCodeUI(true);
   document.getElementById('mTitle').textContent = title;
   document.getElementById('mText').textContent = msg;
   document.getElementById('mCode').textContent = pendingCode;
