@@ -14,18 +14,22 @@
   .wrap{max-width:760px;margin:0 auto;padding:20px 16px 64px}
   .eyebrow{font-size:11px;letter-spacing:.28em;color:var(--ink-soft)}
   h1{font-size:20px;line-height:1.15;margin:0;font-weight:800;letter-spacing:-.01em}
-  .apphead{display:flex;align-items:center;gap:10px;flex-wrap:nowrap;
-    background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:10px 12px;margin-bottom:14px}
-  .apphead h1{flex:none;white-space:nowrap}
-  .brandlight{font-weight:500;color:var(--ink-soft);margin-right:2px}
-  .acts{flex:1;min-width:0;display:flex;align-items:center;justify-content:flex-end;gap:6px;
-    overflow-x:auto;scrollbar-width:none}
-  .acts::-webkit-scrollbar{display:none}
+  .titlerow{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding-left:2px}
+  .pagetitle{margin:0;flex:1;min-width:0}
+  .copyright{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);
+    text-align:center;font-size:11.5px;color:var(--ink-soft);letter-spacing:.02em}
+  .apphead{display:flex;align-items:center;gap:10px;
+    background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:9px 11px;margin-bottom:14px}
+  .brandlight{font-weight:500;color:var(--ink-soft);margin-right:3px}
+  .acts{flex:1;min-width:0;display:flex;align-items:center;gap:6px}
   .acts>*{flex:none}
+  .acts .topbtn{flex:1;min-width:0;text-align:center;padding:8px 6px;white-space:nowrap}
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  #lockMsg{white-space:nowrap}
   .topbtns{display:flex;gap:6px;flex:none}
   .toolbar{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-  .lockbtn{display:flex;align-items:center;justify-content:center;flex:none;width:36px;height:32px;padding:0;
+  .lockbtn{display:flex;align-items:center;justify-content:center;gap:6px;flex:none;padding:8px 13px;
+    font:inherit;font-size:13px;font-weight:700;
     border-radius:9px;cursor:pointer;border:1.5px solid var(--forest);background:var(--forest);color:var(--moss)}
   .lockbtn .ico{width:17px;height:17px;line-height:0;flex:none}
   .lockbtn .ico svg{width:100%;height:100%;display:block}
@@ -33,6 +37,8 @@
   .admin{margin-top:26px;padding-top:14px;border-top:1px dashed var(--line)}
   .adminhead{font-size:11px;letter-spacing:.14em;color:var(--ink-soft);margin-bottom:6px}
   .adminnote{font-size:12px;color:var(--ink-soft);line-height:1.6;margin:0 0 10px}
+  .copyright{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);
+    text-align:center;font-size:11px;color:var(--ink-soft);letter-spacing:.02em}
   .adminbtns{display:flex;gap:6px;flex-wrap:wrap}
   .topbtn.danger{color:var(--bad);border-color:#E2C6C1}
   .topbtn.danger:hover{border-color:var(--bad);color:var(--bad);background:#fff}
@@ -422,12 +428,12 @@
   @media (max-width:520px){
     .wrap{padding:14px 12px 64px}
     h1{font-size:17px}
-    .apphead{padding:8px 9px;gap:7px}
-    .apphead h1{font-size:16px;letter-spacing:-.02em}
+    .apphead{padding:8px 8px;gap:6px}
+    .pagetitle{font-size:19px;margin-bottom:8px}
     .acts{gap:5px}
     .synctoggle{font-size:11px;padding:4px 8px}
-    .topbtn{font-size:12px;padding:6px 10px;white-space:nowrap}
-    .lockbtn{width:33px;height:29px}
+    .topbtn{font-size:12px;padding:7px 6px;white-space:nowrap}
+    .lockbtn{font-size:12px;padding:7px 10px;gap:5px}
     .switchbtn{padding:11px 12px}
     .switchbtn .sn{font-size:17px}
     #tripName{font-size:17px}
@@ -463,14 +469,16 @@
 </style>
 
 <div class="wrap">
+  <div class="titlerow">
+    <h1 class="pagetitle"><span class="brandlight">荳荳團</span>分帳計算器</h1>
+    <button class="synctoggle" id="syncBtn"><span class="sdot" id="syncDot"></span><span id="syncMsg">單機</span></button>
+  </div>
   <header class="apphead">
-    <h1><span class="brandlight">荳荳團</span>分帳計算器</h1>
     <div class="acts">
       <button class="topbtn" id="copy">複製結算</button>
       <button class="topbtn" id="pdf">下載 PDF</button>
       <button class="topbtn" id="history">異動歷程</button>
-      <button class="synctoggle" id="syncBtn"><span class="sdot" id="syncDot"></span><span id="syncMsg">單機</span></button>
-      <button class="lockbtn" id="lockToggle"><span class="ico" id="lockIco"></span><span class="sr" id="lockMsg">鎖定中</span></button>
+      <button class="lockbtn" id="lockToggle"><span class="ico" id="lockIco"></span><span id="lockMsg">鎖定中</span></button>
     </div>
   </header>
 
@@ -556,6 +564,8 @@
       <button class="topbtn danger" id="delTrip">刪除這次紀錄</button>
     </div>
   </div>
+
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved.</p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -748,6 +758,17 @@ const CARET_SVG =
   '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
     '<path d="M6 9.5 L12 15.5 L18 9.5"/></svg>';
 const collapsed = new Set();
+let foldedTrips = {};            /* 每筆出遊第一次顯示時，先全部收合 */
+function foldOnFirstShow(t){
+  if (foldedTrips[t.id]) return;
+  foldedTrips[t.id] = true;
+  t.families.forEach(f => collapsed.add(f.id));
+}
+function syncFoldBtn(){
+  const t = trip();
+  const btn = document.getElementById('foldAll');
+  if (btn) btn.textContent = t.families.length && t.families.every(f => collapsed.has(f.id)) ? '全部展開' : '全部收合';
+}
 
 const TRASH_SVG =
   '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
@@ -1056,6 +1077,7 @@ function render(){
   if (typeof titleEditing !== 'undefined' && titleEditing) setTitleEdit(false);
   applyLock();
 
+  foldOnFirstShow(t);
   const { paid } = calc(t);
   const box = document.getElementById('fams');
   box.innerHTML = '';
@@ -1181,8 +1203,7 @@ function render(){
     caret.onclick = () => {
       collapsed.has(f.id) ? collapsed.delete(f.id) : collapsed.add(f.id);
       applyFold();
-      document.getElementById('foldAll').textContent =
-        trip().families.every(x => collapsed.has(x.id)) ? '全部展開' : '全部收合';
+      syncFoldBtn();
     };
 
     card.append(del, caret);
@@ -1222,6 +1243,7 @@ function updateDerived(){
     r.total.innerHTML = '<span class="tlabel">總計</span>' + nt(paid[fi]);
   });
   refreshSettle();
+  syncFoldBtn();
   renderHistory();
 }
 
