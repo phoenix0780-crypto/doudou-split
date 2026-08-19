@@ -565,7 +565,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-19b</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-19c</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1596,9 +1596,84 @@ async function remotePut(force){
   const res = await fetch(sync.url, {
     method: 'POST', redirect: 'follow',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ book: sync.book, who: sync.who, base: sync.rev, force: !!force, data: JSON.stringify(state) })
+    body: JSON.stringify({
+      book: sync.book, who: sync.who, base: sync.rev, force: !!force,
+      data: JSON.stringify(state),
+      note: describeChange(baseSnapshot, state, sync.who)
+    })
   });
   return res.json();
+}
+
+/* ---------- 異動描述（原本在後端，改由前端產生後一併送出） ---------- */
+function moneyTxt(n){
+  return '$' + String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function tripSum(t){
+  return (t.families || []).reduce((a, f) =>
+    a + (f.items || []).reduce((b, i) => b + (parseFloat(i.amount) || 0), 0), 0);
+}
+function describeChange(oldStr, newObj, who){
+  let o;
+  try { o = oldStr ? JSON.parse(oldStr) : null; } catch (e) { o = null; }
+  if (!o) return '建立帳本';
+  const n = newObj;
+  const parts = [];
+  const byId = arr => { const m = {}; (arr || []).forEach(x => { if (x && x.id) m[x.id] = x; }); return m; };
+  const me = (who || '').trim();
+  const famLabel = name => (me && name !== me) ? '幫「' + name + '」' : name;
+  const oT = byId(o.trips);
+
+  (n.trips || []).forEach(t => {
+    const label = '「' + (t.name || '未命名') + '」';
+    const p = oT[t.id];
+    if (!p) { parts.push('新增出遊' + label + '（總額 ' + moneyTxt(tripSum(t)) + '）'); return; }
+    delete oT[t.id];
+
+    if ((p.name || '') !== (t.name || '')) parts.push('出遊改名「' + (p.name || '未命名') + '」→「' + (t.name || '未命名') + '」');
+    if ((p.date || '') !== (t.date || '')) parts.push(label + '日期 ' + (p.date || '空') + ' → ' + (t.date || '空'));
+    if (p.locked !== t.locked) parts.push(label + (t.locked === false ? '已解鎖' : '已鎖定'));
+    if ((p.mode || 'hub') !== (t.mode || 'hub')) parts.push(label + '匯款方式改為「' + ((t.mode || 'hub') === 'hub' ? '集中匯' : '彼此匯') + '」');
+
+    const oF = byId(p.families);
+    (t.families || []).forEach(f => {
+      const fam = f.name || '未命名';
+      const pf = oF[f.id];
+      if (!pf) { parts.push(label + ' 新增家庭「' + fam + '」'); return; }
+      delete oF[f.id];
+      if ((pf.name || '') !== (f.name || '')) parts.push(label + ' 家庭改名「' + (pf.name || '未命名') + '」→「' + fam + '」');
+
+      const oI = byId(pf.items);
+      (f.items || []).forEach(it => {
+        const note = it.note || '未命名項目';
+        const amt = parseFloat(it.amount) || 0;
+        const pi = oI[it.id];
+        if (!pi) { if (amt || (it.note || '').trim()) parts.push(famLabel(fam) + '｜新增「' + note + '」' + moneyTxt(amt)); return; }
+        delete oI[it.id];
+        const pAmt = parseFloat(pi.amount) || 0;
+        if (pAmt !== amt) parts.push(famLabel(fam) + '｜' + note + '：' + moneyTxt(pAmt) + ' → ' + moneyTxt(amt));
+        else if ((pi.note || '') !== (it.note || '')) parts.push(famLabel(fam) + '｜品名「' + (pi.note || '空') + '」→「' + note + '」');
+      });
+      Object.keys(oI).forEach(k => {
+        const pi = oI[k];
+        parts.push(famLabel(fam) + '｜刪除「' + (pi.note || '未命名項目') + '」' + moneyTxt(parseFloat(pi.amount) || 0));
+      });
+    });
+    Object.keys(oF).forEach(k => parts.push(label + ' 移除家庭「' + (oF[k].name || '未命名') + '」'));
+  });
+  Object.keys(oT).forEach(k => parts.push('刪除出遊「' + (oT[k].name || '未命名') + '」'));
+
+  const oa = o.accounts || {}, na = n.accounts || {};
+  Object.keys(na).forEach(k => { if (oa[k] !== na[k]) parts.push(famLabel(k) + ' 的匯款帳號' + (oa[k] ? '更新' : '填入') + '為 ' + na[k]); });
+  Object.keys(oa).forEach(k => { if (!na[k]) parts.push('清除 ' + famLabel(k) + ' 的匯款帳號'); });
+
+  const ok0 = o.accOk || {}, ok1 = n.accOk || {};
+  Object.keys(ok1).forEach(k => { if (!ok0[k]) parts.push(famLabel(k) + ' 的帳號已確認 ✓'); });
+  Object.keys(ok0).forEach(k => { if (!ok1[k]) parts.push(famLabel(k) + ' 的帳號取消確認'); });
+
+  if (!parts.length) return '細項調整（設定或排序）';
+  if (parts.length > 8) return parts.slice(0, 8).join('；') + '；等共 ' + parts.length + ' 項變動';
+  return parts.join('；');
 }
 
 /* ---------- 三方合併：以「上次雙方一致的版本」為基準，逐欄併起來 ---------- */
