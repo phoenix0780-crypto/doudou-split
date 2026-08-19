@@ -458,17 +458,18 @@
 </style>
 
 <div class="wrap">
-  <div class="topbar">
-    <div class="brand"><span class="eyebrow">荳荳團</span><h1>分帳計算器</h1></div>
-    <button class="synctoggle" id="syncBtn"><span class="sdot" id="syncDot"></span><span id="syncMsg">單機</span></button>
-  </div>
-
-  <div class="toolbar">
-    <button class="topbtn" id="copy">複製結算</button>
-    <button class="topbtn" id="pdf">下載 PDF</button>
-    <button class="topbtn" id="history">異動歷程</button>
-    <button class="lockbtn" id="lockToggle"><span class="ico" id="lockIco"></span><span id="lockMsg">鎖定中</span></button>
-  </div>
+  <header class="apphead">
+    <div class="hrow">
+      <div class="brand"><span class="eyebrow">荳荳團</span><h1>分帳計算器</h1></div>
+      <button class="synctoggle" id="syncBtn"><span class="sdot" id="syncDot"></span><span id="syncMsg">單機</span></button>
+      <button class="lockbtn" id="lockToggle"><span class="ico" id="lockIco"></span><span id="lockMsg">鎖定中</span></button>
+    </div>
+    <div class="toolbar">
+      <button class="topbtn" id="copy">複製結算</button>
+      <button class="topbtn" id="pdf">下載 PDF</button>
+      <button class="topbtn" id="history">異動歷程</button>
+    </div>
+  </header>
 
   <div class="nav">
     <button class="navarrow" id="prevTrip" title="前一次（較早）" aria-label="前一次出遊">‹</button>
@@ -2093,12 +2094,8 @@ if (window.matchMedia) {
 function showPrintHelp(){
   const hint = document.getElementById('pdfHint');
   hint.innerHTML = '<b>這個瀏覽器不允許列印。</b><br>' +
-    '請點畫面上的「⋯」或分享圖示，選「<b>在 Safari／Chrome 開啟</b>」，' +
-    '在正式瀏覽器裡再按一次「下載 PDF → 列印」即可另存 PDF。<br>' +
-    '<button id="pdfCopyUrl">複製網址</button>';
+    '請點畫面上的「⋯」或分享圖示，選「<b>在 Safari／Chrome 開啟</b>」。';
   hint.hidden = false;
-  const btn = document.getElementById('pdfCopyUrl');
-  if (btn) btn.onclick = () => copyText(location.href, '網址已複製，貼到 Safari／Chrome 開啟');
 }
 document.getElementById('pdfPrint').onclick = () => {
   printFired = false;
