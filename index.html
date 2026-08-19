@@ -696,6 +696,7 @@ const nt  = n => '$' + Math.round(n).toLocaleString('en-US');
 const dayOff = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
 const today = () => dayOff(0);
 const esc = s => (s || '（未命名）').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+const dispDate = d => (d || '').replace(/-/g, '/');   /* 只改顯示，儲存值仍是 - 供 <input type=date> 使用 */
 /* 色相間隔約 45°，前幾家先拿到彼此差最遠的顏色 */
 const FAM_COLORS = [
   '#1F7A87', /* 青藍 */
@@ -995,7 +996,7 @@ function renderNav(){
   const t = trip();
   document.getElementById('switchNo').textContent = tripNo(t);
   document.getElementById('switchName').textContent = t.name || '未命名';
-  document.getElementById('switchDate').textContent = t.date || '';
+  document.getElementById('switchDate').textContent = dispDate(t.date);
   const list = sortedTrips();
   const i = list.findIndex(x => x.id === state.currentId);
   document.getElementById('prevTrip').disabled = i >= list.length - 1;
@@ -1041,7 +1042,7 @@ function renderPanel(){
     b.className = 'prow';
     b.setAttribute('aria-current', t.id === state.currentId);
     b.innerHTML = '<span class="pno">' + tripNo(t) + '</span><span class="pn">' + esc(t.name) +
-      '</span><span class="pv">' + (t.date || '').slice(5) + '　' + nt(calc(t).total) + '</span>';
+      '</span><span class="pv">' + dispDate(t.date).slice(5) + '　' + nt(calc(t).total) + '</span>';
     b.onclick = () => { state.currentId = t.id; closePanel(); save(); render(); };
     row.append(lk, b);
     box.appendChild(row);
@@ -1478,7 +1479,7 @@ function renderHistory(){
     li.className = 'hrow' + (cur ? ' cur' : '');
     li.innerHTML = '<div class="hno">' + tripNo(t) + '</div>' +
       '<div style="flex:1;min-width:0"><div class="hn">' + esc(t.name) + '</div>' +
-      '<div class="hd">' + (t.date || '') + '　' + t.families.length + ' 家</div></div>' +
+      '<div class="hd">' + dispDate(t.date) + '　' + t.families.length + ' 家</div></div>' +
       '<div class="hv">' + nt(total) + '</div>';
     if (!cur) {
       li.setAttribute('role', 'button');
@@ -1509,7 +1510,7 @@ function text(){
   const cr = bal.filter(v => v > 0).reduce((a, b) => a + b, 0);
   const db = -bal.filter(v => v < 0).reduce((a, b) => a + b, 0);
   const L = [];
-  L.push('【荳荳團分帳 No.' + tripNo(t) + '｜' + (t.name || '出遊') + '　' + (t.date || '') + '】');
+  L.push('【荳荳團分帳 No.' + tripNo(t) + '｜' + (t.name || '出遊') + '　' + dispDate(t.date) + '】');
   L.push('');
   L.push('一、各家代墊');
   t.families.forEach((f, i) => {
@@ -2081,7 +2082,7 @@ function buildReport(){
     : '<p>大家付的剛好一樣，不用互相匯款。</p>';
 
   return '<div class="top"><h1>荳荳團分帳　' + esc(t.name) + '</h1>' +
-    '<div class="pmeta">No.' + tripNo(t) + '　' + (t.date || '') + '　列印於 ' + today() + '</div></div>' +
+    '<div class="pmeta">No.' + tripNo(t) + '　' + dispDate(t.date) + '　列印於 ' + dispDate(today()) + '</div></div>' +
     '<div class="cards">' +
     '<div class="card"><div class="k">總花費</div><div class="v">' + nt(total) + '</div></div>' +
     '<div class="card"><div class="k">分攤家數</div><div class="v">' + t.families.length + ' 家</div></div>' +
@@ -2228,7 +2229,7 @@ document.getElementById('delTrip').onclick = () => {
   if (state.trips.length === 1) { flash('至少要留一次紀錄'); return; }
   const t = trip();
   askCode('刪除這次紀錄',
-    'No.' + tripNo(t) + '「' + (t.name || '未命名') + '」（' + (t.date || '') + '，共 ' +
+    'No.' + tripNo(t) + '「' + (t.name || '未命名') + '」（' + dispDate(t.date) + '，共 ' +
     nt(calc(t).total) + '）會整筆刪除，無法復原，後面的編號會往前遞補。',
     () => {
       state.trips = state.trips.filter(x => x.id !== state.currentId);
