@@ -13,12 +13,14 @@
   body{margin:0;background:var(--moss);color:var(--forest);font-family:var(--sans);line-height:1.55;-webkit-text-size-adjust:100%}
   .wrap{max-width:760px;margin:0 auto;padding:20px 16px 64px}
   .eyebrow{font-size:11px;letter-spacing:.28em;color:var(--ink-soft)}
-  h1{font-size:25px;line-height:1.2;margin:6px 0 0;font-weight:800;letter-spacing:-.01em}
-  .topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px}
+  h1{font-size:22px;line-height:1.2;margin:0;font-weight:800;letter-spacing:-.01em}
+  .topbar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .brand{display:flex;align-items:baseline;gap:8px;min-width:0}
+  .brand .eyebrow{flex:none;font-size:11px;letter-spacing:.2em;color:var(--ink-soft)}
   .topbtns{display:flex;gap:6px;flex:none}
-  .toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
-  .lockbtn{margin-left:auto;display:flex;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:700;
-    padding:8px 14px;border-radius:9px;cursor:pointer;border:1.5px solid var(--forest);background:var(--forest);color:var(--moss)}
+  .toolbar{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+  .lockbtn{margin-left:auto;display:flex;align-items:center;gap:5px;font:inherit;font-size:12.5px;font-weight:700;
+    padding:7px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--forest);background:var(--forest);color:var(--moss)}
   .lockbtn .ico{width:16px;height:16px;line-height:0;flex:none}
   .lockbtn .ico svg{width:100%;height:100%;display:block}
   .lockbtn.open{background:#fff;border-color:var(--stream);color:var(--stream)}
@@ -41,7 +43,7 @@
   .mine{position:absolute;top:5px;left:10px;font-size:10px;font-weight:700;color:#fff;background:var(--fc,var(--stream));border-radius:999px;padding:2px 8px}
   .fam.notmine{opacity:.86}
   .fam.notmine .famhead{cursor:default}
-  .topbtn{flex:none;font:inherit;font-size:13px;padding:8px 13px;border-radius:9px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink-soft)}
+  .topbtn{flex:none;font:inherit;font-size:12.5px;padding:7px 11px;border-radius:8px;cursor:pointer;border:1px solid transparent;background:#EFF2EC;color:var(--ink-soft)}
   .topbtn:hover{border-color:var(--stream);color:var(--stream);background:#fff}
 
   /* 出遊切換器 */
@@ -75,7 +77,9 @@
   .plock.open{color:var(--stream);opacity:1}
   .plock svg{width:100%;height:100%;display:block}
   .prowwrap .prow{flex:1;min-width:0}
-  .synctoggle{display:flex;align-items:center;gap:6px}
+  .synctoggle{flex:none;margin-left:auto;display:flex;align-items:center;gap:6px;font:inherit;font-size:12px;
+    color:var(--ink-soft);background:transparent;border:0;padding:4px 2px;cursor:pointer}
+  .synctoggle:hover{color:var(--stream)}
   .sdot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
   .sdot.on{background:var(--ok)} .sdot.busy{background:var(--ember)} .sdot.err{background:var(--bad)}
   .syncbar{display:flex;align-items:center;gap:9px;margin:0 0 14px;padding:9px 12px;background:var(--ember-soft);border:1px solid var(--ember);border-radius:10px;font-size:13px;color:var(--forest)}
@@ -340,8 +344,12 @@
   .btn:disabled{opacity:.4;cursor:not-allowed}
   button:focus-visible,input:focus-visible{outline:2px solid var(--stream);outline-offset:2px}
   @media (max-width:520px){
-    .topbar{align-items:center}
-    h1{font-size:21px}
+    .wrap{padding:14px 12px 64px}
+    h1{font-size:19px}
+    .brand .eyebrow{font-size:10px;letter-spacing:.16em}
+    .synctoggle{font-size:11px}
+    .topbtn{font-size:12px;padding:6px 10px}
+    .lockbtn{font-size:12px;padding:6px 10px}
     .toolbar{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .toolbar::-webkit-scrollbar{display:none}
     .toolbar .topbtn{white-space:nowrap}
@@ -381,8 +389,8 @@
 
 <div class="wrap">
   <div class="topbar">
-    <div><div class="eyebrow">荳荳團</div><h1>分帳計算器</h1></div>
-    <button class="topbtn synctoggle" id="syncBtn"><span class="sdot" id="syncDot"></span><span id="syncMsg">單機</span></button>
+    <div class="brand"><span class="eyebrow">荳荳團</span><h1>分帳計算器</h1></div>
+    <button class="synctoggle" id="syncBtn"><span class="sdot" id="syncDot"></span><span id="syncMsg">單機</span></button>
   </div>
 
   <div class="toolbar">
