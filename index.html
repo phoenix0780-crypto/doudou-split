@@ -619,7 +619,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20r</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20s</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -949,6 +949,9 @@ async function load(){
       const s = JSON.parse(r.value);
       if (s && Array.isArray(s.trips) && s.trips.length) state = s;
       if (!trip()) state.currentId = state.trips[0].id;
+      /* 一進來預設停在最新一次出遊 */
+      const latest = ascTrips().slice(-1)[0];
+      if (latest) state.currentId = latest.id;
       if ((state.seed || 0) < 3) { state.trips.push(...seedDemos()); state.seed = 3; save(); }
       if (!state.accounts) state.accounts = {};
       Object.keys(DEFAULT_ACCOUNTS).forEach(k => { if (!state.accounts[k]) state.accounts[k] = DEFAULT_ACCOUNTS[k]; });
