@@ -29,15 +29,17 @@
   #lockMsg{white-space:nowrap}
   .topbtns{display:flex;gap:6px;flex:none}
   .toolbar{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
-  .lockbtn{display:flex;align-items:center;justify-content:center;gap:7px;flex:none;padding:12px 13px;
-    font:inherit;font-size:14px;font-weight:700;letter-spacing:.06em;
-    border-radius:11px;cursor:pointer;border:1.5px solid var(--forest);background:var(--forest);color:var(--moss);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 2px 8px rgba(23,52,42,.18);
-    transition:background .18s,color .18s,border-color .18s,box-shadow .18s}
+  .lockbtn{display:flex;align-items:center;justify-content:center;gap:8px;flex:none;padding:13px 15px;
+    font:inherit;font-size:14.5px;font-weight:700;letter-spacing:.14em;
+    border-radius:999px;cursor:pointer;border:1.5px solid var(--forest);
+    background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,0)),var(--forest);color:var(--moss);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 3px 10px rgba(23,52,42,.22);
+    transition:background .18s,color .18s,border-color .18s,box-shadow .18s,transform .12s}
+  .lockbtn:active{transform:scale(.985)}
   .lockbtn .ico{width:17px;height:17px;line-height:0;flex:none}
   .lockbtn .ico svg{width:100%;height:100%;display:block}
   .lockbtn.open{background:linear-gradient(180deg,#fff,var(--stream-soft,#EAF3F0));border-color:var(--stream);color:var(--stream);
-    box-shadow:inset 0 1px 0 #fff, 0 2px 8px rgba(23,52,42,.10)}
+    box-shadow:inset 0 1px 0 #fff, 0 3px 12px rgba(58,122,106,.20)}
   @keyframes lockglow{
     0%,100%{box-shadow:0 0 0 0 rgba(232,163,61,0)}
     50%{box-shadow:0 0 0 7px rgba(232,163,61,.45)}
@@ -69,9 +71,9 @@
 
   /* 出遊切換器 */
   .nav{display:flex;gap:8px;align-items:stretch;margin-bottom:10px}
-  .navarrow{flex:none;width:44px;font:inherit;font-size:21px;font-weight:700;line-height:1;cursor:pointer;
-    border:1.5px solid var(--stream);background:#fff;color:var(--stream);border-radius:10px;
-    box-shadow:0 1px 4px rgba(23,52,42,.10)}
+  .navarrow{flex:none;width:46px;font:inherit;font-size:23px;font-weight:700;line-height:1;cursor:pointer;
+    border:2px solid var(--stream);background:var(--stream-soft,#EAF3F0);color:var(--stream);border-radius:11px;
+    box-shadow:0 2px 8px rgba(23,52,42,.14)}
   .navarrow:disabled{opacity:.3;cursor:default;border-color:var(--line);color:var(--ink-soft);box-shadow:none}
   .navarrow:not(:disabled):hover{background:var(--stream);color:#fff}
   .switch{position:relative;flex:1;min-width:0}
@@ -103,7 +105,7 @@
   .synctoggle{flex:none;margin-left:auto;display:flex;align-items:center;gap:6px;font:inherit;font-size:12px;
     color:var(--ink-soft);background:transparent;border:0;padding:4px 2px;cursor:pointer}
   .synctoggle:hover{color:var(--stream)}
-  .herefloat{position:fixed;right:14px;top:calc(205px + env(safe-area-inset-top, 0px));z-index:64;
+  .herefloat{position:fixed;right:14px;top:calc(268px + env(safe-area-inset-top, 0px));z-index:64;
     display:flex;flex-direction:column;gap:8px}
   body:has(.modal:not([hidden])) .herefloat,
   body:has(.pdfview:not([hidden])) .herefloat{display:none}
@@ -121,7 +123,7 @@
   .hball.self{outline:2.5px solid var(--forest);outline-offset:1.5px}
   .hball.hmore{background:var(--ink-soft);font-size:13px}
   @media (max-width:520px){
-    .herefloat{right:10px;top:calc(248px + env(safe-area-inset-top, 0px))}
+    .herefloat{right:10px;top:calc(312px + env(safe-area-inset-top, 0px))}
     .hball{width:40px;height:40px;font-size:14px}
   }
   .sdot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
@@ -709,7 +711,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21p</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21q</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
