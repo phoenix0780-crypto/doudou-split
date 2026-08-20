@@ -100,6 +100,10 @@
   .synctoggle:hover{color:var(--stream)}
   .herefloat{position:fixed;right:14px;top:calc(118px + env(safe-area-inset-top, 0px));z-index:64;
     display:flex;flex-direction:column;gap:8px}
+  body:has(.modal:not([hidden])) .herefloat,
+  body:has(.pdfview:not([hidden])) .herefloat{display:none}
+  .morewrap{position:relative;flex:none}
+  .acts .lockbtn{flex:1}
   .hball{width:44px;height:44px;border-radius:50%;border:2px solid #fff;background:var(--stream);color:#fff;
     font-weight:700;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;
     box-shadow:0 4px 16px rgba(23,52,42,.25);cursor:pointer;position:relative;opacity:.95;padding:0}
@@ -593,10 +597,15 @@
 <div class="herefloat" id="here" hidden aria-label="目前在線上的人"></div>
   <header class="apphead">
     <div class="acts">
-      <button class="topbtn" id="copy">複製結算</button>
-      <button class="topbtn" id="pdf">下載 PDF</button>
-      <button class="topbtn" id="history">異動歷程</button>
       <button class="lockbtn" id="lockToggle"><span class="ico" id="lockIco"></span><span id="lockMsg">鎖定中</span></button>
+      <div class="morewrap">
+        <button class="topbtn" id="moreBtn" aria-haspopup="true" aria-expanded="false">⋯ 更多</button>
+        <div class="moremenu" id="moreMenu" hidden>
+          <button id="copy">複製結算</button>
+          <button id="pdf">下載 PDF</button>
+          <button id="history">異動歷程</button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -658,6 +667,7 @@
         <button class="mode" data-mode="min">彼此匯</button>
         <button class="autoback" id="autoBack" hidden></button>
       </div>
+      <p class="caption" id="modeNote"></p>
       <div id="route"></div>
     </div>
 
@@ -681,7 +691,6 @@
     <ul class="hist" id="hist"></ul>
   </div>
 
-  <div c
   <div class="admin">
     <div class="adminhead">管理（通常只有記帳的人會用到）</div>
     <p class="adminnote">「下載備份／還原備份」是整個網頁資料結構的備份檔，給架設這個網頁的人維護用；一般記帳不需要動它。</p>
@@ -693,7 +702,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21n</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21o</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -760,23 +769,6 @@
 <div class="toast" id="toast" hidden></div>
 <button class="totop" id="toTop" hidden aria-label="回到最上方">↑</button>
 <button class="totop flock" id="floatLock" hidden aria-label="鎖定或解鎖這次紀錄"></button>
-
-<div class="modal" id="pmodal" hidden>
-  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="pTitle">
-    <div class="mtitle" id="pTitle">你正在幫別家填</div>
-    <div class="mtext" id="pText"></div>
-    <div class="mbtns"><button class="btn" id="pOk" style="flex:1">知道了</button></div>
-  </div>
-</div>
-
-<div class="modal" id="lmodal" hidden>
-  <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="lTitle">
-    <div class="mtitle" id="lTitle">異動歷程</div>
-    <div class="mtext">這本帳最近的修改紀錄，來自雲端。</div>
-    <div id="lList" class="llist">讀取中…</div>
-    <div class="mbtns"><button class="btn warn" id="lClose" style="flex:1">關閉</button></div>
-  </div>
-</div>
 
 <div class="modal" id="bmodal" hidden>
   <div class="mbox" role="dialog" aria-modal="true" aria-labelledby="bTitle">
@@ -1310,9 +1302,11 @@ function renderPanel(){
 function openPanel(){
   document.getElementById('panel').hidden = false;
   document.getElementById('switchBtn').setAttribute('aria-expanded', 'true');
-  document.getElementById('tripSearch').value = '';
+  const s = document.getElementById('tripSearch');
+  s.value = '';
+  s.hidden = state.trips.length <= 6;   /* 紀錄少的時候不需要搜尋，清爽一點 */
   renderPanel();
-  if (state.trips.length > 6) document.getElementById('tripSearch').focus();
+  if (!s.hidden) s.focus();
 }
 function closePanel(){
   document.getElementById('panel').hidden = true;
@@ -1737,6 +1731,9 @@ function refreshSettle(){
       ? '欠錢的各家都匯給代墊最多的那一家，再由他把多的轉給其他人'
       : '兩兩配對直接匯款，錢不經過第三人手上';
   });
+  document.getElementById('modeNote').textContent = (t.mode === 'hub')
+    ? '集中匯：大家都匯給代墊最多的那一家，由他統一轉付，最好對帳。'
+    : '彼此匯：兩兩直接匯款，筆數最少，錢不經過第三人手上。';
   const legs = total > 0 ? transfers(t, bal) : [];
   const ledger = document.getElementById('ledger');
   const head = document.getElementById('headline');
@@ -2055,7 +2052,7 @@ function applyLock(){
 }
 document.querySelector('.sheet').addEventListener('click', e => {
   if (!isLocked(trip())) return;
-  if (e.target.closest('#lockToggle, .topbtn, .switch, .legpaid, .leg, .mode, .checkhd, .mycard')) return;
+  if (e.target.closest('#lockToggle, .topbtn, .morewrap, .switch, .legpaid, .leg, .mode, .checkhd, .mycard')) return;
   const hit = e.target.closest('.item, .famhead, .fam');
   if (!hit) return;
   showUnlockPop(e.clientX, e.clientY);
@@ -2519,6 +2516,18 @@ document.getElementById('iOk').onclick = async () => {
 };
 
 /* 異動歷程 */
+function fmtAt(s){
+  const d = new Date(s);
+  if (isNaN(d)) return s;
+  const now = new Date();
+  const hm = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  const days = Math.round((new Date(now.getFullYear(), now.getMonth(), now.getDate()) -
+                           new Date(d.getFullYear(), d.getMonth(), d.getDate())) / 86400000);
+  if (days === 0) return '今天 ' + hm;
+  if (days === 1) return '昨天 ' + hm;
+  return (d.getFullYear() !== now.getFullYear() ? d.getFullYear() + '/' : '') +
+    (d.getMonth() + 1) + '/' + d.getDate() + ' ' + hm;
+}
 document.getElementById('history').onclick = async () => {
   const box = document.getElementById('lList');
   box.innerHTML = '<div class="lempty">讀取中…</div>';
@@ -2546,8 +2555,8 @@ document.getElementById('history').onclick = async () => {
       const who = (r.who || '').trim();
       const c = cmap[who];
       return '<div class="lrowi"><span class="lwho"' + (c ? ' style="background:' + c + '"' : '') + '>' +
-        esc(r.who) + '</span>' + tint(r.what) +
-        '<span class="lmeta">' + esc(r.at) + '</span></div>';
+        esc(r.who) + '</span>' + tint(r.what).split('；').join('<br>') +
+        '<span class="lmeta">' + esc(fmtAt(r.at)) + '</span></div>';
     }).join('');
   } catch (e) {
     box.innerHTML = '<div class="lempty">連不上雲端，稍後再試。</div>';
@@ -2555,6 +2564,17 @@ document.getElementById('history').onclick = async () => {
 };
 document.getElementById('lClose').onclick = () => { document.getElementById('lmodal').hidden = true; };
 document.getElementById('lmodal').onclick = e => { if (e.target.id === 'lmodal') e.currentTarget.hidden = true; };
+
+/* 更多選單 */
+const moreBtn = document.getElementById('moreBtn'), moreMenu = document.getElementById('moreMenu');
+function closeMore(){ moreMenu.hidden = true; moreBtn.setAttribute('aria-expanded', 'false'); }
+moreBtn.onclick = e => {
+  e.stopPropagation();
+  moreMenu.hidden = !moreMenu.hidden;
+  moreBtn.setAttribute('aria-expanded', String(!moreMenu.hidden));
+};
+moreMenu.addEventListener('click', () => closeMore());
+document.addEventListener('click', e => { if (!moreMenu.hidden && !e.target.closest('.morewrap')) closeMore(); });
 
 /* 設定視窗 */
 document.getElementById('syncBtn').onclick = () => {
