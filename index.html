@@ -21,7 +21,7 @@
   .apphead{display:flex;align-items:center;gap:10px;
     background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:9px 11px;margin-bottom:14px}
   .brandlight{font-weight:500;color:var(--ink-soft);margin-right:3px}
-  .theart{color:#D4586B;margin-left:5px;font-size:.8em;vertical-align:2px}
+  .theart{color:#E8A33D;margin-right:6px;font-size:.85em;vertical-align:1px}
   .acts{flex:1;min-width:0;display:flex;align-items:center;gap:6px}
   .acts>*{flex:none}
   .acts .topbtn{flex:1;min-width:0;text-align:center;padding:8px 6px;white-space:nowrap}
@@ -191,7 +191,9 @@
   .catrow .cname{flex:none;width:64px;color:var(--forest);font-weight:700}
   .catrow .cbar{flex:1;height:8px;background:var(--moss);border-radius:99px;overflow:hidden}
   .catrow .cbar i{display:block;height:100%;background:var(--stream);border-radius:99px}
-  .catrow.none .cbar i{background:var(--line)}
+  .catrow .cdot{flex:none;width:10px;height:10px;border-radius:99px}
+  .catrow.none .cname{font-weight:800}
+  .catrow.none{background:#fdf3f1}
   .catrow .cpct{flex:none;width:44px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
   .catrow .cval{flex:none;width:96px;text-align:right;font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums;color:var(--forest)}
   .cattag{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
@@ -200,8 +202,9 @@
   .catitem + .catitem{border-top:1px solid var(--moss)}
   .catitem .cinote{flex:1;color:var(--forest);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .catitem .ciamt{flex:none;width:88px;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink-soft)}
-  .catitem select{flex:none;width:auto;min-width:80px;max-width:150px;font:inherit;font-size:13px;padding:6px 26px 6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%226%22><path d=%22M1 1l4 4 4-4%22 stroke=%22%23667%22 stroke-width=%221.5%22 fill=%22none%22/></svg>') no-repeat right 9px center;color:var(--ink-soft);-webkit-appearance:none;appearance:none}
+  .catitem select{flex:none;width:118px;font:inherit;font-size:13px;padding:6px 26px 6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%226%22><path d=%22M1 1l4 4 4-4%22 stroke=%22%23667%22 stroke-width=%221.5%22 fill=%22none%22/></svg>') no-repeat right 9px center;color:var(--ink-soft);-webkit-appearance:none;appearance:none}
   .catitem select.set{color:var(--forest);font-weight:700;border-color:var(--stream)}
+  .catitem select.isnone{border-color:#c25b4e;color:#c25b4e;background-color:#fdf3f1}
   .catitem select:disabled{opacity:.6;cursor:default}
   .catnote{margin:8px 2px 0;font-size:12px;color:var(--ink-soft)}
   .warn{margin:2px 0 8px;padding:9px 12px;background:var(--ember-soft);border-left:3px solid var(--ember);border-radius:0 8px 8px 0;font-size:13px;color:var(--forest)}
@@ -468,7 +471,7 @@
     .catitem{flex-wrap:wrap;row-gap:4px;padding:9px 10px}
     .catitem .cinote{flex:1 1 100%;white-space:normal}
     .catitem .ciamt{width:auto;margin-left:auto;order:2}
-    .catitem select{order:3;max-width:46vw}
+    .catitem select{order:3;width:118px}
     .catrow{padding:10px 10px;gap:8px}
     .catrow .cname{width:56px;font-size:13px}
     .catrow .cval{width:78px;font-size:13px}
@@ -499,7 +502,7 @@
 
 <div class="wrap">
   <div class="titlerow">
-    <h1 class="pagetitle"><span class="brandlight">荳荳團</span>分帳計算器<span class="theart">♥</span></h1>
+    <h1 class="pagetitle"><span class="theart">☀</span><span class="brandlight">荳荳團</span>分帳計算器</h1>
     <button class="synctoggle" id="syncBtn"><span class="sdot" id="syncDot"></span><span id="syncMsg">單機</span></button>
   </div>
   <header class="apphead">
@@ -601,7 +604,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20h</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20i</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1283,6 +1286,7 @@ const CATS = [
   { k: 'misc', n: '雜支' },
   { k: 'none', n: '無法判斷' }
 ];
+const CAT_COLOR = { food: '#2e7d52', stay: '#7b5ea7', ride: '#2b6cb0', tick: '#c47f17', gear: '#4a8f8c', misc: '#8a8f76', none: '#c25b4e' };
 const NONE = 'none';
 const catName = k => (CATS.find(c => c.k === k) || {}).n || '無法判斷';
 const catKey = k => (CATS.some(c => c.k === k) ? k : '');
@@ -1360,8 +1364,9 @@ function renderCats(){
     const top = rows[0].val || 1;
     list.innerHTML = rows.map(r =>
       '<div class="catrow' + (r.k === NONE ? ' none' : '') + '">' +
-      '<span class="cname">' + esc(r.name) + '</span>' +
-      '<span class="cbar"><i style="width:' + Math.max(4, Math.round(r.val / top * 100)) + '%"></i></span>' +
+      '<span class="cdot" style="background:' + CAT_COLOR[r.k] + '"></span>' +
+      '<span class="cname"' + (r.k === NONE ? ' style="color:' + CAT_COLOR[NONE] + '"' : '') + '>' + esc(r.name) + '</span>' +
+      '<span class="cbar"><i style="width:' + Math.max(4, Math.round(r.val / top * 100)) + '%;background:' + CAT_COLOR[r.k] + '"></i></span>' +
       '<span class="cpct">' + Math.round(r.val / total * 100) + '%</span>' +
       '<span class="cval">' + nt(r.val) + '</span></div>'
     ).join('');
@@ -1380,6 +1385,7 @@ function renderCats(){
     items.forEach(it => {
       const row = document.createElement('div');
       row.className = 'catitem';
+      row.style.boxShadow = 'inset 3px 0 0 ' + CAT_COLOR[effCat(it)];
       const note = document.createElement('span');
       note.className = 'cinote';
       note.textContent = (it.note || '').trim() || '未命名項目';
@@ -1397,7 +1403,7 @@ function renderCats(){
         if (catKey(it.cat) === c.k) op.selected = true;
         sel.appendChild(op);
       });
-      sel.className = catKey(it.cat) ? 'set' : '';
+      sel.className = (catKey(it.cat) ? 'set' : '') + (effCat(it) === NONE ? ' isnone' : '');
       sel.title = catKey(it.cat) ? '手動指定：' + catName(it.cat) : '自動判斷：' + catName(auto);
       sel.onchange = e => {
         noticeProxy((f.name || '').trim());
