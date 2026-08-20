@@ -130,7 +130,8 @@ const identify = (d, name) => {
   await sleep(300);
   const pv = A.d.getElementById('pdfView');
   ok('報表開啟', !pv.hidden);
-  ok('報表三章節', A.d.querySelectorAll('#pdfDoc h2').length === 3);
+  ok('報表四章節', A.d.querySelectorAll('#pdfDoc h2').length === 4);
+  ok('報表含費用分類', [...A.d.querySelectorAll('#pdfDoc h2')].some(e => /費用分類/.test(e.textContent)));
   ok('報表含運算符號', [...A.d.querySelectorAll('#pdfDoc .op')].some(e => e.textContent === '−'));
   ok('報表含帳號', /\d{3} \d+/.test(A.d.querySelector('#pdfDoc .pay .acc').textContent));
   A.d.getElementById('pdfClose').click();
@@ -148,6 +149,7 @@ const identify = (d, name) => {
   ok('複製結算有內容', copied.length > 200);
   ok('複製含運算式', /−.*=/.test(copied));
   ok('複製含帳號', /822 245540246943/.test(copied));
+  ok('複製含費用分類', /四、費用分類/.test(copied) && /・/.test(copied));
   ok('複製有提示', /已複製/.test(S.d.getElementById('toast').textContent));
 
   /* ---------- F. 備份還原 ---------- */
