@@ -677,7 +677,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21f</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21g</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -973,13 +973,15 @@ const tripNo = t => String(ascTrips().findIndex(x => x.id === t.id) + 1).padStar
 const yearOf = t => (t.date || '').slice(0, 4) || '未填日期';
 
 /* ---------- 儲存 ---------- */
-let saveTimer;
-function save(){
+let saveTimer, saveNeedsPush = false;
+/* save(true) = 只寫這台裝置，不往雲端推（用在剛套用完雲端資料的時候） */
+function save(localOnly){
+  if (!localOnly) saveNeedsPush = true;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async () => {
     try { await store.set(KEY, JSON.stringify(state)); if (!syncOn()) flash('已儲存'); }
     catch (e) { flash('這台裝置無法儲存，關掉頁面資料會消失'); }
-    schedulePush();
+    if (saveNeedsPush) { saveNeedsPush = false; schedulePush(); }
   }, 400);
 }
 /* 需要解鎖時：捲到頁頂並讓鎖定鈕發亮提示 */
@@ -1994,6 +1996,7 @@ const DEFAULT_SYNC = {
 };
 let sync = { url: DEFAULT_SYNC.url, book: DEFAULT_SYNC.book, who: '', rev: 0, onlyMine: true };
 let dirty = false, pushTimer = null, pulling = false, pushing = false, conflictData = null, lastSyncError = '';
+let syncSeq = 0;   /* 每次成功推送或套用雲端資料就 +1，用來認出「回來太晚」的舊回應 */
 const syncOn = () => !!(sync.url && sync.book);
 
 async function loadSyncCfg(){
@@ -2029,13 +2032,14 @@ async function remoteGet(){
   const res = await fetchT(url, { method: 'GET', redirect: 'follow' });
   return res.json();
 }
-async function remotePut(force){
+async function remotePut(force, payload){
+  const data = payload || JSON.stringify(state);
   const res = await fetchT(sync.url, {
     method: 'POST', redirect: 'follow',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({
       book: sync.book, who: sync.who, base: sync.rev, force: !!force,
-      data: JSON.stringify(state),
+      data: data,
       note: describeChange(baseSnapshot, state, sync.who)
     })
   });
@@ -2129,15 +2133,26 @@ function setBase(str){
 async function loadBase(){
   try { const r = await store.get(BASE_KEY); if (r && r.value) baseSnapshot = r.value; } catch (e) {}
 }
-let pendingRemote = null;     /* 使用者正在打字時，先擱著的雲端更新 */
+let pendingRemote = null, pendingSeq = -1;   /* 使用者正在打字時，先擱著的雲端更新 */
 
 const idMap = arr => { const m = {}; (arr || []).forEach(x => { if (x && x.id) m[x.id] = x; }); return m; };
 const same = (a, b) => JSON.stringify(a === undefined ? null : a) === JSON.stringify(b === undefined ? null : b);
 /* 只有我改 → 用我的；只有對方改 → 用對方的；兩邊都改同一格 → 用雲端的 */
+/* 比對兩份帳本是否「內容相同」：忽略欄位排列順序，也忽略 currentId（那是每台裝置各看各的） */
+function canon(v){
+  if (Array.isArray(v)) return '[' + v.map(canon).join(',') + ']';
+  if (v && typeof v === 'object') return '{' + Object.keys(v)
+    .filter(k => k !== 'currentId' && v[k] !== undefined)
+    .sort().map(k => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}';
+  return JSON.stringify(v === undefined ? null : v);
+}
+const blank = v => v === undefined || v === null || v === '';
 function pick(b, m, t){
   if (same(m, t)) return m;
-  if (same(m, b)) return t;
-  if (same(t, b)) return m;
+  if (same(m, b) || (blank(m) && blank(b))) return t;
+  if (same(t, b) || (blank(t) && blank(b))) return m;
+  /* 基準沒這一格（新欄位／新項目）時，不讓對方的空值蓋掉我填好的內容 */
+  if (b === undefined && blank(t) && !blank(m)) return m;
   return t;
 }
 
@@ -2230,21 +2245,26 @@ function applyRemote(json){
   if (!theirs || !Array.isArray(theirs.trips) || !theirs.trips.length) return false;
   if (!theirs.accounts) theirs.accounts = {};
 
-  if (JSON.stringify(state) === json.data) {          /* 完全一樣就什麼都不用做 */
-    sync.rev = json.updatedAt; setBase(json.data); saveSyncCfg();
+  if (canon(state) === canon(theirs)) {          /* 完全一樣就什麼都不用做 */
+    sync.rev = json.updatedAt; setBase(json.data); saveSyncCfg(); dirty = false;
     return true;
   }
-  if (isTyping()) { pendingRemote = json; return true; }   /* 正在打字，先擱著 */
+  if (isTyping()) { pendingRemote = json; pendingSeq = syncSeq; return true; }   /* 正在打字，先擱著 */
 
   /* 沒有共同基準（第一次連線、或換裝置）就直接採用雲端版本，避免把兩份不同來源的資料併成雙份 */
   markActive();
   const merged = baseSnapshot ? merge3(baseSnapshot, state, theirs) : theirs;
+  const mStr = canon(merged);
+  const nothingNew = mStr === canon(state);
+  const localOnly = mStr === canon(theirs);   /* 合併結果跟雲端一樣 → 沒有我的新東西要推 */
   const y = window.scrollY;
   state = merged;
+  syncSeq++;
   sync.rev = json.updatedAt;
   setBase(json.data);
-  saveSyncCfg(); save(); render();
-  window.scrollTo(0, y);
+  saveSyncCfg(); save(localOnly);
+  if (localOnly) dirty = false;
+  if (!nothingNew) { render(); window.scrollTo(0, y); }   /* 沒有實際變動就不重畫，畫面才不會每 2 秒閃一下 */
   return true;
 }
 
@@ -2253,6 +2273,7 @@ document.addEventListener('focusout', () => {
   setTimeout(() => {
     if (!pendingRemote || isTyping()) return;
     const json = pendingRemote; pendingRemote = null;
+    if (pendingSeq !== syncSeq) { pull(true); return; }   /* 擱著的期間資料已更新，這份作廢，重抓一次 */
     applyRemote(json);
   }, 200);
 });
@@ -2260,8 +2281,12 @@ document.addEventListener('focusout', () => {
 async function pull(auto){
   if (!syncOn() || pulling || pushing) return;
   pulling = true;
+  const seq0 = syncSeq;
   try {
     const json = await remoteGet();
+    /* 等回應這段時間內若已推送成功或已合併過，這份就是舊資料，丟掉不套用，
+       否則會拿舊版蓋掉剛剛才輸入的金額（多人同時編輯時最常見的「資料跳掉」） */
+    if (seq0 !== syncSeq) return;
     if (!json.ok) {
       setSync('err', '連線異常');
       document.getElementById('syncDot').parentElement.title = '雲端回報：' + (json.error || '未知錯誤');
@@ -2279,20 +2304,28 @@ async function pull(auto){
 
 async function push(){
   if (!syncOn() || pushing) return;
+  /* 有一筆 GET 還在路上時先讓它跑完，避免推送與拉取交錯 */
+  if (pulling) { clearTimeout(pushTimer); pushTimer = setTimeout(push, 300); return; }
   pushing = true; setSync('busy', '同步中…');
+  const payload = JSON.stringify(state);
   try {
-    const json = await remotePut(false);
+    const json = await remotePut(false, payload);
     if (json.ok) {
+      syncSeq++;
       sync.rev = json.updatedAt;
-      setBase(JSON.stringify(state));
+      setBase(payload);                       /* 基準＝這次真正送出去的內容，不含送出後才打的字 */
       push.retry = 0; saveSyncCfg();
-      dirty = false; conflictData = null; hideSyncBar(); setSync('on', '已同步');
+      conflictData = null; hideSyncBar();
+      dirty = JSON.stringify(state) !== payload;   /* 送出期間又改了 → 再推一次 */
+      if (dirty) { setSync('busy', '同步中…'); pushing = false; schedulePush(); return; }
+      setSync('on', '已同步');
     } else if (json.conflict) {
       /* 別人先存了：把兩邊的修改合併起來，再送一次，使用者不需要處理 */
       let theirs = null;
       try { theirs = JSON.parse(json.data); } catch (e) {}
       if (theirs) {
         state = baseSnapshot ? merge3(baseSnapshot, state, theirs) : theirs;
+        syncSeq++;
         sync.rev = json.updatedAt;
         setBase(json.data);
         saveSyncCfg(); save();
@@ -2316,7 +2349,7 @@ function schedulePush(){
   markActive();
   dirty = true;
   clearTimeout(pushTimer);
-  pushTimer = setTimeout(push, 1500);
+  pushTimer = setTimeout(push, 800);
 }
 
 document.getElementById('syncReload').onclick = () => {
@@ -2327,7 +2360,7 @@ document.getElementById('syncReload').onclick = () => {
 document.getElementById('syncForce').onclick = async () => {
   try {
     const json = await remotePut(true);
-    if (json.ok) { sync.rev = json.updatedAt; saveSyncCfg(); dirty = false; conflictData = null; hideSyncBar(); setSync('on', '已同步'); flash('已用你的版本覆蓋雲端'); }
+    if (json.ok) { syncSeq++; sync.rev = json.updatedAt; setBase(JSON.stringify(state)); saveSyncCfg(); dirty = false; conflictData = null; hideSyncBar(); setSync('on', '已同步'); flash('已用你的版本覆蓋雲端'); }
     else setSync('err', '覆蓋失敗');
   } catch (e) { setSync('err', '離線'); flash('連不上雲端，稍後再試'); }
 };
