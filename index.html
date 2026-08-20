@@ -309,16 +309,16 @@
   .mode{font:inherit;font-size:13px;padding:7px 12px;border-radius:999px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink-soft)}
   .mode[aria-pressed="true"]{background:var(--stream-soft);border-color:var(--stream);color:var(--stream);font-weight:700}
   .route{background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px 14px}
-  .mycard{background:var(--forest);color:#fff;border-radius:14px;padding:16px 18px;margin-bottom:18px}
-  .mycard .mywho{font-size:12px;letter-spacing:.08em;opacity:.75;margin-bottom:4px}
+  .mycard{background:var(--paper);color:var(--forest);border:1.5px solid var(--stream);border-left:6px solid var(--stream);border-radius:14px;padding:16px 18px;margin-bottom:18px;box-shadow:0 2px 10px rgba(44,110,127,.08)}
+  .mycard .mywho{font-size:12px;letter-spacing:.08em;color:var(--stream);font-weight:700;margin-bottom:4px}
   .mycard .myline{font-size:20px;font-weight:800;line-height:1.4}
   .mycard .myline b{font-family:var(--mono);font-variant-numeric:tabular-nums}
-  .mycard .myline .pay{color:#ffb4a6}
-  .mycard .myline .get{color:#a8e6c1}
+  .mycard .myline .pay{color:var(--bad)}
+  .mycard .myline .get{color:var(--ok)}
   .mycard .myacts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-  .mycard .mybtn{font:inherit;font-size:13px;font-weight:700;padding:9px 14px;border-radius:9px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:#fff;cursor:pointer}
-  .mycard .mybtn.done{background:#2e7d52;border-color:#2e7d52}
-  .mycard .mynote{font-size:12px;opacity:.7;margin-top:8px}
+  .mycard .mybtn{font:inherit;font-size:13px;font-weight:700;padding:9px 14px;border-radius:9px;border:1px solid var(--stream);background:#fff;color:var(--stream);cursor:pointer}
+  .mycard .mybtn.done{background:#e7f4ec;border-color:var(--ok);color:var(--ok)}
+  .mycard .mynote{font-size:12px;color:var(--ink-soft);margin-top:8px}
   .legpaid{font:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;white-space:nowrap;justify-self:end}
   .legpaid.done{background:#e7f4ec;border-color:#2e7d52;color:#2e7d52}
   .leg.ispaid .who,.leg.ispaid .legamt{opacity:.55}
@@ -647,7 +647,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20u</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20v</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
