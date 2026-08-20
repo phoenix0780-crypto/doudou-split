@@ -150,6 +150,7 @@ const identify = (d, name) => {
   ok('複製含運算式', /−.*=/.test(copied));
   ok('複製含帳號', /822 245540246943/.test(copied));
   ok('複製含費用分類', /四、費用分類/.test(copied) && /・/.test(copied));
+  ok('複製分類含明細', /　－.+（.+）\$/.test(copied));
   ok('複製有提示', /已複製/.test(S.d.getElementById('toast').textContent));
 
   /* ---------- F. 備份還原 ---------- */
