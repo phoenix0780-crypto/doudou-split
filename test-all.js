@@ -188,6 +188,25 @@ const identify = (d, name) => {
   const m2 = A.w.eval('merge3')(JSON.stringify(base), added, theirs);
   ok('合併保留新增項目', m2.trips[0].families[1].items.length === 2);
 
+  /* ---------- H. 分類自動判斷（長詞優先，防短詞誤中） ---------- */
+  const gc = A.w.eval('guessCat');
+  const CASES = [
+    ['沙拉油', 'food'], ['醬油', 'food'], ['奶油', 'food'], ['烤肉食材', 'food'],
+    ['買菜', 'food'], ['啤酒', 'food'], ['冰塊', 'food'], ['全聯', 'food'], ['7-11', 'food'],
+    ['營位費', 'stay'], ['營區清潔費', 'stay'], ['包棟', 'stay'],
+    ['加油', 'ride'], ['國道通行費', 'ride'], ['停車費', 'ride'], ['船票', 'ride'], ['露營車', 'ride'],
+    ['門票', 'tick'], ['溫泉票', 'tick'], ['兒童票', 'tick'],
+    ['帳篷租借', 'gear'], ['瓦斯', 'gear'], ['菜刀', 'gear'], ['行動電源', 'gear'], ['推車', 'gear'],
+    ['木炭', 'misc'], ['酒精', 'misc'], ['蚊香', 'misc'], ['清潔費', 'misc'], ['水電費', 'misc'],
+    ['發票', ''], ['統一發票', ''], ['公基金', ''], ['補差額', ''], ['退費', ''], ['', '']
+  ];
+  CASES.forEach(([note, want]) => ok('分類判斷「' + (note || '空白') + '」', gc(note) === want, gc(note) || '無'));
+  ok('分類全形轉半形', gc('ＵＢＥＲ車資') === 'ride');
+  ok('分類忽略空白', gc('晚 餐') === 'food');
+  const eff = A.w.eval('effCat');
+  ok('手動分類優先於自動', eff({ note: '沙拉油', cat: 'gear' }) === 'gear');
+  ok('猜不到歸無法判斷', eff({ note: '公基金' }) === 'none');
+
   /* ---------- 結果 ---------- */
   console.log(fails.length ? 'FAIL (' + fails.length + ')\n - ' + fails.join('\n - ') : 'ALL PASS');
   process.exit(fails.length ? 1 : 0);
