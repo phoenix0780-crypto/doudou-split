@@ -326,6 +326,13 @@
   .routeprog{font-size:12px;color:var(--ink-soft);padding:8px 2px 4px}
   .starthint{background:#fff;border:1.5px dashed var(--stream);border-radius:12px;padding:14px;text-align:center;font-size:14px;color:var(--forest);margin-top:10px}
   .starthint b{color:var(--stream)}
+  .unlockpop{position:fixed;z-index:60;display:flex;align-items:center;gap:10px;background:var(--forest);color:#fff;
+    border-radius:11px;padding:10px 12px;font-size:13px;box-shadow:0 8px 26px rgba(23,52,42,.35);
+    animation:poprise .18s ease-out;max-width:calc(100vw - 24px)}
+  @keyframes poprise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .unlockpop button{font:inherit;font-size:13px;font-weight:700;padding:7px 13px;border-radius:8px;
+    border:none;background:#E8A33D;color:var(--forest);cursor:pointer;white-space:nowrap}
+  @media (prefers-reduced-motion:reduce){.unlockpop{animation:none}}
   .checkhd{cursor:pointer;user-select:none}
   .checkhd .chev{font-size:12px;color:var(--ink-soft)}
   .leg{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:13px 0;border-bottom:1px dashed var(--line)}
@@ -647,7 +654,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20y</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20z</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -951,6 +958,40 @@ function save(){
   }, 400);
 }
 /* 需要解鎖時：捲到頁頂並讓鎖定鈕發亮提示 */
+function hideUnlockPop(){
+  const p = document.getElementById('unlockPop');
+  if (p) p.remove();
+  clearTimeout(hideUnlockPop.t);
+  document.removeEventListener('click', hideUnlockPop.out, true);
+}
+function showUnlockPop(x, y, msg){
+  hideUnlockPop();
+  const p = document.createElement('div');
+  p.id = 'unlockPop'; p.className = 'unlockpop';
+  const txt = document.createElement('span');
+  txt.textContent = msg || '這次紀錄已鎖定';
+  const b = document.createElement('button');
+  b.textContent = '🔓 解鎖編輯';
+  b.onclick = e => {
+    e.stopPropagation();
+    hideUnlockPop();
+    const t = trip();
+    t.locked = false; save(); render();
+    flash('已解鎖，可以編輯了');
+  };
+  p.append(txt, b);
+  document.body.appendChild(p);
+  const r = p.getBoundingClientRect();
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let left = Math.min(Math.max(12, x - r.width / 2), vw - r.width - 12);
+  let top = y + 14;
+  if (top + r.height > vh - 12) top = y - r.height - 14;
+  p.style.left = left + 'px'; p.style.top = Math.max(12, top) + 'px';
+  hideUnlockPop.out = ev => { if (!p.contains(ev.target)) hideUnlockPop(); };
+  setTimeout(() => document.addEventListener('click', hideUnlockPop.out, true), 0);
+  hideUnlockPop.t = setTimeout(hideUnlockPop, 6000);
+}
+
 function pingLock(msg){
   flash(msg || '這次紀錄已鎖定，先解鎖');
   try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
@@ -1686,7 +1727,7 @@ function refreshSettle(){
         numIn.oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 20); saveAcc(); };
         okBtn.onclick = e => {
           e.stopPropagation();
-          if (isLocked(t)) { pingLock(); return; }
+          if (isLocked(t)) { showUnlockPop(e.clientX, e.clientY, '已鎖定，要確認帳號請先解鎖'); return; }
           const ok = !!(state.accOk && state.accOk[key]);
           if (ok) { delete state.accOk[key]; paint(); save(); return; }
           if (!bankIn.value.trim() || !numIn.value.trim()) { flash('銀行代碼和帳號都要填'); return; }
@@ -1884,6 +1925,13 @@ function applyLock(){
   document.getElementById('lockMsg').textContent = shut ? '鎖定中' : '可編輯';
   document.querySelectorAll('#fams input').forEach(el => { el.readOnly = shut || el.readOnly; });
 }
+document.querySelector('.sheet').addEventListener('click', e => {
+  if (!isLocked(trip())) return;
+  if (e.target.closest('#lockToggle, .topbtn, .switch, .legpaid, .leg, .mode, .checkhd, .mycard')) return;
+  const hit = e.target.closest('.item, .famhead, .fam');
+  if (!hit) return;
+  showUnlockPop(e.clientX, e.clientY);
+});
 document.getElementById('checkHd').onclick = () => {
   const c = document.getElementById('checks');
   c.hidden = !c.hidden;
@@ -1895,6 +1943,7 @@ document.getElementById('checkHd').onkeydown = e => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.getElementById('checkHd').onclick(); }
 };
 document.getElementById('lockToggle').onclick = () => {
+  hideUnlockPop();
   const b = document.getElementById('lockToggle');
   clearTimeout(pingLock.t);
   b.classList.remove('notice');          /* 解鎖當下立刻停掉發亮提示 */
