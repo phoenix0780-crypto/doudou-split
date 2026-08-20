@@ -579,7 +579,7 @@
     <h2>費用分類</h2>
     <div class="catbox" id="catList"></div>
     <div class="cattag" id="catTag"></div>
-    <p class="catnote">分類只影響這裡的統計，不會動到分帳計算與匯款金額。</p>
+    <p class="catnote">系統會依備註文字自動判斷分類；判斷不準時，直接在該筆右邊改成你要的分類即可（改過會變粗體，之後不再自動變動）。分類只影響這裡的統計，不會動到分帳計算與匯款金額。</p>
   </div>
 
   <div class="admin">
@@ -593,7 +593,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20b</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20c</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1190,7 +1190,7 @@ function render(){
       const note = document.createElement('input');
       note.className = 'note'; note.value = it.note; note.placeholder = '先墊了什麼錢？';
       note.readOnly = isLocked(t);
-      note.oninput = e => { noticeProxy((f.name || '').trim()); it.note = e.target.value; save(); };
+      note.oninput = e => { noticeProxy((f.name || '').trim()); it.note = e.target.value; save(); renderCats(); };
       const amt = document.createElement('input');
       amt.className = 'amt'; amt.value = it.amount; amt.placeholder = '0';
       amt.inputMode = 'decimal'; amt.setAttribute('aria-label', '金額');
@@ -1277,6 +1277,24 @@ const CATS = [
 const catName = k => (CATS.find(c => c.k === k) || {}).n || '未分類';
 const catKey = k => (CATS.some(c => c.k === k) ? k : '');
 
+/* 關鍵字自動判斷：由備註猜分類。順序由上到下，先中先算 */
+const CAT_HINTS = [
+  ['stay', ['營位', '營地', '露營區', '住宿', '住', '民宿', '飯店', '旅館', '訂房', '房費', '木屋', '小屋', '包棟', 'villa', 'hotel']],
+  ['ride', ['加油', '油錢', '油資', '過路', '國道', 'etc', '停車', '車位', '高鐵', '火車', '客運', '計程車', '租車', '車資', '船票', '接駁', '機票', '油']],
+  ['tick', ['門票', '入園', '入場', '園區', '樂園', '遊樂', '纜車', '導覽', '體驗', '課程', '泛舟', '浮潛', '溫泉', '票']],
+  ['gear', ['帳篷', '天幕', '睡袋', '睡墊', '瓦斯', '卡式爐', '營燈', '營釘', '營繩', '桌椅', '推車', '延長線', '冰桶', '裝備', '風扇', '電池', '充電']],
+  ['food', ['早餐', '午餐', '晚餐', '宵夜', '正餐', '餐費', '餐廳', '便當', '食材', '菜', '肉', '烤肉', '火鍋', '海鮮', '水果', '零食', '點心', '飲料', '咖啡', '啤酒', '酒', '飲水', '礦泉水', '冰塊', '早午餐', '伙食', '吃', '餐']],
+  ['misc', ['垃圾袋', '衛生紙', '紙巾', '餐具', '紙盤', '紙杯', '木炭', '炭', '柴', '打火機', '藥', '防蚊', '清潔', '洗碗', '雜支', '雜物', '雜']]
+];
+function guessCat(note){
+  const s = String(note || '').toLowerCase().trim();
+  if (!s) return '';
+  for (const [k, words] of CAT_HINTS) { if (words.some(w => s.includes(w))) return k; }
+  return '';
+}
+/* 實際採用的分類：手動選過就用手動的，否則用自動判斷 */
+const effCat = it => catKey(it && it.cat) || guessCat(it && it.note);
+
 function catCalc(t){
   t = t || trip();
   const sum = { '': 0 }; let total = 0;
@@ -1284,7 +1302,7 @@ function catCalc(t){
   (t.families || []).forEach(f => (f.items || []).forEach(i => {
     const v = parseFloat(i.amount) || 0;
     if (v <= 0) return;
-    sum[catKey(i.cat)] += v; total += v;
+    sum[effCat(i)] += v; total += v;
   }));
   const rows = CATS.map(c => ({ k: c.k, name: c.n, val: sum[c.k] }))
     .filter(r => r.val > 0).sort((a, b) => b.val - a.val);
@@ -1334,13 +1352,15 @@ function renderCats(){
       const sel = document.createElement('select');
       sel.setAttribute('aria-label', '費用分類');
       sel.disabled = lock;
-      [{ k: '', n: '未分類' }].concat(CATS).forEach(c => {
+      const auto = guessCat(it.note);
+      [{ k: '', n: '自動（' + (auto ? catName(auto) : '未分類') + '）' }].concat(CATS).forEach(c => {
         const op = document.createElement('option');
         op.value = c.k; op.textContent = c.n;
         if (catKey(it.cat) === c.k) op.selected = true;
         sel.appendChild(op);
       });
       sel.className = catKey(it.cat) ? 'set' : '';
+      sel.title = catKey(it.cat) ? '手動指定：' + catName(it.cat) : '自動判斷：' + (auto ? catName(auto) : '未分類');
       sel.onchange = e => {
         noticeProxy((f.name || '').trim());
         it.cat = e.target.value;
@@ -1777,7 +1797,7 @@ function describeChange(oldStr, newObj, who){
         const pAmt = parseFloat(pi.amount) || 0;
         if (pAmt !== amt) parts.push(famLabel(fam) + '｜' + note + '：' + moneyTxt(pAmt) + ' → ' + moneyTxt(amt));
         else if ((pi.note || '') !== (it.note || '')) parts.push(famLabel(fam) + '｜品名「' + (pi.note || '空') + '」→「' + note + '」');
-        else if ((pi.cat || '') !== (it.cat || '')) parts.push(famLabel(fam) + '｜' + note + ' 分類改為「' + catName(it.cat) + '」');
+        else if ((pi.cat || '') !== (it.cat || '')) parts.push(famLabel(fam) + '｜' + note + ' 分類改為「' + (catKey(it.cat) ? catName(it.cat) : '自動判斷') + '」');
       });
       Object.keys(oI).forEach(k => {
         const pi = oI[k];
