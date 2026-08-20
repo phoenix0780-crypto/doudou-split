@@ -647,7 +647,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20w</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20x</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -2023,7 +2023,7 @@ function describeChange(oldStr, newObj, who){
   Object.keys(ok1).forEach(k => { if (!ok0[k]) parts.push(famLabel(k) + ' 的帳號已確認 ✓'); });
   Object.keys(ok0).forEach(k => { if (!ok1[k]) parts.push(famLabel(k) + ' 的帳號取消確認'); });
 
-  if (!parts.length) return '細項調整（設定或排序）';
+  if (!parts.length) return '';   /* 純瀏覽狀態（切頁、預設鎖定等）不寫歷程 */
   if (parts.length > 8) return parts.slice(0, 8).join('；') + '；等共 ' + parts.length + ' 項變動';
   return parts.join('；');
 }
@@ -2306,7 +2306,9 @@ document.getElementById('history').onclick = async () => {
     const json = await (await fetch(url, { method: 'GET', redirect: 'follow' })).json();
     if (!json.ok || !json.log) { box.innerHTML = '<div class="lempty">讀不到異動紀錄。</div>'; return; }
     if (!json.log.length) { box.innerHTML = '<div class="lempty">還沒有任何異動紀錄。</div>'; return; }
-    box.innerHTML = json.log.map(r =>
+    const rows = json.log.filter(r => (r.what || '').trim() && r.what !== '細項調整（設定或排序）');
+    if (!rows.length) { box.innerHTML = '<div class="lempty">還沒有任何異動紀錄。</div>'; return; }
+    box.innerHTML = rows.map(r =>
       '<div class="lrowi"><span class="lwho">' + esc(r.who) + '</span>' + esc(r.what) +
       '<span class="lmeta">' + esc(r.at) + '</span></div>'
     ).join('');
