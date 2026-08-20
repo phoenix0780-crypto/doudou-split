@@ -711,7 +711,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21q</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21r</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -2172,7 +2172,7 @@ function describeChange(oldStr, newObj, who){
 
     if ((p.name || '') !== (t.name || '')) parts.push('出遊改名「' + (p.name || '未命名') + '」→「' + (t.name || '未命名') + '」');
     if ((p.date || '') !== (t.date || '')) parts.push(label + '日期 ' + (p.date || '空') + ' → ' + (t.date || '空'));
-    if (p.locked !== t.locked) parts.push(label + (t.locked === false ? '已解鎖' : '已鎖定'));
+    /* 鎖定/解鎖只是操作狀態，不算帳目異動，不寫進歷程 */
     const pk = Object.assign({}, p.paidMarks), tk = Object.assign({}, t.paidMarks);
     Object.keys(Object.assign({}, pk, tk)).forEach(k => {
       if (!!pk[k] !== !!tk[k]) parts.push(label + '「' + k.replace(/^(hub|min):/, '').replace('→', ' → ') + '」' +
@@ -2548,7 +2548,12 @@ document.getElementById('history').onclick = async () => {
     const json = await (await fetchT(url, { method: 'GET', redirect: 'follow' })).json();
     if (!json.ok || !json.log) { box.innerHTML = '<div class="lempty">讀不到異動紀錄。</div>'; return; }
     if (!json.log.length) { box.innerHTML = '<div class="lempty">還沒有任何異動紀錄。</div>'; return; }
-    const rows = json.log.filter(r => (r.what || '').trim() && r.what !== '細項調整（設定或排序）' && r.what !== '更新');
+    const rows = json.log
+      .map(r => Object.assign({}, r, {
+        what: (r.what || '').split('；')
+          .filter(s => !/^「.*」已(鎖定|解鎖)$/.test(s.trim())).join('；')
+      }))
+      .filter(r => (r.what || '').trim() && r.what !== '細項調整（設定或排序）' && r.what !== '更新');
     if (!rows.length) { box.innerHTML = '<div class="lempty">還沒有任何異動紀錄。</div>'; return; }
     const cmap = famColorMap();
     const names = Object.keys(cmap).sort((a, b) => b.length - a.length);
