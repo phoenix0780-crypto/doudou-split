@@ -200,7 +200,7 @@
   .catitem + .catitem{border-top:1px solid var(--moss)}
   .catitem .cinote{flex:1;color:var(--forest);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .catitem .ciamt{flex:none;width:88px;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink-soft)}
-  .catitem select{flex:none;width:86px;font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink-soft)}
+  .catitem select{flex:none;width:auto;min-width:80px;max-width:150px;font:inherit;font-size:13px;padding:6px 26px 6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%226%22><path d=%22M1 1l4 4 4-4%22 stroke=%22%23667%22 stroke-width=%221.5%22 fill=%22none%22/></svg>') no-repeat right 9px center;color:var(--ink-soft);-webkit-appearance:none;appearance:none}
   .catitem select.set{color:var(--forest);font-weight:700;border-color:var(--stream)}
   .catitem select:disabled{opacity:.6;cursor:default}
   .catnote{margin:8px 2px 0;font-size:12px;color:var(--ink-soft)}
@@ -465,6 +465,14 @@
     .fam{padding:30px 10px 8px}
     .amt{width:88px}
     .item input{font-size:14px}
+    .catitem{flex-wrap:wrap;row-gap:4px;padding:9px 10px}
+    .catitem .cinote{flex:1 1 100%;white-space:normal}
+    .catitem .ciamt{width:auto;margin-left:auto;order:2}
+    .catitem select{order:3;max-width:46vw}
+    .catrow{padding:10px 10px;gap:8px}
+    .catrow .cname{width:56px;font-size:13px}
+    .catrow .cval{width:78px;font-size:13px}
+    .catrow .cpct{width:36px}
   }
   @media (max-width:420px){
     .lrow{grid-template-columns:minmax(58px,1fr) .8fr 9px .8fr 9px 1fr;gap:3px;padding:9px 6px;font-size:11.5px}
@@ -593,7 +601,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20g</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20h</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1382,7 +1390,8 @@ function renderCats(){
       sel.setAttribute('aria-label', '費用分類');
       sel.disabled = lock;
       const auto = guessCat(it.note) || NONE;
-      [{ k: '', n: '自動（' + catName(auto) + '）' }].concat(CATS).forEach(c => {
+      const autoTxt = auto === NONE ? '自動（？）' : '自動（' + catName(auto) + '）';
+      [{ k: '', n: autoTxt }].concat(CATS).forEach(c => {
         const op = document.createElement('option');
         op.value = c.k; op.textContent = c.n;
         if (catKey(it.cat) === c.k) op.selected = true;
