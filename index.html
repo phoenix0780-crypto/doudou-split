@@ -647,7 +647,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20x</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20y</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1895,6 +1895,9 @@ document.getElementById('checkHd').onkeydown = e => {
   if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.getElementById('checkHd').onclick(); }
 };
 document.getElementById('lockToggle').onclick = () => {
+  const b = document.getElementById('lockToggle');
+  clearTimeout(pingLock.t);
+  b.classList.remove('notice');          /* 解鎖當下立刻停掉發亮提示 */
   const t = trip(), shut = isLocked(t);
   t.locked = !shut; save(); render();
   flash(shut ? '已解鎖，可以編輯了' : '已鎖定，避免誤改');
