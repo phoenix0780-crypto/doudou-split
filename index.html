@@ -58,7 +58,7 @@
   #tripDate{font-family:var(--mono);font-size:14px;text-align:center;color:var(--forest);background:#fff;border:1px solid var(--stream);border-radius:6px;padding:3px 5px;flex:none}
   .switchbtn{user-select:none}
   .switchbtn.editing{cursor:default}
-  .mine{position:absolute;top:5px;left:10px;font-size:10px;font-weight:700;color:#fff;background:var(--fc,var(--stream));border-radius:999px;padding:2px 8px}
+  .mine{position:absolute;top:-9px;left:12px;z-index:1;font-size:10px;font-weight:700;color:#fff;background:var(--fc,var(--stream));border-radius:999px;padding:2px 8px;box-shadow:0 0 0 2px #fff}
   .fam.notmine{opacity:.86}
   .fam.notmine .famhead{cursor:default}
   .topbtn{flex:none;font:inherit;font-size:12.5px;padding:7px 11px;border-radius:8px;cursor:pointer;border:1px solid transparent;background:#EFF2EC;color:var(--ink-soft)}
@@ -145,20 +145,20 @@
   .bmeta{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
   .foldall{flex:none;font:inherit;font-size:12px;color:var(--ink-soft);background:transparent;border:1px solid var(--line);border-radius:7px;padding:4px 9px;cursor:pointer;margin-left:10px}
   .foldall:hover{border-color:var(--stream);color:var(--stream)}
-  .caretbtn{position:absolute;top:0;right:36px;width:26px;height:26px;padding:5px;border:0;background:transparent;border-radius:0 0 8px 8px;cursor:pointer;color:var(--ink-soft);opacity:.55;line-height:0}
+  .caretbtn{position:absolute;top:14px;right:40px;width:28px;height:28px;padding:5px;border:0;background:transparent;border-radius:8px;cursor:pointer;color:var(--ink-soft);opacity:.6;line-height:0}
   .caretbtn:hover{background:var(--moss);color:var(--stream);opacity:1}
   .caretbtn svg{width:100%;height:100%;display:block;transition:transform .15s}
   .caretbtn.closed svg{transform:rotate(-90deg)}
   #tripDate:disabled{background:transparent;color:var(--ink-soft);opacity:1;border-bottom-color:transparent}
   .sec{margin-bottom:30px}
 
-  .fam{position:relative;background:#fff;border:1px solid var(--line);border-left:4px solid var(--fc,var(--line));border-radius:12px;padding:32px 12px 8px;margin-bottom:10px}
+  .fam{position:relative;background:#fff;border:1px solid var(--line);border-left:4px solid var(--fc,var(--line));border-radius:12px;padding:12px 12px 8px;margin-bottom:10px}
   .fam .famhead{margin-top:0}
-  .famx{position:absolute;top:0;right:0;width:26px;height:26px;padding:0;border:0;background:transparent;color:var(--line);font:inherit;font-size:16px;line-height:26px;text-align:center;border-radius:0 11px 0 8px;cursor:pointer}
+  .famx{position:absolute;top:14px;right:8px;width:28px;height:28px;padding:0;border:0;background:transparent;color:var(--line);font:inherit;font-size:16px;line-height:28px;text-align:center;border-radius:8px;cursor:pointer}
   .famx:hover{background:var(--moss);color:var(--bad)}
   .famname{color:var(--fc,var(--forest))}
   .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:baseline}
-  .famhead{display:flex;align-items:center;gap:8px;padding-right:34px}
+  .famhead{display:flex;align-items:center;gap:8px;padding-right:72px;min-height:28px}
   .namewrap{display:flex;align-items:baseline;gap:4px;flex:1;min-width:0}
   .namewrap .famno,.namewrap .lock{align-self:center}
   .famname{flex:none}
@@ -319,6 +319,8 @@
   .mycard .mybtn{font:inherit;font-size:13px;font-weight:700;padding:9px 14px;border-radius:9px;border:1px solid var(--stream);background:#fff;color:var(--stream);cursor:pointer}
   .mycard .mybtn.done{background:#e7f4ec;border-color:var(--ok);color:var(--ok)}
   .mycard .mynote{font-size:12px;color:var(--ink-soft);margin-top:8px}
+  .mycard .myrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .mycard .myrow .mynote{margin-top:0;text-align:right}
   .legpaid{font:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;white-space:nowrap;justify-self:end}
   .legnote{grid-column:2 / 4;color:var(--ink-soft)}
   .legnote small{font-size:12px}
@@ -517,7 +519,7 @@
     .block{padding:0 9px 10px}
     .blockhead{margin:0 -9px 10px;padding:10px 11px;flex-wrap:wrap}
     .bsum{white-space:normal;font-size:12px;width:100%;margin:4px 0 0}
-    .fam{padding:30px 10px 8px}
+    .fam{padding:12px 10px 8px}
     .amt{width:88px}
     .item input{font-size:14px;min-height:42px}
     .add{min-height:44px}
@@ -667,7 +669,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21c</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21d</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1352,6 +1354,7 @@ function render(){
     const applyFold = () => {
       const shut = collapsed.has(f.id);
       body.hidden = shut;
+      add.hidden = shut;
       const n = f.items.filter(i => parseFloat(i.amount) || (i.note || '').trim()).length;
       cnt.hidden = !shut || !n;
       cnt.textContent = n + ' 筆';
@@ -1606,9 +1609,9 @@ function renderMyCard(t, bal, legs, total){
       html += '<div class="mynote">對方還沒填帳號，可先到第 3 區展開「帳號」提醒對方填寫。</div>';
   } else if (v > 0) {
     const done = myIn.filter(l => isPaidLeg(t, l)).length;
-    html += '<div class="myline">應收 <b class="get">' + nt(v) + '</b></div>' +
+    html += '<div class="myrow"><div class="myline">應收 <b class="get">' + nt(v) + '</b></div>' +
       '<div class="mynote">共 ' + myIn.length + ' 家要匯給你' +
-      (myIn.length ? '，已標記匯款 ' + done + ' / ' + myIn.length : '') + '。</div>';
+      (myIn.length ? '，已標記匯款 ' + done + ' / ' + myIn.length : '') + '。</div></div>';
   } else {
     html += '<div class="myline">這次剛好打平，不用匯款 ✓</div>';
   }
