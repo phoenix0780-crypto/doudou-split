@@ -579,7 +579,7 @@
     <h2>費用分類</h2>
     <div class="catbox" id="catList"></div>
     <div class="cattag" id="catTag"></div>
-    <p class="catnote">系統會依備註文字自動判斷分類；判斷不準時，直接在該筆右邊改成你要的分類即可（改過會變粗體，之後不再自動變動）。分類只影響這裡的統計，不會動到分帳計算與匯款金額。</p>
+    <p class="catnote">系統會依備註文字自動判斷分類，猜不出來的會歸到「無法判斷」；判斷不準時，直接在該筆右邊改成你要的分類即可（改過會變粗體，之後不再自動變動）。分類只影響這裡的統計，不會動到分帳計算與匯款金額。</p>
   </div>
 
   <div class="admin">
@@ -593,7 +593,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20c</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20d</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1272,9 +1272,11 @@ const CATS = [
   { k: 'ride', n: '交通' },
   { k: 'tick', n: '門票' },
   { k: 'gear', n: '裝備' },
-  { k: 'misc', n: '雜支' }
+  { k: 'misc', n: '雜支' },
+  { k: 'none', n: '無法判斷' }
 ];
-const catName = k => (CATS.find(c => c.k === k) || {}).n || '未分類';
+const NONE = 'none';
+const catName = k => (CATS.find(c => c.k === k) || {}).n || '無法判斷';
 const catKey = k => (CATS.some(c => c.k === k) ? k : '');
 
 /* 關鍵字自動判斷：由備註猜分類。順序由上到下，先中先算 */
@@ -1293,20 +1295,20 @@ function guessCat(note){
   return '';
 }
 /* 實際採用的分類：手動選過就用手動的，否則用自動判斷 */
-const effCat = it => catKey(it && it.cat) || guessCat(it && it.note);
+const effCat = it => catKey(it && it.cat) || guessCat(it && it.note) || NONE;
 
 function catCalc(t){
   t = t || trip();
-  const sum = { '': 0 }; let total = 0;
+  const sum = {}; let total = 0;
   CATS.forEach(c => sum[c.k] = 0);
   (t.families || []).forEach(f => (f.items || []).forEach(i => {
     const v = parseFloat(i.amount) || 0;
     if (v <= 0) return;
     sum[effCat(i)] += v; total += v;
   }));
-  const rows = CATS.map(c => ({ k: c.k, name: c.n, val: sum[c.k] }))
+  const rows = CATS.filter(c => c.k !== NONE).map(c => ({ k: c.k, name: c.n, val: sum[c.k] }))
     .filter(r => r.val > 0).sort((a, b) => b.val - a.val);
-  if (sum['']) rows.push({ k: '', name: '未分類', val: sum[''] });
+  if (sum[NONE]) rows.push({ k: NONE, name: catName(NONE), val: sum[NONE] });
   return { rows, total };
 }
 
@@ -1322,7 +1324,7 @@ function renderCats(){
   } else {
     const top = rows[0].val || 1;
     list.innerHTML = rows.map(r =>
-      '<div class="catrow' + (r.k ? '' : ' none') + '">' +
+      '<div class="catrow' + (r.k === NONE ? ' none' : '') + '">' +
       '<span class="cname">' + esc(r.name) + '</span>' +
       '<span class="cbar"><i style="width:' + Math.max(4, Math.round(r.val / top * 100)) + '%"></i></span>' +
       '<span class="cpct">' + Math.round(r.val / total * 100) + '%</span>' +
@@ -1352,15 +1354,15 @@ function renderCats(){
       const sel = document.createElement('select');
       sel.setAttribute('aria-label', '費用分類');
       sel.disabled = lock;
-      const auto = guessCat(it.note);
-      [{ k: '', n: '自動（' + (auto ? catName(auto) : '未分類') + '）' }].concat(CATS).forEach(c => {
+      const auto = guessCat(it.note) || NONE;
+      [{ k: '', n: '自動（' + catName(auto) + '）' }].concat(CATS).forEach(c => {
         const op = document.createElement('option');
         op.value = c.k; op.textContent = c.n;
         if (catKey(it.cat) === c.k) op.selected = true;
         sel.appendChild(op);
       });
       sel.className = catKey(it.cat) ? 'set' : '';
-      sel.title = catKey(it.cat) ? '手動指定：' + catName(it.cat) : '自動判斷：' + (auto ? catName(auto) : '未分類');
+      sel.title = catKey(it.cat) ? '手動指定：' + catName(it.cat) : '自動判斷：' + catName(auto);
       sel.onchange = e => {
         noticeProxy((f.name || '').trim());
         it.cat = e.target.value;
