@@ -604,7 +604,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20i</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20j</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1672,7 +1672,7 @@ function renderHistory(){
     if (!cur) {
       li.setAttribute('role', 'button');
       li.tabIndex = 0;
-      const go = () => { state.currentId = t.id; save(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+      const go = () => { const y = window.scrollY; state.currentId = t.id; save(); render(); window.scrollTo(0, y); };
       li.onclick = go;
       li.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } };
     } else {
