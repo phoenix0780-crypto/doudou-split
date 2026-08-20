@@ -109,6 +109,7 @@
   .llist{max-height:46vh;overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
   .lrowi{padding:9px 11px;border-bottom:1px solid var(--moss);font-size:13px;line-height:1.6}
   .lrowi .lwho{display:inline-block;font-size:11px;font-weight:700;color:#fff;background:var(--stream);border-radius:999px;padding:1px 8px;margin-right:7px;vertical-align:1px}
+  .lrowi .lfam{font-weight:700}
   .lrowi:last-child{border-bottom:0}
   .lrowi .lmeta{display:block;font-family:var(--mono);font-size:11px;color:var(--ink-soft)}
   .lempty{padding:16px;text-align:center;color:var(--ink-soft);font-size:13px}
@@ -677,7 +678,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21g</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21h</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -839,6 +840,21 @@ function famColors(t){
   return t.families.map((f, i) => i < FAM_COLORS.length
     ? FAM_COLORS[i]
     : 'hsl(' + Math.round(hues[i]) + ' 56% ' + (i % 2 ? 33 : 44) + '%)');
+}
+
+/* 家庭名稱 → 顏色：跟「各家代墊」卡片同一組色，異動歷程才認得出是哪一家 */
+function famColorMap(){
+  const map = {};
+  const list = [trip()].concat(state.trips.filter(t => t.id !== state.currentId));
+  list.forEach(t => {
+    if (!t || !t.families) return;
+    const cs = famColors(t);
+    t.families.forEach((f, i) => {
+      const k = (f.name || '').trim();
+      if (k && !map[k]) map[k] = cs[i];
+    });
+  });
+  return map;
 }
 
 const unlocked = new Set();   /* 只存在這次瀏覽，重新整理後一律回到未編輯狀態 */
@@ -2432,10 +2448,23 @@ document.getElementById('history').onclick = async () => {
     if (!json.log.length) { box.innerHTML = '<div class="lempty">還沒有任何異動紀錄。</div>'; return; }
     const rows = json.log.filter(r => (r.what || '').trim() && r.what !== '細項調整（設定或排序）');
     if (!rows.length) { box.innerHTML = '<div class="lempty">還沒有任何異動紀錄。</div>'; return; }
-    box.innerHTML = rows.map(r =>
-      '<div class="lrowi"><span class="lwho">' + esc(r.who) + '</span>' + esc(r.what) +
-      '<span class="lmeta">' + esc(r.at) + '</span></div>'
-    ).join('');
+    const cmap = famColorMap();
+    const names = Object.keys(cmap).sort((a, b) => b.length - a.length);
+    const tint = txt => {
+      let out = esc(txt);
+      names.forEach(n => {
+        out = out.split('幫「' + esc(n) + '」').join(
+          '幫<span class="lfam" style="color:' + cmap[n] + '">「' + esc(n) + '」</span>');
+      });
+      return out;
+    };
+    box.innerHTML = rows.map(r => {
+      const who = (r.who || '').trim();
+      const c = cmap[who];
+      return '<div class="lrowi"><span class="lwho"' + (c ? ' style="background:' + c + '"' : '') + '>' +
+        esc(r.who) + '</span>' + tint(r.what) +
+        '<span class="lmeta">' + esc(r.at) + '</span></div>';
+    }).join('');
   } catch (e) {
     box.innerHTML = '<div class="lempty">連不上雲端，稍後再試。</div>';
   }
