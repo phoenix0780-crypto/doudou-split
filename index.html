@@ -321,8 +321,8 @@
   .mycard .mynote{font-size:12px;color:var(--ink-soft);margin-top:8px}
   .mycard .myrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
   .mycard .myrow .mynote{margin-top:0;text-align:right}
-  .legpaid{font:inherit;font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;white-space:nowrap;justify-self:end}
-  .legnote{grid-column:2 / 4;color:var(--ink-soft)}
+  .legpaid{font:inherit;font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;white-space:nowrap}
+  .legnote{color:var(--ink-soft)}
   .legnote small{font-size:13px}
   .legpaid.done{background:#e7f4ec;border-color:#2e7d52;color:#2e7d52}
   .leg.ispaid .who,.leg.ispaid .legamt{opacity:.55}
@@ -339,7 +339,12 @@
   @media (prefers-reduced-motion:reduce){.unlockpop{animation:none}}
   .checkhd{cursor:pointer;user-select:none}
   .checkhd .chev{font-size:12px;color:var(--ink-soft)}
-  .leg{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:13px 0;border-bottom:1px dashed var(--line)}
+  .leg{display:grid;grid-template-columns:auto 1fr auto auto;column-gap:12px;row-gap:7px;align-items:center;padding:13px 0;border-bottom:1px dashed var(--line)}
+  .leg .who{grid-column:2;grid-row:1}
+  .leg .legacc{grid-column:3;grid-row:1;justify-self:start}
+  .leg .legamt{grid-column:4;grid-row:1;justify-self:end}
+  .leg .legnote{grid-column:2;grid-row:2;justify-self:start}
+  .leg .legpaid{grid-column:3;grid-row:2;justify-self:start}
   .legright{display:flex;align-items:center;gap:8px;justify-content:flex-end}
   .leg:last-child{border-bottom:0}
   .step{width:26px;height:26px;border-radius:50%;background:#fff;border:1.5px solid currentColor;font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
@@ -532,9 +537,7 @@
     .legacc{min-height:38px;padding:7px 12px}
     .legpaid{min-height:38px}
     .famx{width:34px;height:34px;font-size:17px}
-    .leg{grid-template-columns:auto 1fr auto;row-gap:6px}
-    .legnote{grid-column:2 / 3;grid-row:2;align-self:center}
-    .legpaid{grid-column:3 / 4;grid-row:2;justify-self:end}
+    .leg{column-gap:8px}
     .catitem{flex-wrap:wrap;row-gap:4px;padding:9px 10px}
     .catitem .cinote{flex:1 1 100%;white-space:normal}
     .catitem .ciamt{width:auto;margin-left:auto;order:2}
@@ -674,7 +677,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21e</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21f</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1689,9 +1692,10 @@ function refreshSettle(){
       esc(t.families[l.from].name) +
       '</span><span class="arrow">匯給</span><span class="t" style="color:' + colors[l.to] + '">' +
       esc(t.families[l.to].name) +
-      '</span><span class="toacc">→</span><button class="legacc" data-to="' + l.to + '">帳號</button></div>' +
+      '</span></div>' +
+      '<button class="legacc" data-to="' + l.to + '">帳號</button>' +
       '<div class="legamt">' + nt(l.amt) + '</div>' +
-      '<div class="legnote"><small>' + (l.kind === 'out' ? '代收方把多的錢轉出' : '補齊自己的分攤') + '</small>' +
+      '<div class="legnote">' + (l.kind === 'out' ? '<small>代收方把多的錢轉出</small>' : '') +
       '<button class="why pill">怎麼算的 ▾</button></div>' +
       '<button class="legpaid' + (isPaidLeg(t, l) ? ' done' : '') + '" data-leg="' + i + '">' +
       (isPaidLeg(t, l) ? '✓ 已匯款' : '未匯款') + '</button>' +
