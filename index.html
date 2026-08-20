@@ -279,8 +279,8 @@
     border-radius:7px;padding:5px 9px;cursor:pointer}
   .acccopy:hover{color:var(--stream);border-color:var(--stream)}
   .toacc{color:var(--line);font-size:12px;margin:0 5px}
-  .legacc{flex:none;font:inherit;font-size:11px;color:var(--ink-soft);background:transparent;border:1px solid var(--line);
-    border-radius:999px;padding:3px 9px;cursor:pointer;vertical-align:1px}
+  .legacc{flex:none;font:inherit;font-size:13px;font-weight:700;color:var(--ink-soft);background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:5px 12px;cursor:pointer;vertical-align:1px}
   .legacc:hover,.legacc.on{color:var(--stream);border-color:var(--stream)}
   .legacc.on{background:var(--stream-soft)}
   .legacc.confirmed{color:var(--ok);border-color:#BFDCC8;background:#E7F2EA}
@@ -321,9 +321,9 @@
   .mycard .mynote{font-size:12px;color:var(--ink-soft);margin-top:8px}
   .mycard .myrow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
   .mycard .myrow .mynote{margin-top:0;text-align:right}
-  .legpaid{font:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;white-space:nowrap;justify-self:end}
+  .legpaid{font:inherit;font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;white-space:nowrap;justify-self:end}
   .legnote{grid-column:2 / 4;color:var(--ink-soft)}
-  .legnote small{font-size:12px}
+  .legnote small{font-size:13px}
   .legpaid.done{background:#e7f4ec;border-color:#2e7d52;color:#2e7d52}
   .leg.ispaid .who,.leg.ispaid .legamt{opacity:.55}
   .leg.ispaid .legamt{text-decoration:line-through}
@@ -343,13 +343,18 @@
   .legright{display:flex;align-items:center;gap:8px;justify-content:flex-end}
   .leg:last-child{border-bottom:0}
   .step{width:26px;height:26px;border-radius:50%;background:#fff;border:1.5px solid currentColor;font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
-  .who{font-size:14px;line-height:1.4}
+  .who{font-size:15.5px;line-height:1.45}
   .who .f{font-weight:800}
   .who .arrow{color:var(--ink-soft);margin:0 6px}
   .who .t{font-weight:800}
-  .who small{display:block;color:var(--ink-soft);font-size:11px;margin-top:1px}
+  .who small{display:block;color:var(--ink-soft);font-size:13px;margin-top:1px}
   .leg{cursor:pointer}
   .who .why{color:var(--stream);text-decoration:underline;white-space:nowrap}
+  .why.pill{font:inherit;font-size:13px;font-weight:700;color:var(--ink-soft);background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:5px 12px;cursor:pointer;text-decoration:none;white-space:nowrap}
+  .why.pill:hover{color:var(--stream);border-color:var(--stream)}
+  .legnote{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .legnote small{display:inline}
   .legdetail{grid-column:1/-1;margin:0 0 12px;padding:10px 12px;background:var(--moss);border-radius:8px;font-size:12.5px;line-height:1.7}
   .legdetail div{margin:2px 0}
   .legdetail b{font-family:var(--mono);font-weight:800;font-variant-numeric:tabular-nums}
@@ -546,11 +551,11 @@
     .lrow .nm{font-size:12px}
     .lrow .lno{margin-right:3px;font-size:11px}
     .leg{grid-template-columns:auto 1fr auto;gap:8px}
-    .who{font-size:12.5px}
+    .who{font-size:14px}
     .who .f,.who .t{white-space:nowrap}
     .who .arrow{margin:0 4px}
     .toacc{margin:0 3px}
-    .legacc{font-size:10px;padding:2px 7px}
+    .legacc{font-size:12px;padding:4px 10px}
     .legamt{font-size:15px}
     .step{width:22px;height:22px;font-size:11px}
     .accbank{width:56px}
@@ -669,7 +674,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21d</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21e</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1681,13 +1686,13 @@ function refreshSettle(){
       '<div class="leg' + (isPaidLeg(t, l) ? ' ispaid' : '') + '" role="button" tabindex="0" aria-expanded="false"><div class="step" style="color:' +
       colors[l.from] + '">' + (i + 1) +
       '</div><div class="who"><span class="f" style="color:' + colors[l.from] + '">' +
-      dot(colors[l.from]) + esc(t.families[l.from].name) +
+      esc(t.families[l.from].name) +
       '</span><span class="arrow">匯給</span><span class="t" style="color:' + colors[l.to] + '">' +
-      dot(colors[l.to]) + esc(t.families[l.to].name) +
+      esc(t.families[l.to].name) +
       '</span><span class="toacc">→</span><button class="legacc" data-to="' + l.to + '">帳號</button></div>' +
       '<div class="legamt">' + nt(l.amt) + '</div>' +
-      '<div class="legnote"><small>' + (l.kind === 'out' ? '代收方把多的錢轉出' : '補齊自己的分攤') +
-      '　<span class="why">怎麼算的 ▾</span></small></div>' +
+      '<div class="legnote"><small>' + (l.kind === 'out' ? '代收方把多的錢轉出' : '補齊自己的分攤') + '</small>' +
+      '<button class="why pill">怎麼算的 ▾</button></div>' +
       '<button class="legpaid' + (isPaidLeg(t, l) ? ' done' : '') + '" data-leg="' + i + '">' +
       (isPaidLeg(t, l) ? '✓ 已匯款' : '未匯款') + '</button>' +
       '<div class="legaccrow" hidden></div>' +
