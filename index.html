@@ -404,6 +404,9 @@
   .pdfdoc .pay .ok{color:#2F7A4F;font-weight:800}
   .pdfdoc .muted{color:#A8B3AA}
   .pdfdoc .foot{margin-top:8px;font-size:11.5px;color:#5A6B60}
+  .pdfdoc .pcats{width:100%;border-collapse:collapse}
+  .pdfdoc .pcats td{padding:6px 8px;border-bottom:1px solid #e4e6dc;font-size:13px}
+  .pdfdoc .pcats .pbar{width:45%}
   @media (max-width:520px){.pdfdoc .famgrid{grid-template-columns:1fr}.pdfdoc .cards{gap:6px}}
   @page{margin:14mm 12mm}
   @media print{
@@ -614,7 +617,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20p</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20q</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1750,6 +1753,14 @@ function text(){
     L.push((i + 1) + '. ' + (t.families[l.from].name || '未命名') + ' 匯給 ' + to + '　' + nt(l.amt) +
       '　' + (acc ? acc + ((state.accOk && state.accOk[to.trim()]) ? '（已確認）' : '（尚未確認）') : '（未填帳號）'));
   });
+  const cats = catCalc(t);
+  if (cats.total > 0) {
+    L.push('');
+    L.push('四、費用分類');
+    cats.rows.forEach(r => {
+      L.push('・' + r.name + '：' + nt(r.val) + '（' + Math.round(r.val / cats.total * 100) + '%）');
+    });
+  }
   return L.join('\n');
 }
 
@@ -2361,6 +2372,18 @@ function buildReport(){
         '</td><td class="n">' + nt(parseFloat(it.amount) || 0) + '</td></tr>').join('') + '</table></div>';
   }).join('');
 
+  const cats = catCalc(t);
+  const catSec = cats.total > 0
+    ? '<div class="sec"><h2>四、費用分類</h2><table class="pcats">' +
+      cats.rows.map(r =>
+        '<tr><td class="nm"><span class="pdot" style="background:' + CAT_COLOR[r.k] + ';width:10px;height:10px;min-width:10px;border-radius:99px;display:inline-block;margin-right:7px;vertical-align:1px"></span>' +
+        esc(r.name) + '</td>' +
+        '<td class="pbar"><span style="display:block;height:8px;border-radius:99px;background:' + CAT_COLOR[r.k] + ';width:' + Math.max(4, Math.round(r.val / (cats.rows[0].val || 1) * 100)) + '%"></span></td>' +
+        '<td class="n">' + Math.round(r.val / cats.total * 100) + '%</td>' +
+        '<td class="n"><b>' + nt(r.val) + '</b></td></tr>').join('') +
+      '</table><p class="foot">分類只作花費結構參考，不影響分攤與匯款金額。</p></div>'
+    : '';
+
   const pay = legs.length
     ? '<table class="pay">' + legs.map((l, i) => {
         const acc = accOf(t.families[l.to].name);
@@ -2387,7 +2410,7 @@ function buildReport(){
     '<p class="foot">應攤 = 總花費 ' + nt(total) + ' ÷ ' + t.families.length + ' 家 = ' + nt(avg) +
     '　｜　驗算：應收回 ' + nt(cr) + ' ＝ 應補交 ' + nt(db) + '，帳務平衡。</p></div>' +
     '<div class="sec"><h2>三、匯款方式（' + (t.mode === 'hub' ? '集中匯' : '彼此匯') + '）</h2>' + pay +
-    '<p class="foot">帳號後方有 ✓ 表示該家已確認帳號正確。</p></div>';
+    '<p class="foot">帳號後方有 ✓ 表示該家已確認帳號正確。</p></div>' + catSec;
 }
 
 document.getElementById('pdf').onclick = () => {
