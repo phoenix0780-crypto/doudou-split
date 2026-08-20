@@ -184,6 +184,26 @@
   .item input:focus{outline:none;background:#fff;border-color:var(--stream)}
   .note{flex:1}
   .amt{width:100px;text-align:right;font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+  /* 費用分類 */
+  .catbox{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .catrow{display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:14px}
+  .catrow + .catrow{border-top:1px solid var(--moss)}
+  .catrow .cname{flex:none;width:64px;color:var(--forest);font-weight:700}
+  .catrow .cbar{flex:1;height:8px;background:var(--moss);border-radius:99px;overflow:hidden}
+  .catrow .cbar i{display:block;height:100%;background:var(--stream);border-radius:99px}
+  .catrow.none .cbar i{background:var(--line)}
+  .catrow .cpct{flex:none;width:44px;text-align:right;font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
+  .catrow .cval{flex:none;width:96px;text-align:right;font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums;color:var(--forest)}
+  .cattag{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .catfam{padding:9px 14px;background:var(--paper);font-size:12px;font-weight:700;color:var(--forest);letter-spacing:.04em}
+  .catitem{display:flex;align-items:center;gap:10px;padding:9px 14px;font-size:14px}
+  .catitem + .catitem{border-top:1px solid var(--moss)}
+  .catitem .cinote{flex:1;color:var(--forest);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .catitem .ciamt{flex:none;width:88px;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink-soft)}
+  .catitem select{flex:none;width:86px;font:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink-soft)}
+  .catitem select.set{color:var(--forest);font-weight:700;border-color:var(--stream)}
+  .catitem select:disabled{opacity:.6;cursor:default}
+  .catnote{margin:8px 2px 0;font-size:12px;color:var(--ink-soft)}
   .warn{margin:2px 0 8px;padding:9px 12px;background:var(--ember-soft);border-left:3px solid var(--ember);border-radius:0 8px 8px 0;font-size:13px;color:var(--forest)}
   .famname.dup{border-bottom:1px solid var(--ember)}
   .add{margin-top:6px;background:transparent;border:1px dashed var(--line);border-radius:8px;color:var(--ink-soft);font:inherit;font-size:13px;padding:7px 12px;width:100%;cursor:pointer}
@@ -555,6 +575,13 @@
     <ul class="hist" id="hist"></ul>
   </div>
 
+  <div class="sec" style="margin-top:32px">
+    <h2>費用分類</h2>
+    <div class="catbox" id="catList"></div>
+    <div class="cattag" id="catTag"></div>
+    <p class="catnote">分類只影響這裡的統計，不會動到分帳計算與匯款金額。</p>
+  </div>
+
   <div class="admin">
     <div class="adminhead">管理（通常只有記帳的人會用到）</div>
     <p class="adminnote">「下載備份／還原備份」是整個網頁資料結構的備份檔，給架設這個網頁的人維護用；一般記帳不需要動它。</p>
@@ -566,7 +593,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20a</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20b</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1238,6 +1265,94 @@ function checkDupNames(){
   });
 }
 
+/* ---------- 費用分類（只做統計，不影響分帳） ---------- */
+const CATS = [
+  { k: 'food', n: '吃' },
+  { k: 'stay', n: '住' },
+  { k: 'ride', n: '交通' },
+  { k: 'tick', n: '門票' },
+  { k: 'gear', n: '裝備' },
+  { k: 'misc', n: '雜支' }
+];
+const catName = k => (CATS.find(c => c.k === k) || {}).n || '未分類';
+const catKey = k => (CATS.some(c => c.k === k) ? k : '');
+
+function catCalc(t){
+  t = t || trip();
+  const sum = { '': 0 }; let total = 0;
+  CATS.forEach(c => sum[c.k] = 0);
+  (t.families || []).forEach(f => (f.items || []).forEach(i => {
+    const v = parseFloat(i.amount) || 0;
+    if (v <= 0) return;
+    sum[catKey(i.cat)] += v; total += v;
+  }));
+  const rows = CATS.map(c => ({ k: c.k, name: c.n, val: sum[c.k] }))
+    .filter(r => r.val > 0).sort((a, b) => b.val - a.val);
+  if (sum['']) rows.push({ k: '', name: '未分類', val: sum[''] });
+  return { rows, total };
+}
+
+function renderCats(){
+  const t = trip(), lock = isLocked(t);
+  const { rows, total } = catCalc(t);
+  const list = document.getElementById('catList');
+  const tag = document.getElementById('catTag');
+
+  if (!total) {
+    list.innerHTML = '<div class="catrow"><span class="cname">尚無資料</span>' +
+      '<span class="cbar"></span><span class="cval">$0</span></div>';
+  } else {
+    const top = rows[0].val || 1;
+    list.innerHTML = rows.map(r =>
+      '<div class="catrow' + (r.k ? '' : ' none') + '">' +
+      '<span class="cname">' + esc(r.name) + '</span>' +
+      '<span class="cbar"><i style="width:' + Math.max(4, Math.round(r.val / top * 100)) + '%"></i></span>' +
+      '<span class="cpct">' + Math.round(r.val / total * 100) + '%</span>' +
+      '<span class="cval">' + nt(r.val) + '</span></div>'
+    ).join('');
+  }
+
+  tag.innerHTML = '';
+  let any = false;
+  (t.families || []).forEach(f => {
+    const items = (f.items || []).filter(i => (parseFloat(i.amount) || 0) > 0);
+    if (!items.length) return;
+    any = true;
+    const head = document.createElement('div');
+    head.className = 'catfam';
+    head.textContent = (f.name || '未命名') + '　' + items.length + ' 筆';
+    tag.appendChild(head);
+    items.forEach(it => {
+      const row = document.createElement('div');
+      row.className = 'catitem';
+      const note = document.createElement('span');
+      note.className = 'cinote';
+      note.textContent = (it.note || '').trim() || '未命名項目';
+      const amt = document.createElement('span');
+      amt.className = 'ciamt';
+      amt.textContent = nt(parseFloat(it.amount) || 0);
+      const sel = document.createElement('select');
+      sel.setAttribute('aria-label', '費用分類');
+      sel.disabled = lock;
+      [{ k: '', n: '未分類' }].concat(CATS).forEach(c => {
+        const op = document.createElement('option');
+        op.value = c.k; op.textContent = c.n;
+        if (catKey(it.cat) === c.k) op.selected = true;
+        sel.appendChild(op);
+      });
+      sel.className = catKey(it.cat) ? 'set' : '';
+      sel.onchange = e => {
+        noticeProxy((f.name || '').trim());
+        it.cat = e.target.value;
+        save(); renderCats();
+      };
+      row.append(note, amt, sel);
+      tag.appendChild(row);
+    });
+  });
+  if (!any) tag.innerHTML = '<div class="catitem"><span class="cinote">記了金額之後，這裡可以逐筆選分類。</span></div>';
+}
+
 /* 只更新算出來的數字，不動輸入框（避免打字時游標被重建吃掉） */
 function updateDerived(){
   const t = trip();
@@ -1252,6 +1367,7 @@ function updateDerived(){
     r.total.innerHTML = '<span class="tlabel">總計</span>' + nt(paid[fi]);
   });
   refreshSettle();
+  renderCats();
   syncFoldBtn();
   renderHistory();
 }
@@ -1661,6 +1777,7 @@ function describeChange(oldStr, newObj, who){
         const pAmt = parseFloat(pi.amount) || 0;
         if (pAmt !== amt) parts.push(famLabel(fam) + '｜' + note + '：' + moneyTxt(pAmt) + ' → ' + moneyTxt(amt));
         else if ((pi.note || '') !== (it.note || '')) parts.push(famLabel(fam) + '｜品名「' + (pi.note || '空') + '」→「' + note + '」');
+        else if ((pi.cat || '') !== (it.cat || '')) parts.push(famLabel(fam) + '｜' + note + ' 分類改為「' + catName(it.cat) + '」');
       });
       Object.keys(oI).forEach(k => {
         const pi = oI[k];
@@ -1712,7 +1829,7 @@ function mergeItems(bArr, mArr, tArr){
     const b = B[t.id], m = M[t.id];
     seen[t.id] = 1;
     if (!m) { if (b && same(b, t)) return; out.push(t); return; }   /* 我刪掉、對方沒動 → 維持刪除 */
-    out.push({ id: t.id, note: pick(b && b.note, m.note, t.note), amount: pick(b && b.amount, m.amount, t.amount) });
+    out.push({ id: t.id, note: pick(b && b.note, m.note, t.note), amount: pick(b && b.amount, m.amount, t.amount), cat: pick(b && b.cat, m.cat, t.cat) || '' });
   });
   (mArr || []).forEach(m => {
     if (seen[m.id]) return;
