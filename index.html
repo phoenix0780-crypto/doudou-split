@@ -13,7 +13,7 @@
   body{margin:0;background:var(--moss);color:var(--forest);font-family:var(--sans);line-height:1.55;-webkit-text-size-adjust:100%}
   .wrap{max-width:760px;margin:0 auto;padding:20px 16px 64px}
   .eyebrow{font-size:11px;letter-spacing:.28em;color:var(--ink-soft)}
-  h1{font-size:20px;line-height:1.15;margin:0;font-weight:800;letter-spacing:-.01em}
+  h1{font-size:23px;line-height:1.2;margin:0;font-weight:800;letter-spacing:-.01em}
   .titlerow{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding-left:2px;flex-wrap:wrap}
   .pagetitle{margin:0;flex:1;min-width:0}
   .copyright{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);
@@ -21,7 +21,8 @@
   .apphead{display:flex;align-items:center;gap:10px;
     background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:9px 11px;margin-bottom:14px}
   .brandlight{font-weight:500;color:var(--ink-soft);margin-right:3px}
-  .theart{color:#E8A33D;margin-right:6px;font-size:.85em;vertical-align:1px}
+  .theart{color:#E8A33D;margin-right:7px;font-size:1em;vertical-align:0}
+  .pagetitle{white-space:nowrap}
   .acts{flex:1;min-width:0;display:flex;align-items:center;gap:6px}
   .acts>*{flex:none}
   .acts .topbtn{flex:1;min-width:0;text-align:center;padding:8px 6px;white-space:nowrap}
@@ -541,12 +542,13 @@
   @media (max-width:520px){
     .wrap{padding:14px 12px 64px}
     h1{font-size:17px}
+    .titlerow{row-gap:8px}
+    .pagetitle{flex:1 1 100%;font-size:23px;margin-bottom:0}
+    .titleacts{gap:5px}
+    .minibtn{font-size:12.5px;padding:8px 12px;min-height:36px}
+    .synctoggle{font-size:12px;padding:8px 8px;min-height:36px}
     .apphead{padding:8px 8px;gap:6px}
-    .pagetitle{font-size:19px;margin-bottom:8px}
     .acts{gap:5px}
-    .synctoggle{font-size:11px;padding:4px 8px}
-    .minibtn{font-size:11px;padding:4px 7px}
-    .titleacts{gap:4px}
     .topbtn{font-size:12px;padding:7px 6px;white-space:nowrap}
     .lockbtn{font-size:12px;padding:7px 10px;gap:5px}
     .switchbtn{padding:11px 12px;display:grid;grid-template-columns:auto 1fr auto;column-gap:9px;row-gap:3px;align-items:center}
@@ -711,7 +713,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21r</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21s</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
