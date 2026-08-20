@@ -309,7 +309,26 @@
   .mode{font:inherit;font-size:13px;padding:7px 12px;border-radius:999px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--ink-soft)}
   .mode[aria-pressed="true"]{background:var(--stream-soft);border-color:var(--stream);color:var(--stream);font-weight:700}
   .route{background:#fff;border:1px solid var(--line);border-radius:12px;padding:4px 14px}
-  .leg{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:13px 0;border-bottom:1px dashed var(--line)}
+  .mycard{background:var(--forest);color:#fff;border-radius:14px;padding:16px 18px;margin-bottom:18px}
+  .mycard .mywho{font-size:12px;letter-spacing:.08em;opacity:.75;margin-bottom:4px}
+  .mycard .myline{font-size:20px;font-weight:800;line-height:1.4}
+  .mycard .myline b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .mycard .myline .pay{color:#ffb4a6}
+  .mycard .myline .get{color:#a8e6c1}
+  .mycard .myacts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .mycard .mybtn{font:inherit;font-size:13px;font-weight:700;padding:9px 14px;border-radius:9px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);color:#fff;cursor:pointer}
+  .mycard .mybtn.done{background:#2e7d52;border-color:#2e7d52}
+  .mycard .mynote{font-size:12px;opacity:.7;margin-top:8px}
+  .legpaid{font:inherit;font-size:12px;font-weight:700;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer;white-space:nowrap;justify-self:end}
+  .legpaid.done{background:#e7f4ec;border-color:#2e7d52;color:#2e7d52}
+  .leg.ispaid .who,.leg.ispaid .legamt{opacity:.55}
+  .leg.ispaid .legamt{text-decoration:line-through}
+  .routeprog{font-size:12px;color:var(--ink-soft);padding:8px 2px 4px}
+  .starthint{background:#fff;border:1.5px dashed var(--stream);border-radius:12px;padding:14px;text-align:center;font-size:14px;color:var(--forest);margin-top:10px}
+  .starthint b{color:var(--stream)}
+  .checkhd{cursor:pointer;user-select:none}
+  .checkhd .chev{font-size:12px;color:var(--ink-soft)}
+  .leg{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:13px 0;border-bottom:1px dashed var(--line)}
   .legright{display:flex;align-items:center;gap:8px;justify-content:flex-end}
   .leg:last-child{border-bottom:0}
   .step{width:26px;height:26px;border-radius:50%;background:#fff;border:1.5px solid currentColor;font-family:var(--mono);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
@@ -481,7 +500,14 @@
     .bsum{white-space:normal;font-size:12px;width:100%;margin:4px 0 0}
     .fam{padding:30px 10px 8px}
     .amt{width:88px}
-    .item input{font-size:14px}
+    .item input{font-size:14px;min-height:42px}
+    .add{min-height:44px}
+    .mode{min-height:42px;padding:9px 14px}
+    .legacc{min-height:38px;padding:7px 12px}
+    .legpaid{min-height:38px}
+    .famx{width:34px;height:34px;font-size:17px}
+    .leg{grid-template-columns:auto 1fr auto;row-gap:6px}
+    .legpaid{grid-column:2 / 4;justify-self:start}
     .catitem{flex-wrap:wrap;row-gap:4px;padding:9px 10px}
     .catitem .cinote{flex:1 1 100%;white-space:normal}
     .catitem .ciamt{width:auto;margin-left:auto;order:2}
@@ -561,6 +587,8 @@
       <div class="sum"><div class="k">每家平均</div><div class="v" id="sAvg">$0</div></div>
     </div>
 
+    <div class="mycard" id="myCard" hidden></div>
+
     <div class="block">
       <div class="blockhead"><span class="bno">1</span><span class="btitle">各家代墊</span>
         <button class="foldall" id="foldAll" style="margin-left:auto">全部收合</button></div>
@@ -588,8 +616,8 @@
     </div>
 
     <div class="sec">
-      <h2>驗算</h2>
-      <div class="checks" id="checks"></div>
+      <h2 class="checkhd" id="checkHd" role="button" tabindex="0" aria-expanded="false">驗算 <span class="chev">▸</span></h2>
+      <div class="checks" id="checks" hidden></div>
     </div>
 
     <div class="saved" id="saved"></div>
@@ -619,7 +647,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20t</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20u</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1428,7 +1456,9 @@ function renderCats(){
       note.textContent = (it.note || '').trim() || '未命名項目';
       const amt = document.createElement('span');
       amt.className = 'ciamt';
-      amt.textContent = nt(parseFloat(it.amount) || 0);
+      const av = parseFloat(it.amount) || 0;
+      amt.textContent = nt(av);
+      if (av >= 1000) amt.style.fontWeight = '700';
       const sel = document.createElement('select');
       sel.setAttribute('aria-label', '費用分類');
       sel.disabled = lock;
@@ -1441,6 +1471,7 @@ function renderCats(){
         sel.appendChild(op);
       });
       sel.className = (catKey(it.cat) ? 'set' : '') + (effCat(it) === NONE ? ' isnone' : '');
+      if (effCat(it) !== NONE) sel.style.borderLeft = '4px solid ' + CAT_COLOR[effCat(it)];
       sel.title = catKey(it.cat) ? '手動指定：' + catName(it.cat) : '自動判斷：' + catName(auto);
       sel.onchange = e => {
         noticeProxy((f.name || '').trim());
@@ -1467,6 +1498,12 @@ function updateDerived(){
     if (!r) return;
     r.total.innerHTML = '<span class="tlabel">總計</span>' + nt(paid[fi]);
   });
+  const oldHint = document.getElementById('startHint');
+  if (oldHint) oldHint.remove();
+  if (calc(t).total <= 0 && !isLocked(t)) {
+    document.getElementById('fams').insertAdjacentHTML('afterend',
+      '<div class="starthint" id="startHint">先記第一筆：在上面任何一家填 <b>品名</b> 和 <b>金額</b>，分帳結果會即時算出來。</div>');
+  }
   refreshSettle();
   renderCats();
   syncFoldBtn();
@@ -1475,6 +1512,55 @@ function updateDerived(){
 
 /* ---------- 匯款帳號設定（在計算結果區） ---------- */
 /* ---------- 結算結果 ---------- */
+const legKey = (t, l) => ((t.families[l.from].name || '').trim() + '→' + (t.families[l.to].name || '').trim());
+const isPaidLeg = (t, l) => !!(t.paidMarks && t.paidMarks[legKey(t, l)]);
+function togglePaid(t, l){
+  const k = legKey(t, l);
+  t.paidMarks = t.paidMarks || {};
+  if (t.paidMarks[k]) delete t.paidMarks[k]; else t.paidMarks[k] = true;
+  save(); refreshSettle();
+}
+
+function renderMyCard(t, bal, legs, total){
+  const card = document.getElementById('myCard');
+  const me = (sync.who || '').trim();
+  const mi = me ? t.families.findIndex(f => (f.name || '').trim() === me) : -1;
+  if (mi < 0 || total <= 0) { card.hidden = true; return; }
+  card.hidden = false;
+  const v = bal[mi];
+  const myOut = legs.filter(l => l.from === mi);
+  const myIn = legs.filter(l => l.to === mi);
+  let html = '<div class="mywho">' + esc(me) + '｜這次的結論</div>';
+  if (v < 0 && myOut.length) {
+    const allPaid = myOut.every(l => isPaidLeg(t, l));
+    html += myOut.map(l =>
+      '<div class="myline">匯 <b class="pay">' + nt(l.amt) + '</b> 給 ' + esc(t.families[l.to].name || '未命名') + '</div>').join('');
+    html += '<div class="myacts">';
+    myOut.forEach((l, i) => {
+      const to = (t.families[l.to].name || '').trim();
+      const acc = accOf(to);
+      const ok = !!(state.accOk && state.accOk[to]);
+      if (acc && ok) html += '<button class="mybtn" data-copy="' + esc(acc) + '">複製 ' + esc(to) + ' 帳號</button>';
+      html += '<button class="mybtn' + (isPaidLeg(t, l) ? ' done' : '') + '" data-paid="' + i + '">' +
+        (isPaidLeg(t, l) ? '✓ 已匯款' : '匯好了，按這裡') + '</button>';
+    });
+    html += '</div>';
+    if (allPaid) html += '<div class="mynote">你這次的匯款都完成了 ✓</div>';
+    else if (myOut.some(l => !accOf((t.families[l.to].name || '').trim())))
+      html += '<div class="mynote">對方還沒填帳號，可先到第 3 區展開「帳號」提醒對方填寫。</div>';
+  } else if (v > 0) {
+    const done = myIn.filter(l => isPaidLeg(t, l)).length;
+    html += '<div class="myline">應收 <b class="get">' + nt(v) + '</b></div>' +
+      '<div class="mynote">共 ' + myIn.length + ' 家要匯給你' +
+      (myIn.length ? '，已標記匯款 ' + done + ' / ' + myIn.length : '') + '。</div>';
+  } else {
+    html += '<div class="myline">這次剛好打平，不用匯款 ✓</div>';
+  }
+  card.innerHTML = html;
+  card.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copyText(b.dataset.copy, '已複製帳號'));
+  card.querySelectorAll('[data-paid]').forEach(b => b.onclick = () => togglePaid(t, myOut[Number(b.dataset.paid)]));
+}
+
 function refreshSettle(){
   const t = trip();
   const { paid, total, avg, bal } = calc(t);
@@ -1501,6 +1587,7 @@ function refreshSettle(){
     route.className = '';
     route.innerHTML = '<div class="empty">記了金額之後，這裡會列出誰要匯給誰。</div>';
     renderChecks(legs);
+    renderMyCard(t, bal, legs, total);
     return;
   }
 
@@ -1529,7 +1616,7 @@ function refreshSettle(){
   } else {
     route.className = 'route';
     route.innerHTML = legs.map((l, i) =>
-      '<div class="leg" role="button" tabindex="0" aria-expanded="false"><div class="step" style="color:' +
+      '<div class="leg' + (isPaidLeg(t, l) ? ' ispaid' : '') + '" role="button" tabindex="0" aria-expanded="false"><div class="step" style="color:' +
       colors[l.from] + '">' + (i + 1) +
       '</div><div class="who"><span class="f" style="color:' + colors[l.from] + '">' +
       dot(colors[l.from]) + esc(t.families[l.from].name) +
@@ -1539,8 +1626,17 @@ function refreshSettle(){
       '<small>' + (l.kind === 'out' ? '代收方把多的錢轉出' : '補齊自己的分攤') +
       '　<span class="why">怎麼算的 ▾</span></small></div>' +
       '<div class="legamt">' + nt(l.amt) + '</div>' +
+      '<button class="legpaid' + (isPaidLeg(t, l) ? ' done' : '') + '" data-leg="' + i + '">' +
+      (isPaidLeg(t, l) ? '✓ 已匯款' : '未匯款') + '</button>' +
       '<div class="legaccrow" hidden></div>' +
       '<div class="legdetail" hidden>' + legWhy(t, l) + '</div></div>').join('');
+    const doneN = legs.filter(l => isPaidLeg(t, l)).length;
+    if (doneN) route.insertAdjacentHTML('afterbegin',
+      '<div class="routeprog">匯款進度：' + doneN + ' / ' + legs.length + ' 筆已標記' +
+      (doneN === legs.length ? '，全部完成 🎉' : '') + '</div>');
+    route.querySelectorAll('.legpaid').forEach(btn => {
+      btn.onclick = e => { e.stopPropagation(); togglePaid(t, legs[Number(btn.dataset.leg)]); };
+    });
     route.querySelectorAll('.legacc').forEach(btn => {
       const fi = Number(btn.dataset.to);
       const f = t.families[fi];
@@ -1635,6 +1731,7 @@ function refreshSettle(){
   }
   document.getElementById('mPay').textContent = legs.length ? legs.length + ' 筆匯款' : '';
   renderChecks(legs);
+  renderMyCard(t, bal, legs, total);
 }
 
 /* ---------- 驗算 ---------- */
@@ -1787,6 +1884,16 @@ function applyLock(){
   document.getElementById('lockMsg').textContent = shut ? '鎖定中' : '可編輯';
   document.querySelectorAll('#fams input').forEach(el => { el.readOnly = shut || el.readOnly; });
 }
+document.getElementById('checkHd').onclick = () => {
+  const c = document.getElementById('checks');
+  c.hidden = !c.hidden;
+  const hd = document.getElementById('checkHd');
+  hd.setAttribute('aria-expanded', String(!c.hidden));
+  hd.querySelector('.chev').textContent = c.hidden ? '▸' : '▾';
+};
+document.getElementById('checkHd').onkeydown = e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.getElementById('checkHd').onclick(); }
+};
 document.getElementById('lockToggle').onclick = () => {
   const t = trip(), shut = isLocked(t);
   t.locked = !shut; save(); render();
@@ -1872,6 +1979,10 @@ function describeChange(oldStr, newObj, who){
     if ((p.name || '') !== (t.name || '')) parts.push('出遊改名「' + (p.name || '未命名') + '」→「' + (t.name || '未命名') + '」');
     if ((p.date || '') !== (t.date || '')) parts.push(label + '日期 ' + (p.date || '空') + ' → ' + (t.date || '空'));
     if (p.locked !== t.locked) parts.push(label + (t.locked === false ? '已解鎖' : '已鎖定'));
+    const pk = Object.assign({}, p.paidMarks), tk = Object.assign({}, t.paidMarks);
+    Object.keys(Object.assign({}, pk, tk)).forEach(k => {
+      if (!!pk[k] !== !!tk[k]) parts.push(label + '「' + k.replace('→', ' → ') + '」' + (tk[k] ? '標記已匯款' : '取消匯款標記'));
+    });
     if ((p.mode || 'hub') !== (t.mode || 'hub')) parts.push(label + '匯款方式改為「' + ((t.mode || 'hub') === 'hub' ? '集中匯' : '彼此匯') + '」');
 
     const oF = byId(p.families);
@@ -1983,6 +2094,7 @@ function mergeTrips(bArr, mArr, tArr){
       mode: pick(b && b.mode, m.mode, t.mode),
       auto: pick(b && b.auto, m.auto, t.auto),
       locked: pick(b && b.locked, m.locked, t.locked),
+      paidMarks: mergeAccounts(b && b.paidMarks, m.paidMarks, t.paidMarks),
       demo: t.demo || m.demo,
       families: mergeFamilies(b && b.families, m.families, t.families)
     });
