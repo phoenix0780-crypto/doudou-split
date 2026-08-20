@@ -98,8 +98,8 @@
   .synctoggle{flex:none;margin-left:auto;display:flex;align-items:center;gap:6px;font:inherit;font-size:12px;
     color:var(--ink-soft);background:transparent;border:0;padding:4px 2px;cursor:pointer}
   .synctoggle:hover{color:var(--stream)}
-  .herefloat{position:fixed;left:14px;bottom:calc(20px + env(safe-area-inset-bottom, 0px));z-index:64;
-    display:flex;flex-direction:column-reverse;gap:8px}
+  .herefloat{position:fixed;right:14px;top:calc(66px + env(safe-area-inset-top, 0px));z-index:64;
+    display:flex;flex-direction:column;gap:8px}
   .hball{width:44px;height:44px;border-radius:50%;border:2px solid #fff;background:var(--stream);color:#fff;
     font-weight:700;font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;
     box-shadow:0 4px 16px rgba(23,52,42,.25);cursor:pointer;position:relative;opacity:.95;padding:0}
@@ -109,7 +109,7 @@
   .hball.self{outline:2.5px solid var(--forest);outline-offset:1.5px}
   .hball.hmore{background:var(--ink-soft);font-size:13px}
   @media (max-width:520px){
-    .herefloat{left:10px;bottom:calc(76px + env(safe-area-inset-bottom, 0px))}
+    .herefloat{right:10px;top:calc(58px + env(safe-area-inset-top, 0px))}
     .hball{width:40px;height:40px;font-size:14px}
   }
   .sdot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
@@ -693,7 +693,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21j</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21k</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
