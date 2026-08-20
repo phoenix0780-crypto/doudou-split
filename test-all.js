@@ -225,6 +225,14 @@ const identify = (d, name) => {
   ok('顯示匯款進度', /匯款進度：1/.test((U.d.querySelector('.routeprog') || {}).textContent || ''));
   U.d.querySelector('.legpaid').click(); await sleep(120);
   ok('可取消匯款標記', U.w.eval("Object.keys(trip().paidMarks||{}).length") === 0);
+  /* 兩種匯款方式的標記各自獨立 */
+  U.d.querySelector('.legpaid').click(); await sleep(120);
+  U.d.querySelector('.mode[data-mode="min"]').click(); await sleep(150);
+  ok('切到彼此匯不帶入標記', U.d.querySelectorAll('.legpaid.done').length === 0);
+  ok('集中匯標記仍保留', U.w.eval("Object.keys(trip().paidMarks||{}).filter(k=>k.startsWith('hub:')).length") === 1);
+  U.d.querySelector('.mode[data-mode="hub"]').click(); await sleep(150);
+  ok('切回集中匯標記還在', U.d.querySelectorAll('.legpaid.done').length === 1);
+  U.d.querySelector('.legpaid.done').click(); await sleep(120);
   U.w.eval("sync.who='語安家'; refreshSettle();");
   ok('結論卡出現', U.d.getElementById('myCard').hidden === false);
   const pmB = { trips: [{ id: 't1', name: 'x', date: '2026-01-01', families: [
