@@ -35,6 +35,11 @@
   .lockbtn .ico{width:17px;height:17px;line-height:0;flex:none}
   .lockbtn .ico svg{width:100%;height:100%;display:block}
   .lockbtn.open{background:#fff;border-color:var(--stream);color:var(--stream)}
+  @keyframes lockglow{
+    0%,100%{box-shadow:0 0 0 0 rgba(232,163,61,0)}
+    50%{box-shadow:0 0 0 7px rgba(232,163,61,.45)}
+  }
+  .lockbtn.notice{animation:lockglow 1s ease-in-out 3;background:#E8A33D;border-color:#E8A33D;color:#fff}
   .admin{margin-top:26px;padding-top:14px;border-top:1px dashed var(--line)}
   .adminhead{font-size:11px;letter-spacing:.14em;color:var(--ink-soft);margin-bottom:6px}
   .adminnote{font-size:12px;color:var(--ink-soft);line-height:1.6;margin:0 0 10px}
@@ -604,7 +609,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20j</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20k</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -907,6 +912,19 @@ function save(){
     schedulePush();
   }, 400);
 }
+/* 需要解鎖時：捲到頁頂並讓鎖定鈕發亮提示 */
+function pingLock(msg){
+  flash(msg || '這次紀錄已鎖定，先解鎖');
+  try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  catch (e) { window.scrollTo(0, 0); }
+  const b = document.getElementById('lockToggle');
+  if (!b) return;
+  b.classList.remove('notice');
+  void b.offsetWidth;               /* 重新觸發動畫 */
+  b.classList.add('notice');
+  clearTimeout(pingLock.t);
+  pingLock.t = setTimeout(() => b.classList.remove('notice'), 3200);
+}
 function flash(msg){
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -1149,7 +1167,7 @@ function render(){
     nameIn.readOnly = true;
     nameIn.title = '連點兩下改名稱';
     const startEdit = () => {
-      if (isLocked(t)) { flash('這次紀錄已鎖定，先按左上角解鎖'); return; }
+      if (isLocked(t)) { pingLock(); return; }
       nameIn.readOnly = false; nameIn.focus(); nameIn.select();
     };
     nameIn.ondblclick = startEdit;
@@ -1553,7 +1571,7 @@ function refreshSettle(){
         numIn.oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 20); saveAcc(); };
         okBtn.onclick = e => {
           e.stopPropagation();
-          if (isLocked(t)) { flash('這次紀錄已鎖定，先解鎖'); return; }
+          if (isLocked(t)) { pingLock(); return; }
           const ok = !!(state.accOk && state.accOk[key]);
           if (ok) { delete state.accOk[key]; paint(); save(); return; }
           if (!bankIn.value.trim() || !numIn.value.trim()) { flash('銀行代碼和帳號都要填'); return; }
@@ -2224,7 +2242,7 @@ const switchBtn = document.getElementById('switchBtn');
 let titleEditing = false, clickTimer = null;
 
 function setTitleEdit(on){
-  if (on && isLocked()) { flash('這次紀錄已鎖定，先按左上角解鎖'); return; }
+  if (on && isLocked()) { pingLock(); return; }
   titleEditing = on;
   switchBtn.classList.toggle('editing', on);
   document.getElementById('switchName').hidden = on;
