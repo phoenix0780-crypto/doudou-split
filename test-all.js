@@ -213,6 +213,30 @@ const identify = (d, name) => {
   ok('手動分類優先於自動', eff({ note: '沙拉油', cat: 'gear' }) === 'gear');
   ok('猜不到歸無法判斷', eff({ note: '公基金' }) === 'none');
 
+  /* ---------- I. UX：結論卡／已匯款標記／驗算摺疊／空狀態 ---------- */
+  const U = boot(); await sleep(1300);
+  ok('驗算預設收合', U.d.getElementById('checks').hidden === true);
+  U.d.getElementById('checkHd').click();
+  ok('驗算可展開', U.d.getElementById('checks').hidden === false);
+  const pb = U.d.querySelector('.legpaid');
+  ok('匯款列有標記鈕', !!pb);
+  pb.click(); await sleep(120);
+  ok('可標記已匯款', U.w.eval("Object.keys(trip().paidMarks||{}).length") === 1);
+  ok('顯示匯款進度', /匯款進度：1/.test((U.d.querySelector('.routeprog') || {}).textContent || ''));
+  U.d.querySelector('.legpaid').click(); await sleep(120);
+  ok('可取消匯款標記', U.w.eval("Object.keys(trip().paidMarks||{}).length") === 0);
+  U.w.eval("sync.who='語安家'; refreshSettle();");
+  ok('結論卡出現', U.d.getElementById('myCard').hidden === false);
+  const pmB = { trips: [{ id: 't1', name: 'x', date: '2026-01-01', families: [
+    { id: 'f1', name: 'A', items: [{ id: 'i1', note: 'n', amount: '100' }] },
+    { id: 'f2', name: 'B', items: [] }] }], accounts: {} };
+  const pmM = JSON.parse(JSON.stringify(pmB)); pmM.trips[0].paidMarks = { 'B→A': true };
+  const pmR = U.w.eval('merge3')(JSON.stringify(pmB), pmM, JSON.parse(JSON.stringify(pmB)));
+  ok('合併保留匯款標記', pmR.trips[0].paidMarks && pmR.trips[0].paidMarks['B→A'] === true);
+  U.w.eval("trip().families.forEach(f=>f.items.forEach(i=>i.amount='')); trip().locked=false; render();");
+  await sleep(120);
+  ok('空狀態顯示引導', !!U.d.getElementById('startHint'));
+
   /* ---------- 結果 ---------- */
   console.log(fails.length ? 'FAIL (' + fails.length + ')\n - ' + fails.join('\n - ') : 'ALL PASS');
   process.exit(fails.length ? 1 : 0);
