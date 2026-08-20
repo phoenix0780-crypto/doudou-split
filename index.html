@@ -647,7 +647,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20v</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20w</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1512,7 +1512,7 @@ function updateDerived(){
 
 /* ---------- 匯款帳號設定（在計算結果區） ---------- */
 /* ---------- 結算結果 ---------- */
-const legKey = (t, l) => ((t.families[l.from].name || '').trim() + '→' + (t.families[l.to].name || '').trim());
+const legKey = (t, l) => ((t.mode === 'hub' ? 'hub' : 'min') + ':' + (t.families[l.from].name || '').trim() + '→' + (t.families[l.to].name || '').trim());
 const isPaidLeg = (t, l) => !!(t.paidMarks && t.paidMarks[legKey(t, l)]);
 function togglePaid(t, l){
   const k = legKey(t, l);
@@ -1981,7 +1981,8 @@ function describeChange(oldStr, newObj, who){
     if (p.locked !== t.locked) parts.push(label + (t.locked === false ? '已解鎖' : '已鎖定'));
     const pk = Object.assign({}, p.paidMarks), tk = Object.assign({}, t.paidMarks);
     Object.keys(Object.assign({}, pk, tk)).forEach(k => {
-      if (!!pk[k] !== !!tk[k]) parts.push(label + '「' + k.replace('→', ' → ') + '」' + (tk[k] ? '標記已匯款' : '取消匯款標記'));
+      if (!!pk[k] !== !!tk[k]) parts.push(label + '「' + k.replace(/^(hub|min):/, '').replace('→', ' → ') + '」' +
+        (k.startsWith('hub:') ? '（集中匯）' : k.startsWith('min:') ? '（彼此匯）' : '') + (tk[k] ? '標記已匯款' : '取消匯款標記'));
     });
     if ((p.mode || 'hub') !== (t.mode || 'hub')) parts.push(label + '匯款方式改為「' + ((t.mode || 'hub') === 'hub' ? '集中匯' : '彼此匯') + '」');
 
