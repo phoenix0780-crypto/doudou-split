@@ -654,7 +654,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20z</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21a</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1985,13 +1985,19 @@ function showSyncBar(msg, force){
 }
 function hideSyncBar(){ document.getElementById('syncBar').hidden = true; }
 
+function fetchT(url, opts, ms){
+  const ac = new AbortController();
+  const t = setTimeout(() => ac.abort(), ms || 20000);
+  return fetch(url, Object.assign({}, opts, { signal: ac.signal }))
+    .finally(() => clearTimeout(t));
+}
 async function remoteGet(){
   const url = sync.url + (sync.url.includes('?') ? '&' : '?') + 'book=' + encodeURIComponent(sync.book);
-  const res = await fetch(url, { method: 'GET', redirect: 'follow' });
+  const res = await fetchT(url, { method: 'GET', redirect: 'follow' });
   return res.json();
 }
 async function remotePut(force){
-  const res = await fetch(sync.url, {
+  const res = await fetchT(sync.url, {
     method: 'POST', redirect: 'follow',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({
@@ -2234,7 +2240,7 @@ async function pull(auto){
     if (applyRemote(json)) setSync(dirty ? 'busy' : 'on', dirty ? '同步中…' : '已同步');
     if (dirty) schedulePush();
   } catch (e) {
-    setSync('err', '離線');
+    setSync('err', e && e.name === 'AbortError' ? '雲端沒回應' : '離線');
   } finally { pulling = false; }
 }
 
@@ -2355,7 +2361,7 @@ document.getElementById('history').onclick = async () => {
   try {
     const url = sync.url + (sync.url.includes('?') ? '&' : '?') +
       'book=' + encodeURIComponent(sync.book) + '&log=1&n=30';
-    const json = await (await fetch(url, { method: 'GET', redirect: 'follow' })).json();
+    const json = await (await fetchT(url, { method: 'GET', redirect: 'follow' })).json();
     if (!json.ok || !json.log) { box.innerHTML = '<div class="lempty">讀不到異動紀錄。</div>'; return; }
     if (!json.log.length) { box.innerHTML = '<div class="lempty">還沒有任何異動紀錄。</div>'; return; }
     const rows = json.log.filter(r => (r.what || '').trim() && r.what !== '細項調整（設定或排序）');
