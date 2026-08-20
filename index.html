@@ -98,6 +98,13 @@
   .synctoggle{flex:none;margin-left:auto;display:flex;align-items:center;gap:6px;font:inherit;font-size:12px;
     color:var(--ink-soft);background:transparent;border:0;padding:4px 2px;cursor:pointer}
   .synctoggle:hover{color:var(--stream)}
+  .here{display:flex;align-items:center;gap:7px;margin:-4px 0 10px;padding-left:2px;flex-wrap:wrap}
+  .here .hlabel{font-size:11.5px;color:var(--ink-soft);flex:none}
+  .here .hchips{display:flex;flex-wrap:wrap;gap:5px}
+  .hchip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;
+    padding:2px 9px 2px 7px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--ink-soft)}
+  .hchip .hdot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+  .hchip.self{background:var(--stream-soft)}
   .sdot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
   .sdot.on{background:var(--ok)} .sdot.busy{background:var(--ember)} .sdot.err{background:var(--bad)}
   .syncbar{display:flex;align-items:center;gap:9px;margin:0 0 14px;padding:9px 12px;background:var(--ember-soft);border:1px solid var(--ember);border-radius:10px;font-size:13px;color:var(--forest)}
@@ -576,6 +583,7 @@
     <h1 class="pagetitle"><span class="theart">☀</span><span class="brandlight">荳荳團</span>分帳計算器</h1>
     <button class="synctoggle" id="syncBtn"><span class="sdot" id="syncDot"></span><span id="syncMsg">單機</span></button>
   </div>
+  <div class="here" id="here" hidden><span class="hlabel">在線上</span><span class="hchips" id="hereChips"></span></div>
   <header class="apphead">
     <div class="acts">
       <button class="topbtn" id="copy">複製結算</button>
@@ -678,7 +686,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21h</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-21i</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -857,6 +865,60 @@ function famColorMap(){
   return map;
 }
 
+/* ---------- 誰在線上 ---------- */
+/* state.here = { 家名: 最後一次有動作的時間 }，跟著帳本一起同步。
+   離開分頁或閒置超過 10 分鐘就停止回報，超過 90 秒沒回報的人視為離線。 */
+const HERE_TTL = 90000, HERE_BEAT = 25000, HERE_IDLE = 600000;
+let lastTouch = Date.now(), hereTimer = null;
+
+function mergeHere(a, b){
+  const out = {}, now = Date.now();
+  [a || {}, b || {}].forEach(o => Object.keys(o).forEach(k => {
+    const v = Math.min(Number(o[k]) || 0, now);     /* 對方時鐘走太快時往回夾，避免永遠顯示在線 */
+    if (v > (out[k] || 0)) out[k] = v;
+  }));
+  Object.keys(out).forEach(k => { if (now - out[k] > HERE_IDLE) delete out[k]; });
+  return out;
+}
+
+function touchHere(){
+  const me = (sync.who || '').trim();
+  if (!me) return false;
+  state.here = mergeHere(state.here, null);
+  state.here[me] = Date.now();
+  return true;
+}
+
+function renderPresence(){
+  const box = document.getElementById('here');
+  if (!box) return;
+  const me = (sync.who || '').trim();
+  const now = Date.now();
+  const on = Object.keys(state.here || {})
+    .filter(k => now - (state.here[k] || 0) < HERE_TTL)
+    .sort((a, b) => (a === me ? -1 : b === me ? 1 : a.localeCompare(b, 'zh-Hant')));
+  if (!syncOn() || !on.length) { box.hidden = true; return; }
+  box.hidden = false;
+  const cmap = famColorMap();
+  document.getElementById('hereChips').innerHTML = on.map(n =>
+    '<span class="hchip' + (n === me ? ' self' : '') + '" style="color:' + (cmap[n] || 'var(--stream)') + '">' +
+    '<span class="hdot"></span>' + esc(n) + (n === me ? '（你）' : '') + '</span>').join('');
+}
+
+function heartbeat(){
+  clearTimeout(hereTimer);
+  hereTimer = setTimeout(heartbeat, HERE_BEAT);
+  renderPresence();
+  if (!syncOn() || document.visibilityState !== 'visible') return;
+  if (Date.now() - lastTouch > HERE_IDLE) return;        /* 閒置太久就不再佔用雲端配額 */
+  const me = (sync.who || '').trim();
+  if (!me) return;
+  if (Date.now() - (state.here && state.here[me] || 0) < HERE_BEAT - 2000) return;
+  if (touchHere()) schedulePush();
+}
+['pointerdown', 'keydown'].forEach(ev =>
+  document.addEventListener(ev, () => { lastTouch = Date.now(); }, { passive: true, capture: true }));
+
 const unlocked = new Set();   /* 只存在這次瀏覽，重新整理後一律回到未編輯狀態 */
 const LOCK_SVG = {
   closed:
@@ -978,7 +1040,7 @@ const DEFAULT_ACCOUNTS = {
   '言琳家': '812 20351000054333',
   '惟剴家': '812 28881001553521'
 };
-let state = { trips: [seedReal(), ...seedDemos()], currentId: null, seed: 3, accounts: Object.assign({}, DEFAULT_ACCOUNTS) };
+let state = { trips: [seedReal(), ...seedDemos()], currentId: null, seed: 3, accounts: Object.assign({}, DEFAULT_ACCOUNTS), here: {} };
 state.currentId = state.trips[0].id;
 const trip = () => state.trips.find(t => t.id === state.currentId) || state.trips[0];
 
@@ -1404,6 +1466,7 @@ function render(){
   });
 
   updateDerived();
+  renderPresence();
 }
 
 /* 家庭名稱重複提醒 */
@@ -2158,7 +2221,7 @@ const same = (a, b) => JSON.stringify(a === undefined ? null : a) === JSON.strin
 function canon(v){
   if (Array.isArray(v)) return '[' + v.map(canon).join(',') + ']';
   if (v && typeof v === 'object') return '{' + Object.keys(v)
-    .filter(k => k !== 'currentId' && v[k] !== undefined)
+    .filter(k => k !== 'currentId' && k !== 'here' && v[k] !== undefined)
     .sort().map(k => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}';
   return JSON.stringify(v === undefined ? null : v);
 }
@@ -2243,6 +2306,7 @@ function merge3(baseStr, mine, theirs){
     trips: mergeTrips(base.trips, mine.trips, theirs.trips),
     accounts: mergeAccounts(base.accounts, mine.accounts, theirs.accounts),
     seed: Math.max(mine.seed || 0, theirs.seed || 0),
+    here: mergeHere(mine.here, theirs.here),
     currentId: mine.currentId
   };
   if (!merged.trips.length) merged.trips = theirs.trips.length ? theirs.trips : mine.trips;
@@ -2261,6 +2325,9 @@ function applyRemote(json){
   if (!theirs || !Array.isArray(theirs.trips) || !theirs.trips.length) return false;
   if (!theirs.accounts) theirs.accounts = {};
 
+  state.here = mergeHere(state.here, theirs.here);   /* 在線名單隨時更新，不算資料異動 */
+  renderPresence();
+
   if (canon(state) === canon(theirs)) {          /* 完全一樣就什麼都不用做 */
     sync.rev = json.updatedAt; setBase(json.data); saveSyncCfg(); dirty = false;
     return true;
@@ -2274,7 +2341,9 @@ function applyRemote(json){
   const nothingNew = mStr === canon(state);
   const localOnly = mStr === canon(theirs);   /* 合併結果跟雲端一樣 → 沒有我的新東西要推 */
   const y = window.scrollY;
+  const keepHere = state.here;
   state = merged;
+  state.here = mergeHere(keepHere, merged.here);
   syncSeq++;
   sync.rev = json.updatedAt;
   setBase(json.data);
@@ -2430,6 +2499,7 @@ document.getElementById('iOk').onclick = async () => {
   sync.who = who;
   await saveSyncCfg();
   document.getElementById('imodal').hidden = true;
+  if (touchHere()) schedulePush();
   render();
   flash('哈囉 ' + who + '，開始記帳吧');
 };
@@ -2532,8 +2602,11 @@ function schedulePoll(){
   }, active ? POLL_ACTIVE : POLL_IDLE);
 }
 schedulePoll();
+heartbeat();
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') { markActive(); pull(true); schedulePoll(); }
+  if (document.visibilityState === 'visible') {
+    lastTouch = Date.now(); markActive(); pull(true); schedulePoll(); heartbeat();
+  }
 });
 
 /* ---------- 出遊標題：單擊換紀錄、連點兩下改名 ---------- */
@@ -2911,6 +2984,7 @@ document.getElementById('delTrip').onclick = () => {
     setSync('busy', '連線中…');
     await pull(true);
     if (!sync.who) askWho();
+    else if (touchHere()) { renderPresence(); schedulePush(); }
   } else { setSync('', '單機'); }
 })();
 </script>
