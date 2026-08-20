@@ -406,6 +406,8 @@
   .pdfdoc .foot{margin-top:8px;font-size:11.5px;color:#5A6B60}
   .pdfdoc .pcats{width:100%;border-collapse:collapse}
   .pdfdoc .pcats td{padding:6px 8px;border-bottom:1px solid #e4e6dc;font-size:13px}
+  .pdfdoc .pcats .chead td{background:#f4f6ef;font-weight:700}
+  .pdfdoc .pcats .citem td{border-bottom:1px dashed #edeee6;font-size:12.5px}
   .pdfdoc .pcats .pbar{width:45%}
   @media (max-width:520px){.pdfdoc .famgrid{grid-template-columns:1fr}.pdfdoc .cards{gap:6px}}
   @page{margin:14mm 12mm}
@@ -617,7 +619,7 @@
     </div>
   </div>
 
-  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20q</span></p>
+  <p class="copyright">Copyright © 2026 phoenix0780. All rights reserved. <span style="opacity:.4">build 2026-08-20r</span></p>
 </div>
 
 <div class="modal" id="imodal" hidden>
@@ -1366,14 +1368,19 @@ function catCalc(t){
   t = t || trip();
   const sum = {}; let total = 0;
   CATS.forEach(c => sum[c.k] = 0);
+  const det = {};
+  CATS.forEach(c => det[c.k] = []);
   (t.families || []).forEach(f => (f.items || []).forEach(i => {
     const v = parseFloat(i.amount) || 0;
     if (v <= 0) return;
-    sum[effCat(i)] += v; total += v;
+    const k = effCat(i);
+    sum[k] += v; total += v;
+    det[k].push({ note: (i.note || '').trim() || '未命名項目', fam: (f.name || '').trim() || '未命名', val: v });
   }));
-  const rows = CATS.filter(c => c.k !== NONE).map(c => ({ k: c.k, name: c.n, val: sum[c.k] }))
+  const mk = c => ({ k: c.k, name: c.n, val: sum[c.k], items: det[c.k].sort((a, b) => b.val - a.val) });
+  const rows = CATS.filter(c => c.k !== NONE).map(mk)
     .filter(r => r.val > 0).sort((a, b) => b.val - a.val);
-  if (sum[NONE]) rows.push({ k: NONE, name: catName(NONE), val: sum[NONE] });
+  if (sum[NONE]) rows.push(mk({ k: NONE, n: catName(NONE) }));
   return { rows, total };
 }
 
@@ -1759,6 +1766,7 @@ function text(){
     L.push('四、費用分類');
     cats.rows.forEach(r => {
       L.push('・' + r.name + '：' + nt(r.val) + '（' + Math.round(r.val / cats.total * 100) + '%）');
+      r.items.forEach(it => L.push('　－' + it.note + '（' + it.fam + '）' + nt(it.val)));
     });
   }
   return L.join('\n');
@@ -2376,11 +2384,16 @@ function buildReport(){
   const catSec = cats.total > 0
     ? '<div class="sec"><h2>四、費用分類</h2><table class="pcats">' +
       cats.rows.map(r =>
-        '<tr><td class="nm"><span class="pdot" style="background:' + CAT_COLOR[r.k] + ';width:10px;height:10px;min-width:10px;border-radius:99px;display:inline-block;margin-right:7px;vertical-align:1px"></span>' +
+        '<tr class="chead"><td class="nm"><span class="pdot" style="background:' + CAT_COLOR[r.k] + ';width:10px;height:10px;min-width:10px;border-radius:99px;display:inline-block;margin-right:7px;vertical-align:1px"></span>' +
         esc(r.name) + '</td>' +
         '<td class="pbar"><span style="display:block;height:8px;border-radius:99px;background:' + CAT_COLOR[r.k] + ';width:' + Math.max(4, Math.round(r.val / (cats.rows[0].val || 1) * 100)) + '%"></span></td>' +
         '<td class="n">' + Math.round(r.val / cats.total * 100) + '%</td>' +
-        '<td class="n"><b>' + nt(r.val) + '</b></td></tr>').join('') +
+        '<td class="n"><b>' + nt(r.val) + '</b></td></tr>' +
+        r.items.map(it =>
+          '<tr class="citem"><td class="nm" style="padding-left:24px;color:#4a5248">' + esc(it.note) +
+          '</td><td class="muted" style="font-size:11.5px;color:#8a8f76">' + esc(it.fam) +
+          '</td><td></td><td class="n">' + nt(it.val) + '</td></tr>').join('')
+      ).join('') +
       '</table><p class="foot">分類只作花費結構參考，不影響分攤與匯款金額。</p></div>'
     : '';
 
