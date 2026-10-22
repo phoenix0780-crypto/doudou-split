@@ -2,7 +2,7 @@ name: imgfetch
 on:
   push:
     branches: [imgfetch]
-    paths: ['urls.txt']
+    paths: ['urls.txt','scene/**','render.js']
   workflow_dispatch:
 permissions:
   contents: write
@@ -20,7 +20,7 @@ jobs:
           node-version: '20'
       - name: Install Playwright (only if screenshots requested)
         run: |
-          if grep -qiE '^shot[[:space:]]' urls.txt; then
+          if grep -qiE '^shot[[:space:]]' urls.txt || [ -f scene/index.html ]; then
             npm i --no-save playwright@1.49.1
             npx playwright install --with-deps chromium
           fi
@@ -32,6 +32,12 @@ jobs:
           python3 -m pip install -q pillow
           python3 convert.py "out/$BATCH"
           echo "$BATCH" > out/LATEST
+      - name: Render scene
+        if: hashFiles('scene/index.html') != ''
+        run: |
+          (cd scene && python3 -m http.server 8080 >/dev/null 2>&1 &)
+          sleep 2
+          node render.js http://localhost:8080/index.html "out/$(cat out/LATEST)/render" || true
       - name: Commit results
         run: |
           git config user.name "imgfetch-bot"
