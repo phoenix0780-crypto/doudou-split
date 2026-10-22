@@ -1,4 +1,1 @@
-# 第 3 批: Tesla Model Y (2020-2024 pre-refresh) 參考照 from Wikimedia Commons
-commons Tesla Model Y side profile
-commons Tesla Model Y rear
-commons Tesla Model Y front 2021
+# 第 4 批: 場景渲染 (v8 候選)
