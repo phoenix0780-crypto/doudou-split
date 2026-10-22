@@ -1,0 +1,41 @@
+name: imgfetch
+on:
+  push:
+    branches: [imgfetch]
+    paths: ['urls.txt']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: imgfetch
+  cancel-in-progress: false
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Playwright (only if screenshots requested)
+        run: |
+          if grep -qiE '^shot[[:space:]]' urls.txt; then
+            npm i --no-save playwright@1.49.1
+            npx playwright install --with-deps chromium
+          fi
+      - name: Fetch
+        run: |
+          BATCH=$(date -u +%Y%m%d-%H%M%S)
+          mkdir -p "out/$BATCH"
+          node fetch.js urls.txt "out/$BATCH"
+          python3 -m pip install -q pillow
+          python3 convert.py "out/$BATCH"
+          echo "$BATCH" > out/LATEST
+      - name: Commit results
+        run: |
+          git config user.name "imgfetch-bot"
+          git config user.email "imgfetch-bot@users.noreply.github.com"
+          git add out
+          git commit -m "imgfetch: $(cat out/LATEST) [skip ci]" || echo "nothing to commit"
+          git push
