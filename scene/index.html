@@ -626,7 +626,7 @@ function update(dt,t){
 function resize(){ const w=innerWidth,h=innerHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
 window.addEventListener('resize',resize); resize();
 let last=performance.now(),tt=0;
-function loop(now){ requestAnimationFrame(loop); const dt=Math.min(0.05,(now-last)/1000); last=now; tt+=dt; update(dt,tt); renderer.render(scene,camera); if(L){ L.remove(); L=null; } }
+function loop(now){ requestAnimationFrame(loop); const dt=Math.min(0.5,(now-last)/1000); last=now; tt+=dt; update(dt,tt); renderer.render(scene,camera); if(L){ L.remove(); L=null; } }
 requestAnimationFrame(loop);
 })();
 </script>
