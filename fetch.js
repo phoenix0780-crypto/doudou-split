@@ -27,6 +27,14 @@ const index=[];
         fs.writeFileSync(path.join(outDir,`${tag}-imgs.txt`),imgs.join('\n')+'\n');
         index.push(`${tag}\tshot\t${url}\t${k} screenshots, ${imgs.length} imgs>=300px`);
         await ctx.close();
+      } else if(/^commons\s+/i.test(line)){
+        const q=line.replace(/^commons\s+/i,'');
+        const api='https://commons.wikimedia.org/w/api.php?action=query&list=search&srnamespace=6&srlimit=8&format=json&srsearch='+encodeURIComponent(q);
+        const r=await fetch(api,{headers:{'user-agent':UA+' imgfetch/1.0'}}); const j=await r.json();
+        const titles=((j.query&&j.query.search)||[]).map(x=>x.title).filter(t=>/\.(jpe?g|png)$/i.test(t));
+        let k=0; for(const t of titles){ k++; const fu='https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(t.replace(/^File:/,''))+'?width=1600';
+          try{ const rr=await fetch(fu,{headers:{'user-agent':UA+' imgfetch/1.0'}}); if(!rr.ok) throw new Error('HTTP '+rr.status); const ct=(rr.headers.get('content-type')||'').split(';')[0].trim(); const ext=ct==='image/png'?'png':'jpg'; const buf=Buffer.from(await rr.arrayBuffer()); fs.writeFileSync(path.join(outDir,`${tag}-${String(k).padStart(2,'0')}.${ext}`),buf); index.push(`${tag}-${k}\tcommons\t${t}\t${buf.length} bytes`); }
+          catch(e){ index.push(`${tag}-${k}\tERROR\t${t}\t${e.message}`); } }
       } else {
         const url=line;
         const r=await fetch(url,{headers:{'user-agent':UA,'accept':'image/jpeg,image/png,image/gif,image/*;q=0.8,*/*;q=0.5','referer':new URL(url).origin+'/'}});
