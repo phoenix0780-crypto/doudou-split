@@ -484,10 +484,10 @@ function buildCar(){
  [-1,1].forEach(s=>{ const hl=box(0.06,0.06,0.46,M.headlight,4.56,0.83,s*0.6); hl.rotation.y=s*0.4; g.add(hl); const tl=box(0.06,0.09,0.44,M.taillight,0.1,0.98,s*0.62); tl.rotation.y=-s*0.35; g.add(tl); });
  [-1,1].forEach(s=>{ g.add(box(0.09,0.06,0.17,paint,3.45,1.08,s*0.99)); g.add(box(0.03,0.04,0.08,trim,3.47,1.03,s*0.92)); });
  g.add(box(1.5,0.78,0.5,M.darkMatte,0.2,1.0,0));
- const hatch=new THREE.Group(); hatch.position.set(0.32,1.46,0); hatch.add(box(0.95,0.035,1.4,paint,-0.47,0,0)); hatch.add(box(0.55,0.03,1.25,glass,-0.3,0.02,0)); hatch.rotation.z=-0.5; g.add(hatch);
+ const hatch=new THREE.Group(); hatch.position.set(0.32,1.46,0); hatch.add(box(0.95,0.035,1.4,paint,-0.47,0,0)); hatch.add(box(0.55,0.03,1.25,glass,-0.3,0.02,0)); hatch.rotation.z=-0.16; g.add(hatch); // 尾門只開約 9 度: 190 cm 帳內全開 (約 2 m) 會頂到屋頂, 需設定尾門開啟高度
  const il=new THREE.PointLight(0xffd9a0,0,6,1); il.position.set(0.8,1.1,0); g.add(il); NIGHT.push([il,'intensity',0,0.9]);
  g.position.set(0,0,-3.85); g.rotation.y=PI/2;
- tag(g,{cat:'車輛',name:'Tesla Model Y RWD (2024, 露營模式)',dim:'4751x1921x1624 mm, 軸距 2890; 後廂 108x94.5x69 cm 約 500 L',spec:'2024 年式 (改款前) RWD, 19 吋 Gemini 鋁圈; 全玻璃車頂、隱藏式門把、黑色窗框; 後車廂主艙約 500 L + 下層置物槽 120 L + 前車廂 117 L; 尾門開啟接車尾連接件; 露營模式一晚耗電約 10~15%',status:'既有',car:'裝備全部放後車廂與前車廂',view:V(1,0,-1),dist:5.5});
+ tag(g,{cat:'車輛',name:'Tesla Model Y RWD (2024, 露營模式)',dim:'4751x1921x1624 mm, 軸距 2890; 後廂 108x94.5x69 cm 約 500 L',spec:'2024 年式 (改款前) RWD, 19 吋 Gemini 鋁圈; 全玻璃車頂、隱藏式門把、黑色窗框; 後車廂主艙約 500 L + 下層置物槽 120 L + 前車廂 117 L; 尾門伸進車尾帳內, 尾門全開約 2 m 高會頂到 190 cm 的帳頂, 要先設定尾門開啟高度 (手動停在想要的高度, 長按尾門按鈕 3 秒); 露營模式一晚耗電約 10~15%',status:'既有',car:'裝備全部放後車廂與前車廂',view:V(1,0,-1),dist:5.5});
  return g;
 }
 
@@ -504,9 +504,10 @@ function buildSkyExpan(){
    const win=new THREE.Path(); win.moveTo(-3.3,0.7); win.lineTo(-1.5,0.7); win.lineTo(-1.5,1.25); win.lineTo(-3.3,1.25); win.closePath(); sp.holes.push(win);
    const geo=new THREE.ShapeGeometry(sp,8); scaleUV(geo,8); geo.rotateY(-PI/2); geo.translate(-hw,0,0); g.add(sh(new THREE.Mesh(geo,M.skyexD)));
    g.add(poly([V(-hw,0.7,-3.3),V(-hw,0.7,-1.5),V(-hw,1.25,-1.5),V(-hw,1.25,-3.3)],M.mesh,45,false,V(-1,0,0))); }
- { const sp=new THREE.Shape(); sp.moveTo(zA,0.02); sp.lineTo(zB,0.02); sp.lineTo(zB,he); sp.lineTo(zA,he); sp.closePath();
-   const dz=SKY.doorZ; const door=new THREE.Path(); door.moveTo(dz-0.5,0.02); door.lineTo(dz+0.5,0.02); door.lineTo(dz+0.5,1.25); door.lineTo(dz-0.5,1.25); door.closePath(); sp.holes.push(door);
-   const win=new THREE.Path(); win.moveTo(-1.3,0.7); win.lineTo(-0.6,0.7); win.lineTo(-0.6,1.25); win.lineTo(-1.3,1.25); win.closePath(); sp.holes.push(win);
+ { // +x wall: shape u = -z so that rotateY(+90deg) maps u -> world z
+   const sp=new THREE.Shape(); sp.moveTo(-zB,0.02); sp.lineTo(-zA,0.02); sp.lineTo(-zA,he); sp.lineTo(-zB,he); sp.closePath();
+   const dz=-SKY.doorZ; const door=new THREE.Path(); door.moveTo(dz-0.5,0.02); door.lineTo(dz+0.5,0.02); door.lineTo(dz+0.5,1.25); door.lineTo(dz-0.5,1.25); door.closePath(); sp.holes.push(door);
+   const win=new THREE.Path(); win.moveTo(0.6,0.7); win.lineTo(1.3,0.7); win.lineTo(1.3,1.25); win.lineTo(0.6,1.25); win.closePath(); sp.holes.push(win);
    const geo=new THREE.ShapeGeometry(sp,8); scaleUV(geo,8); geo.rotateY(PI/2); geo.translate(hw,0,0); g.add(sh(new THREE.Mesh(geo,M.skyexD)));
    g.add(poly([V(hw,0.7,-1.3),V(hw,0.7,-0.6),V(hw,1.25,-0.6),V(hw,1.25,-1.3)],M.mesh,45,false,V(1,0,0)));
    const roll=cyl(0.06,0.06,1.0,M.skyex,hw+0.02,1.3,dz); roll.rotation.x=PI/2; g.add(roll);
