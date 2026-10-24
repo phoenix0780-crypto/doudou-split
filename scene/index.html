@@ -111,6 +111,7 @@ T.dirt=tex(256,256,(g,w,h)=>{ g.fillStyle='#8f7a5e'; g.fillRect(0,0,w,h); for(le
 T.weave=tex(64,64,(g,w,h)=>{ g.fillStyle='#ececec'; g.fillRect(0,0,w,h); for(let i=0;i<w;i+=2){ g.fillStyle=(i%4===0)?'#e0e0e0':'#f4f4f4'; g.fillRect(i,0,1,h);} for(let j=0;j<h;j+=2){ g.fillStyle='rgba(0,0,0,0.06)'; g.fillRect(0,j,w,1);} for(let i=0;i<300;i++){ g.fillStyle='rgba(0,0,0,'+(rnd()*0.05).toFixed(3)+')'; g.fillRect(rnd()*w,rnd()*h,2,2);} });
 T.mesh=tex(32,32,(g,w,h)=>{ g.clearRect(0,0,w,h); g.fillStyle='rgba(35,35,38,0.95)'; for(let i=0;i<w;i+=4){ g.fillRect(i,0,1,h); g.fillRect(0,i,w,1); } });
 T.wood=tex(256,256,(g,w,h)=>{ g.fillStyle='#9a7446'; g.fillRect(0,0,w,h); for(let i=0;i<120;i++){ g.strokeStyle='rgba(60,35,10,'+(0.08+rnd()*0.2).toFixed(2)+')'; g.lineWidth=1+rnd()*2; const y=rnd()*h; g.beginPath(); g.moveTo(0,y); g.bezierCurveTo(w/3,y+(rnd()-0.5)*20,2*w/3,y+(rnd()-0.5)*20,w,y); g.stroke(); } });
+T.plateG=tex(512,352,(g,w,h)=>{ g.fillStyle='#3e4a3a'; g.fillRect(0,0,w,h); g.strokeStyle='#5a6655'; g.lineWidth=2; const hole=(x,y)=>{ g.beginPath(); g.arc(x,y,7,0,2*PI); g.fillStyle='#070708'; g.fill(); g.stroke(); }; for(let i=0;i<16;i++){ hole(28+i*30.4,22); hole(28+i*30.4,h-22); } for(let j=1;j<10;j++){ hole(22,22+j*30.8); hole(w-22,22+j*30.8); } g.fillStyle='#8a9a86'; g.font='bold 60px sans-serif'; g.fillText('05',w/2-40,h/2+20); },null,true);
 T.plate=tex(512,352,(g,w,h)=>{ g.fillStyle='#141516'; g.fillRect(0,0,w,h); g.strokeStyle='#3a3c40'; g.lineWidth=2; const hole=(x,y)=>{ g.beginPath(); g.arc(x,y,7,0,2*PI); g.fillStyle='#070708'; g.fill(); g.stroke(); }; for(let i=0;i<16;i++){ hole(28+i*30.4,22); hole(28+i*30.4,h-22); } for(let j=1;j<10;j++){ hole(22,22+j*30.8); hole(w-22,22+j*30.8); } },null,true);
 T.waffle=tex(64,64,(g,w,h)=>{ g.fillStyle='#3a3e46'; g.fillRect(0,0,w,h); g.fillStyle='#474c55'; for(let i=0;i<w;i+=8) for(let j=0;j<h;j+=8) g.fillRect(i+1,j+1,6,6); });
 T.tuft=tex(64,64,(g,w,h)=>{ g.clearRect(0,0,w,h); const cs=['#4f8a2c','#6fa544','#86b957','#5f9a36']; for(let i=0;i<10;i++){ const x=8+rnd()*48; g.strokeStyle=cs[i%4]; g.lineWidth=2.2; g.beginPath(); g.moveTo(x,h); g.quadraticCurveTo(x+(rnd()-0.5)*18,h*0.5,x+(rnd()-0.5)*26,6+rnd()*18); g.stroke(); } },null,true);
@@ -184,6 +185,11 @@ const M={
  skirt:std({color:0x5a4634,roughness:1,side:THREE.DoubleSide}),
  copper:std({color:0xb87a4a,roughness:0.35,metalness:0.8}),
  gemini:std({color:0x2e3034,roughness:0.5,metalness:0.6}),
+ plateGreen:std({map:T.plateG,roughness:0.6,metalness:0.35}),
+ plateBlack:std({color:0x1b1c1e,roughness:0.6,metalness:0.4}),
+ steelDark:std({color:0x3a3c40,roughness:0.5,metalness:0.7}),
+ cardGray:std({color:0x7a7d80,roughness:0.6}),
+ cardSand:std({color:0xb8a784,roughness:0.6}),
  geminiLight:std({color:0x6a6d73,roughness:0.45,metalness:0.7}),
  bladeDark:std({color:0x2a2c30,roughness:0.5}),
  bulb:[0,1,2].map(()=>std({color:0xffe9b0,emissive:0xffc766,emissiveIntensity:0.15,roughness:0.4}))
@@ -365,10 +371,35 @@ function makeMoonChair(o){ // KZM 休閒椅: bucket seat on crossed steel legs
  g.add(bar(V(-X-0.06,0.02,Z*0.8),V(-X-0.06,0.02,-Z*0.8),0.009,fr)); g.add(bar(V(X+0.06,0.02,Z*0.8),V(X+0.06,0.02,-Z*0.8),0.009,fr));
  [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([sx,sz])=>g.add(cyl(0.025,0.028,0.015,M.black,sx*(X+0.06),0.008,sz*Z*0.8)));
  return g; }
-function makeTable(){ const g=new THREE.Group(); const w=0.6,d=0.41,h=0.39; g.add(box(w,0.004,d,M.plate,0,h,0));
+function makeTable(opts){ const o=opts||{}; const g=new THREE.Group(); const w=0.6,d=0.4,h=o.h||0.39; const plate=o.plate||M.plate;
+ g.add(box(w,0.004,d,plate,0,h,0));
  g.add(box(w-0.04,0.018,0.018,M.black,0,h-0.011,-d/2+0.03)); g.add(box(w-0.04,0.018,0.018,M.black,0,h-0.011,d/2-0.03));
  [-1,1].forEach(sx=>{ const hx=sx*(w/2-0.06); g.add(mesh(new THREE.SphereGeometry(0.012,8,6),M.black,hx,h-0.03,0)); [-1,1].forEach(sz=>g.add(bar(V(hx,h-0.03,0),V(sx*(w/2-0.04),0.012,sz*(d/2-0.02)),0.008,M.black))); [-1,1].forEach(sz=>g.add(cyl(0.011,0.011,0.01,M.dark,sx*(w/2-0.04),0.005,sz*(d/2-0.02)))); });
- g.add(bar(V(-(w/2-0.06),h-0.03,0),V(w/2-0.06,h-0.03,0),0.008,M.black)); return g; }
+ g.add(bar(V(-(w/2-0.06),h-0.03,0),V(w/2-0.06,h-0.03,0),0.008,M.black));
+ if(o.lampPost){ const px=-w/2+0.04,pz=-d/2+0.03; g.add(bar(V(px,h,pz),V(px,h+0.72,pz),0.006,M.black)); g.add(bar(V(px,h+0.72,pz),V(px+0.22,h+0.78,pz),0.006,M.black)); const hook=new THREE.Mesh(new THREE.TorusGeometry(0.02,0.004,6,12,PI*1.5),M.black); hook.position.set(px+0.23,h+0.76,pz); hook.rotation.y=PI/2; g.add(hook); g.userData.lampTip=V(px+0.23,h+0.74,pz); }
+ return g; }
+function makeShelf(){ // 山趣 05 層架 49.3x10x27, 鋁板 2 mm, 兩端可拆腳
+ const g=new THREE.Group(); const w=0.493,d=0.10,h=0.27; g.add(box(w,0.003,d,M.plateGreen,0,h,0));
+ [-1,1].forEach(s=>{ g.add(bar(V(s*(w/2-0.02),h,-d/2+0.015),V(s*(w/2-0.02),0,-d/2+0.015),0.005,M.black)); g.add(bar(V(s*(w/2-0.02),h,d/2-0.015),V(s*(w/2-0.02),0,d/2-0.015),0.005,M.black)); g.add(bar(V(s*(w/2-0.02),0.004,-d/2+0.015),V(s*(w/2-0.02),0.004,d/2-0.015),0.005,M.black)); });
+ for(let i=0;i<5;i++){ const hole=new THREE.Mesh(new THREE.CircleGeometry(0.006,8),M.darkMatte); hole.rotation.x=-PI/2; hole.position.set(-0.18+i*0.09,h+0.002,0.03); g.add(hole); }
+ return g; }
+function makeIGTFrame(){ // 山趣 05 IGT 連接板 (一單位框, 估外框 40x30, 開口 36x26)
+ const g=new THREE.Group(); const W=0.40,D=0.30,t=0.02,th=0.004;
+ g.add(box(W,th,t,M.plateBlack,0,0,-D/2+t/2)); g.add(box(W,th,t,M.plateBlack,0,0,D/2-t/2)); g.add(box(t,th,D-2*t,M.plateBlack,-W/2+t/2,0,0)); g.add(box(t,th,D-2*t,M.plateBlack,W/2-t/2,0,0));
+ const lip=box(W-0.04,0.012,0.006,M.black,0,-0.006,-D/2+0.023); g.add(lip); const lip2=box(W-0.04,0.012,0.006,M.black,0,-0.006,D/2-0.023); g.add(lip2);
+ const top=box(W-0.06,0.002,D-0.06,M.meshPocket,0,-0.004,0); top.castShadow=false; g.add(top); return g; }
+function makeCardLight(col){ // 山趣 卡片燈 (估 11x7x2)
+ const g=new THREE.Group(); g.add(rbox(0.11,0.02,0.07,0.006,col)); const face=box(0.08,0.004,0.045,M.lampGlass,0,0.02,0); face.castShadow=false; g.add(face); const ring=new THREE.Mesh(new THREE.TorusGeometry(0.006,0.0015,6,10),M.black); ring.position.set(0.05,0.012,-0.03); ring.rotation.x=PI/2; g.add(ring); return g; }
+function makePigtail(){ // 山趣 豬尾巴燈掛 A065: 細鐵桿 + 螺旋頭, 全長估 23 cm
+ const g=new THREE.Group(); g.add(bar(V(0,0,0),V(0,0.2,0),0.003,M.steelDark)); const curve=new THREE.CatmullRomCurve3([V(0,0.2,0),V(0.012,0.215,0.005),V(0.02,0.235,0),V(0.01,0.25,-0.006),V(-0.005,0.245,0),V(-0.01,0.232,0.008)]); g.add(new THREE.Mesh(new THREE.TubeGeometry(curve,24,0.003,6,false),M.steelDark)); g.userData.tip=V(0.005,0.236,0); return g; }
+function makeLR40(){ // NITECORE LR40 117x96x96 (不含提把): 金屬燈罩 + 籠形護罩 + 頂提把
+ const g=new THREE.Group(); const r=0.048;
+ g.add(cyl(r,r,0.03,M.steelDark,0,0.015,0,20)); g.add(cyl(0.032,0.034,0.04,M.lampGlass,0,0.05,0,16));
+ for(let i=0;i<6;i++){ const a=i*PI/3; const b=bar(V(Math.cos(a)*0.038,0.03,Math.sin(a)*0.038),V(Math.cos(a)*0.038,0.075,Math.sin(a)*0.038),0.002,M.steelDark); b.castShadow=false; g.add(b); }
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(0.038,0.002,6,20),M.steelDark); ring.rotation.x=PI/2; ring.position.y=0.055; g.add(ring);
+ const dome=new THREE.Mesh(new THREE.SphereGeometry(r,20,10,0,2*PI,0,PI/2),M.olive); dome.scale.set(1,0.75,1); dome.position.y=0.075; sh(dome); g.add(dome);
+ g.add(cyl(0.012,0.012,0.012,M.black,0,0.115,0,10)); const handle=new THREE.Mesh(new THREE.TorusGeometry(0.028,0.003,6,16,PI),M.steelDark); handle.position.y=0.122; g.add(handle);
+ const pl=new THREE.PointLight(0xffd9a0,0,4,1); pl.position.set(0,0.05,0); g.add(pl); NIGHT.push([pl,'intensity',0,0.7]); return g; }
 function makeCart(){ const g=new THREE.Group(); const Lc=0.8,W=0.51,y=0.49;
  g.add(box(0.73,0.29,0.44,M.oxBlackD,0,y-0.145,0));
  g.add(bar(V(-Lc/2,y,-W/2),V(Lc/2,y,-W/2),0.011,M.steelBlack)); g.add(bar(V(-Lc/2,y,W/2),V(Lc/2,y,W/2),0.011,M.steelBlack)); g.add(bar(V(-Lc/2,y,-W/2),V(-Lc/2,y,W/2),0.011,M.steelBlack)); g.add(bar(V(Lc/2,y,-W/2),V(Lc/2,y,W/2),0.011,M.steelBlack));
@@ -538,14 +569,23 @@ site.add(buildPower());
 site.add(buildStringLights());
 site.add(buildBags());
 
-const table=makeTable(); table.position.set(0,0,2.75); tag(table,{cat:'桌椅推車',name:'ShineTrip 山趣 風格戰術桌 60x41x39',dim:'60x41x39 cm; 折起約 60x40x6 cm, 2.67 kg',spec:'單片 3 mm 黑化鋁合金桌板 60x41 (邊緣雷切鏤空孔可吊掛), 兩側 V 形快拆桌腳 + 中橫桿; 折起估 60x40x6 cm, 2.67 kg (賣場頁 2.2 kg, 可能含袋差異)',status:'既有',car:'尾門視角最右側貼壁立放',view:V(0,0,1),dist:1.5}); site.add(table);
+const table=makeTable(); table.position.set(0,0,2.75); tag(table,{cat:'桌椅推車',name:'ShineTrip 山趣 05 系列 輕量化戰術桌 (既有)',dim:'60x40x39 cm; 折起約 60x40x6 cm, 2.67 kg',spec:'單片 3 mm 黑化鋁合金桌板 60x41 (邊緣雷切鏤空孔可吊掛), 兩側 V 形快拆桌腳 + 中橫桿; 折起估 60x40x6 cm, 2.67 kg (賣場頁 2.2 kg, 可能含袋差異)',status:'既有',car:'尾門視角最右側貼壁立放',view:V(0,0,1),dist:1.5}); site.add(table);
 site.add(buildTableItems(0,0.39,2.75));
+const table2=makeTable({plate:M.plateGreen,lampPost:true,h:0.45}); table2.position.set(-1.25,0,3.05); table2.rotation.y=PI/2; tag(table2,{cat:'桌椅推車',name:'ShineTrip 山趣 05 系列 輕量化戰術桌 (風隱綠, 含燈架)',dim:'60x40x39 cm (桌腳伸縮 30~60); 折起估 60x40x6 cm, 2.67 kg',spec:'2026-10-23 酷澎 NT$720 新購; 鋁板 2.5 mm 開孔可吊掛, 伸縮桌腳, 附燈架',status:'配送中',car:'床後空位立放',view:V(1,0,0.3),dist:1.6}); site.add(table2);
+const shelf=makeShelf(); shelf.position.set(-1.36,0.45,3.05); shelf.rotation.y=PI/2; tag(shelf,{cat:'桌椅推車',name:'山趣 05 戰術桌 層架 (上層板)',dim:'49.3x10x27 cm, 鋁板 2 mm, 承重 20 kg; 收納 49.3x10x1.9 cm, 0.305 kg',spec:'2026-10-23 酷澎 NT$390; 架在桌面上當第 2 層置物, 腳可拆可調高',status:'準備中',car:'隨桌',view:V(1,0,0.3),dist:1.3}); site.add(shelf);
+const igt=makeIGTFrame(); igt.position.set(-1.25,0.45,3.05+0.45); tag(igt,{cat:'桌椅推車',name:'山趣 05 戰術桌 IGT 連接板 (一單位框)',dim:'尺寸未載 (估 40x30 外框), 鋁合金霧面粉體',spec:'2026-10-23 酷澎 NT$255; 接在桌邊延伸桌面, 放一單位 IGT 配件',status:'配送中',car:'隨桌',view:V(1,0,0.6),dist:1.3}); site.add(igt);
+const lr40=makeLR40(); const lt=table2.userData.lampTip.clone(); table2.updateMatrixWorld(true); table2.localToWorld(lt); lr40.position.set(lt.x,lt.y-0.15,lt.z); tag(lr40,{cat:'電力照明',name:'NITECORE 奈特科爾 LR40 復古露營燈',dim:'117x96x96 mm (不含提把), 222 g; 100 lm, 4000 mAh',spec:'2026-10-23 酷澎 NT$623; 三色光無極調光, USB-C 可反充, 金屬罩 + 籠形護罩, 掛桌上燈架',status:'配送中',car:'下層置物槽',view:V(1,0,0.3),dist:1.1}); site.add(lr40);
+const pig1=makePigtail(); pig1.position.set(-1.25-0.15,0.45,3.05+0.17); tag(pig1,{cat:'電力照明',name:'山趣 ST-豬尾巴燈掛 A065 x2',dim:'細鐵桿 + 螺旋掛鉤, 全長估 23 cm',spec:'2026-10-23 酷澎 NT$36 x2; 插桌面孔掛卡片燈',status:'配送中',car:'隨桌',view:V(1,0,0.3),dist:1}); site.add(pig1);
+const pig2=makePigtail(); pig2.position.set(0.22,0.39,2.75-0.15); site.add(pig2); pig2.traverse(o=>{ o.userData.gear=pig1.userData.gear; });
+const card1=makeCardLight(M.cardGray); card1.position.set(-1.25-0.15+0.005,0.45+0.236-0.06,3.05+0.17); card1.rotation.z=PI/2; card1.rotation.y=PI/2; tag(card1,{cat:'電力照明',name:'山趣 卡片燈 x2 (灰 1, 沙 1)',dim:'卡片式扁燈, 估 11x7x2 cm',spec:'2026-10-23 酷澎 NT$299 x2; 多段無極調光, 可掛可磁吸; 掛在豬尾巴燈掛上',status:'配送中',car:'下層置物槽',view:V(1,0,0.3),dist:1}); site.add(card1);
+const card2=makeCardLight(M.cardSand); card2.position.set(0.22+0.005,0.39+0.236-0.06,2.75-0.15); card2.rotation.z=PI/2; site.add(card2); card2.traverse(o=>{ o.userData.gear=card1.userData.gear; });
+[card1,card2].forEach(c=>{ const pl=new THREE.PointLight(0xfff0d0,0,2.5,1); c.add(pl); NIGHT.push([pl,'intensity',0,0.35]); });
 const chairA=makeLounger({w:0.53,d:0.52,seatH:0.4,backH:0.5,backTilt:0.3,sidePocket:true,fabric:M.oxBlack,frame:M.steelBlack}); chairA.position.set(-0.8,0,2.75); chairA.rotation.y=PI/2; tag(chairA,{cat:'桌椅推車',name:'樂活不露 秒收戰地椅 三段 CHA-01',dim:'53x52x88 cm; 收納 81x30x21 cm, 4.4 kg',spec:'展開 53x52x88 cm; 黑色 600D 牛津布 + 5 mm EPE, 側面 X 交叉鋁腳, 平板黑化扶手, 三段椅背 (坐/放鬆/半躺), 秒收快折, 側邊大網袋, 承重 120 kg; 收納 81x30x21 cm, 4.4 kg; 顏色 夜幕黑/大地沙, 模型用夜幕黑',status:'既有',car:'第 2 層橫放在床袋上 (深 0~30)',view:V(0,0,1),dist:1.6}); site.add(chairA);
 const chairB=makeLounger({w:0.73,d:0.64,seatH:0.42,backH:0.62,backTilt:0.42,headrest:true,pocket:true,bigFeet:true,fabric:M.oxBlack,frame:M.steelBlack}); chairB.position.set(0.85,0,2.75); chairB.rotation.y=-PI/2; tag(chairB,{cat:'桌椅推車',name:'樂活不露 銀河椅 七段高背 CHA-02',dim:'73x64x100 cm; 收納 91x28x18 cm, 5.4 kg',spec:'展開 73x64x100 cm; 黑色 600D 牛津布 + 5 mm EPE, 側面 X 交叉鋁腳 + 萬向地形大腳座, 戰術風黑化扶手, 七段椅背可躺, 可拆可調頭枕, 椅背大網袋, 反光條, 承重 120 kg; 收納 91x28x18 cm, 5.4 kg; 顏色 夜幕黑/大地沙, 模型用夜幕黑 (賣場主圖為黑)',status:'既有',car:'第 2 層橫放在床袋上 (深 32~60)',view:V(0,0,1),dist:1.8}); site.add(chairB);
 const chairC=makeMoonChair({w:0.64,d:0.47,seatH:0.35,fabric:M.olive,fabricD:M.oliveD,frame:M.steelBlack}); chairC.position.set(-0.35,0,3.65); chairC.rotation.y=PI; tag(chairC,{cat:'桌椅推車',name:'KZM 極簡時尚休閒折疊椅',dim:'64x47x66 cm (座高 35); 收納 ø13x71 cm, 2.6 kg',spec:'展開 64x47x66 cm, 座高約 35; 桶形包覆椅背 (軍綠布, KZM 印字), 黑色鋼管 X 交叉腳, 承重 80 kg; 收納 ø13x71 cm 圓筒袋, 2.6 kg',status:'既有',car:'第 3 層橫放在戰地椅上 (高到 67)',view:V(0,0,1),dist:1.5}); site.add(chairC);
 const chairD=makeQuadChair({w:0.38,d:0.38,seatH:0.3,backH:0.3,backTilt:0.3,pocket:true,fabric:M.moss,frame:M.steelBlack}); chairD.position.set(0.45,0,3.7); chairD.rotation.y=PI; tag(chairD,{cat:'桌椅推車',name:'KZM N350 輕巧折疊椅 (K23T1C13)',dim:'38x38x58 cm; 收納 61x13x13 cm, 1.8 kg',spec:'展開 38x38x58 cm; 經典四面 X 交叉鋼管折疊椅, 方形座面, 椅背有 N350 印字, 側邊小物袋, 高密度聚酯纖維防潑水, 承重 100 kg; 收納 61x13x13 cm, 1.8 kg; 黑/軍綠, 模型用軍綠',status:'既有',car:'第 3 層橫放在銀河椅上 (高到 64)',view:V(0,0,1),dist:1.4}); site.add(chairD);
 const cart=makeCart(); buildCartContents(cart); cart.position.set(-2.6,0,4.3); cart.rotation.y=0.35; tag(cart,{cat:'桌椅推車',name:'探險者 征川AL 鋁合金 300L 經典款推車',dim:'80x51x49 cm (內兜 73x44x29); 聚攏 27x23x56 cm, 5 kg',spec:'車架展開 80x51x49 cm, 內兜 73x44x29; 12x5 cm 可拆減震輪 (有軸承, 賣家確認); 聚攏 27x23x56 cm; 標示 5 kg (待驗是否含輪子與底板), 承重 175 kg; 網路查不到征川AL 外觀, 配色依探險者 300L 系列曜石黑; 車內放雨傘 + 防水布 + 衣物袋',status:'已訂 TWD 1,210 (淘寶, 下單管道待確認)',car:'床後空位橫放在底 (寬 25~81, 深 60~87)',view:V(0,0,1),dist:1.8}); site.add(cart);
-const fan=makeFan(); fan.position.set(-1.25,0,2.0); fan.rotation.y=0.8; tag(fan,{cat:'電力照明',name:'艾美特 AIRMATE UD3052R 12 吋 USB 充電摺疊立扇',dim:'30x30x55~99 cm; 收納 30x30x15 cm, 2.75 kg',spec:'黑色圓形扇頭 (細環網罩, 7 葉) + 玫瑰金伸縮管 (5 節, 高 55~99 cm) + ⌀30 cm 黑色圓盤底座; 前網可拆, 上下手動 + 左右自動擺頭, 觸控環狀面板, 5000 mAh 滿電約 6 h, 附遙控, 約 2.75 kg; 收納 30x30x15 cm',status:'既有',car:'天幕上方立放 (寬 0~15, 深 62~92)',view:V(0,0,1),dist:1.6}); site.add(fan);
+const fan=makeFan(); fan.position.set(-1.55,0,2.05); fan.rotation.y=0.9; tag(fan,{cat:'電力照明',name:'艾美特 AIRMATE UD3052R 12 吋 USB 充電摺疊立扇',dim:'30x30x55~99 cm; 收納 30x30x15 cm, 2.75 kg',spec:'黑色圓形扇頭 (細環網罩, 7 葉) + 玫瑰金伸縮管 (5 節, 高 55~99 cm) + ⌀30 cm 黑色圓盤底座; 前網可拆, 上下手動 + 左右自動擺頭, 觸控環狀面板, 5000 mAh 滿電約 6 h, 附遙控, 約 2.75 kg; 收納 30x30x15 cm',status:'既有',car:'天幕上方立放 (寬 0~15, 深 62~92)',view:V(0,0,1),dist:1.6}); site.add(fan);
 
 
 /* ---------- vegetation (instanced) ---------- */
