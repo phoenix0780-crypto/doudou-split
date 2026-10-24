@@ -183,8 +183,7 @@ const M={
  meshPocket:std({map:T.mesh,transparent:true,depthWrite:false,side:THREE.DoubleSide,roughness:1}),
  cordD:std({color:0x3e4a30,roughness:0.8}),
  skirt:std({color:0x5a4634,roughness:1,side:THREE.DoubleSide}),
- skyex:std({color:0x7d7a66,map:T.weave,roughness:0.95}),
- skyexD:std({color:0x7d7a66,map:T.weave,roughness:0.95,side:THREE.DoubleSide}),
+ tarpBlack:std({color:0x1e1e1e,map:T.weave,roughness:0.92,side:THREE.DoubleSide}),
  copper:std({color:0xb87a4a,roughness:0.35,metalness:0.8}),
  gemini:std({color:0x2e3034,roughness:0.5,metalness:0.6}),
  plateGreen:std({map:T.plateG,roughness:0.6,metalness:0.35}),
@@ -251,10 +250,10 @@ function buildMainTent(){
  roof.add(frame);
  tag(roof,{cat:'帳篷系統',name:'挪客 雲界四角 2.0 鋁桿天幕 300x300x220',dim:'300x300x220 cm; 收納 110x25x25 cm, 7.8 kg',spec:'穹頂式自立速開: 中央支撐桿頂起 hub, 四支黑色弧形腳 (帶伸縮按鈕) 連到頂點, 四面皆為拱形開口 (邊緣低、中間高), 頂部圓形頂蓋, 腳頂有風繩扣; 內面鈦黑膠黑色; 150D 牛津布 UPF 12500+; 收納 110x25x25 cm, 約 7.8 kg; 標配地釘 x8 + 風繩 x4, 可自立免拉繩; 門簾邊緣拉鍊帶 (拉鍊款); 拱頂高度依門簾 210 推估',status:'已訂 ¥1,115 (2026-10-17 淘寶, 待集運)',car:'主艙第 1 層左壁斜放',view:V(1,0,1),dist:4.2});
  g.add(roof);
- ['l'].forEach(side=>{ const cur=archPanel(side,0.02,0.9,M.sandD,M.mesh,true);
-   tag(cur,{cat:'帳篷系統',name:'四角大號 拉鍊網紗門簾 (x3, 客廳遠側掛 1, 2 件備用)',dim:'300x210 cm/片; 收納 44.5x22 cm, 1.1 kg/片',spec:'拱形單片門簾 300x210 cm: 上段網紗 (黑)、下段 150D 牛津布鈦黑膠, 中央直拉鍊可開, 底部雪裙壓地; 上緣拉鍊接天幕邊; 收納 44.5x22 cm, 1.1 kg/件',status:'已訂 ¥187.98 x3',car:'下層置物槽 (3 件疊放)',view:V(side==='l'?-1:1,0,0),dist:2.4}); g.add(cur); });
- { const d=archPanel('r',0.02,0.55,M.sandD,M.tpu,true); d.children[0].renderOrder=2;
-   tag(d,{cat:'帳篷系統',name:'四角大號 拉鍊 TPU 門',dim:'300x210 cm; 收納 44.5x22 cm, 1.5 kg',spec:'拱形單片 300x210 cm: 上段透明 TPU、下段布面, 中央拉鍊, 底部雪裙; 掛客廳靠車那一側擋風; TPU + 聚酯纖維',status:'已訂 ¥230.9',car:'下層置物槽',view:V(1,0,0),dist:2.4}); g.add(d); }
+ ['l','r'].forEach(side=>{ const cur=archPanel(side,0.02,0.9,M.sandD,M.mesh,true);
+   tag(cur,{cat:'帳篷系統',name:'四角大號 拉鍊網紗門簾 (x3, 兩側各 1, 1 件備用)',dim:'300x210 cm/片; 收納 44.5x22 cm, 1.1 kg/片',spec:'拱形單片門簾 300x210 cm: 上段網紗 (黑)、下段 150D 牛津布鈦黑膠, 中央直拉鍊可開, 底部雪裙壓地; 上緣拉鍊接天幕邊; 收納 44.5x22 cm, 1.1 kg/件',status:'已訂 ¥187.98 x3',car:'下層置物槽 (3 件疊放)',view:V(side==='l'?-1:1,0,0),dist:2.4}); g.add(cur); });
+ { const d=archPanel('f',0.02,0.55,M.sandD,M.tpu,true); d.children[0].renderOrder=2;
+   tag(d,{cat:'帳篷系統',name:'四角大號 拉鍊 TPU 門',dim:'300x210 cm; 收納 44.5x22 cm, 1.5 kg',spec:'拱形單片 300x210 cm: 上段透明 TPU、下段布面, 中央拉鍊, 底部雪裙; TPU + 聚酯纖維; 收納 44.5x22 cm, 1.5 kg',status:'已訂 ¥230.9',car:'下層置物槽',view:V(0,0,1),dist:2.4}); g.add(d); }
  CC.forEach(([sx,sz])=>guy(g,V(sx*(S-0.04),hC-0.02,sz*(S-0.04)),sx*S*1.6,sz*S*1.6));
  return g;
 }
@@ -268,7 +267,7 @@ function buildConnector(){
    const sk=ribbon([V(sg*(S-0.05),0.012,zT),V(sg*1.14,0.012,-3.6)],[V(sg*(S+0.08),0.012,zT),V(sg*1.27,0.012,-3.6)],M.skirt,1,1,false); g.add(sk);
    guy(g,V(sg*0.98,1.42,zC),sg*2.0,-5.0); guy(g,V(sg*0.98,0.75,zC-0.05),sg*1.9,-4.2); });
  const hem=ribbon([V(-0.98,1.2,zC),V(-0.6,1.42,zC),V(0,1.46,zC),V(0.6,1.42,zC),V(0.98,1.2,zC)],[V(-0.98,1.17,zC),V(-0.6,1.39,zC),V(0,1.43,zC),V(0.6,1.39,zC),V(0.98,1.17,zC)],M.dark,1,1,false); g.add(hem);
- tag(g,{cat:'帳篷系統',name:'車尾連接件 (四角大號) 230x284x195 — 備用, 預設隱藏',dim:'230x284x195 cm; 收納 58x14.5x14.5 cm, 1.9 kg',spec:'布罩型: 帳篷端接在後側拱形開口上, 向車尾延伸 230 cm, 罩過車頂後緣與車身兩側, 車端收口貼合車身, 兩側各 2 條風繩拉到車旁地釘; 底部有雪裙; 150D 牛津布; 收納 58x14.5x14.5 cm, 自記約 1.9 kg (國際站出貨重 2.5 kg)',status:'已訂 ¥248.06',car:'下層置物槽 (靠尾門側)',view:V(-1,0,-0.3),dist:3.2});
+ tag(g,{cat:'帳篷系統',name:'車尾連接件 (四角大號) 230x284x195',dim:'230x284x195 cm; 收納 58x14.5x14.5 cm, 1.9 kg',spec:'布罩型: 帳篷端接在後側拱形開口上, 向車尾延伸 230 cm, 罩過車頂後緣與車身兩側, 車端收口貼合車身, 兩側各 2 條風繩拉到車旁地釘; 底部有雪裙; 150D 牛津布; 收納 58x14.5x14.5 cm, 自記約 1.9 kg (國際站出貨重 2.5 kg)',status:'已訂 ¥248.06',car:'下層置物槽 (靠尾門側)',view:V(-1,0,-0.3),dist:3.2});
  return g;
 }
 
@@ -282,7 +281,30 @@ function buildExtTarp(){
  g.add(bar(V(D.x,0,D.z),D,0.013,M.black)); g.add(mesh(new THREE.SphereGeometry(0.02,8,6),M.black,D.x,D.y+0.01,D.z)); g.add(cyl(0.04,0.05,0.012,M.black,D.x,0.006,D.z));
  guy(g,D,-1.1,D.z+1.3); guy(g,D,1.1,D.z+1.3);
  [EXT.E,EXT.C].forEach(c=>{ const sx=Math.sign(c.x); g.add(stakeAt(c.x+sx*0.35,c.z+0.1,sx,0.2)); const r=bar(V(c.x,c.y,c.z),V(c.x+sx*0.3,0.2,c.z+0.08),0.0035,M.rope); r.castShadow=false; g.add(r); });
- tag(g,{cat:'帳篷系統',name:'拓展天幕 548x390 (流沙金/塗銀)',dim:'548x390 cm; 收納 60x12x12 cm, 2.7 kg',spec:'翼形天幕: 一邊接天幕前側拱邊, 兩個角落地釘固定 (寬 548), 遠端一點用 2.2 m 天幕桿撐起 (深 390) 並拉 2 條風繩; 邊緣弧形剪裁; 150D 牛津布塗銀; 收納 60x12x12 cm, 自記 2.7 kg (國際站出貨重 2.8 kg)',status:'已訂 ¥316.73',car:'床後空位橫放 (內帳袋上)',view:V(0.5,0,1),dist:5});
+ tag(g,{cat:'帳篷系統',name:'挪客 拓展天幕 548x390 — 改用 Sky Expan 蝶形天幕, 備用, 預設隱藏',dim:'548x390 cm; 收納 60x12x12 cm, 2.7 kg',spec:'翼形天幕: 一邊接天幕前側拱邊, 兩個角落地釘固定 (寬 548), 遠端一點用 2.2 m 天幕桿撐起 (深 390) 並拉 2 條風繩; 邊緣弧形剪裁; 150D 牛津布塗銀; 收納 60x12x12 cm, 自記 2.7 kg (國際站出貨重 2.8 kg)',status:'已訂 ¥316.73',car:'床後空位橫放 (內帳袋上)',view:V(0.5,0,1),dist:5});
+ return g;
+}
+
+
+/* ---------- Sky Expan 加大號蝶形八角天幕 520x450x240 黑色 (客廳頂; 一端桿立在雲界前拱口, 尖端壓在雲界頂上) ---------- */
+const SKT={zc:3.95,L:2.6,W:2.25,H:2.4};
+function sktHW(zz){ if(zz<=1.9) return SKT.W-0.22*(1-Math.pow(zz/1.9,2)); const t=(zz-1.9)/0.7; return SKT.W*Math.pow(Math.max(0,1-t),0.75); }
+function sktEdge(zz){ if(zz<=1.9) return 1.62-0.12*Math.pow(zz/1.9,2); const t=(zz-1.9)/0.7; return 1.5+0.9*Math.pow(Math.min(1,t),0.8); }
+function sktRidge(zz){ return 2.17+0.23*Math.pow(zz/SKT.L,2); }
+function sktY(u,z){ const zz=Math.abs(z); const r=sktRidge(zz),e=sktEdge(zz); return r-(r-e)*Math.pow(Math.abs(u),1.6); }
+function buildSkyTarp(){
+ const g=new THREE.Group(); const zc=SKT.zc;
+ const fn=(a,b)=>{ const u=-1+2*a, z=-SKT.L+2*SKT.L*b; const hw=sktHW(Math.abs(z)); return V(u*hw,sktY(u,z),zc+z); };
+ const top=patch(fn,36,30,M.tarpBlack,true); g.add(top);
+ const z1=zc-SKT.L, z2=zc+SKT.L;
+ [z1,z2].forEach(z=>{ g.add(bar(V(0,0,z),V(0,SKT.H-0.02,z),0.014,M.alu)); g.add(mesh(new THREE.SphereGeometry(0.02,8,6),M.black,0,SKT.H,z)); g.add(cyl(0.04,0.05,0.012,M.black,0,0.006,z)); for(let k=1;k<4;k++){ const j=cyl(0.016,0.016,0.03,M.black,0,k*0.6,z,10); j.castShadow=false; g.add(j); } });
+ // far pole: 2 guy lines; near pole (at 雲界 arch): tip tied to the 雲界 front leg tops instead of staking inside the dome
+ guy(g,V(0,SKT.H,z2),-1.4,z2+1.1); guy(g,V(0,SKT.H,z2),1.4,z2+1.1);
+ [-1,1].forEach(s=>{ const r=bar(V(0,SKT.H,z1),V(s*1.47,TENT.hC-0.02,1.47),0.0035,M.rope); r.castShadow=false; g.add(r); });
+ // 4 corners + 2 long-edge midpoints staked
+ [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(([sx,sz])=>guy(g,V(sx*sktHW(1.9),sktEdge(1.9),zc+sz*1.9),sx*3.4,zc+sz*2.7));
+ [-1,1].forEach(s=>guy(g,V(s*sktHW(0),sktEdge(0),zc),s*3.3,zc));
+ tag(g,{cat:'帳篷系統',name:'Sky Expan 加大號蝶形八角天幕 520x450x240 黑色',dim:'520x450x240 cm, 26 m²; 收納 75x15x15 cm',spec:'210D 黑膠牛津布, 抗 UV 99.99%, 防大風防暴雨, 建議 8~18 人; 附 2.4 m 鋁桿 x2 (4 節一支), 鋁合金防風繩 x10 (6+4), 加長夜光釘 x10, PE 天幕錘 x1, 收納包; 一端桿立在雲界前拱口, 尖端壓在雲界頂上 (桿 240 > 雲界邊 208), 另一端桿在 5.2 m 外, 4 角 + 2 長邊中點拉繩下釘; 取代挪客拓展天幕當客廳',status:'已買 (蝦皮 元氣柚)',car:'主艙 (75x15x15)',view:V(0.6,0,1),dist:6});
  return g;
 }
 
@@ -306,29 +328,27 @@ function buildInnerTent(){
  const TC=[V(-ts,h1,-ts),V(ts,h1,-ts),V(ts,h1,ts),V(-ts,h1,ts)];
  for(let i=0;i<4;i++){ const a=TC[i],b=TC[(i+1)%4]; g.add(poly([a,b,V(0,top,0)],M.inner,8,true,V((a.x+b.x)/2,3,(a.z+b.z)/2))); g.add(bar(V(a.x,a.y,a.z),V(0,top,0),0.009,M.dark)); g.add(bar(V(Math.sign(a.x)*s,0,Math.sign(a.z)*s),V(a.x,a.y,a.z),0.009,M.dark)); }
  g.add(mesh(new THREE.SphereGeometry(0.022,8,6),M.black,0,top-0.01,0));
- tag(g,{cat:'帳篷系統',name:'雲界 內帳 290x290x215 — 改用車尾帳當臥室, 不需要, 預設隱藏',dim:'290x290x215 cm; 收納 60x21.5x21.5 cm, 5 kg',spec:'210D 聚酯牛津布; 收納 60x21.5x21.5 cm, 約 5 kg; 接車尾冷氣的密閉靠這頂布面內帳',status:'待買 (酷澎 NT$4,690; 與 2.0 鋁桿相容待確認)',car:'床後空位橫放 (推車上)',view:V(0,0,1),dist:3.2});
+ tag(g,{cat:'帳篷系統',name:'雲界自立速開天幕 內帳 290x290x215 (台灣版)',dim:'290x290x215 cm; 收納 60x21.5x21.5 cm, 5 kg',spec:'210D 聚酯牛津布; 收納 60x21.5x21.5 cm, 約 5 kg; 接車尾冷氣的密閉靠這頂布面內帳',status:'待買 (酷澎 NT$4,690; 與 2.0 鋁桿相容待確認)',car:'床後空位橫放 (推車上)',view:V(0,0,1),dist:3.2});
  return g;
 }
 
-/* ---------- sleeping: mattresses (L 形), pillows, duvets, lamp — inside Sky Expan ---------- */
+/* ---------- sleeping: mattresses, pillows, duvets, lamp ---------- */
 function duvet(w,l,x,z,col){ const geo=new THREE.PlaneGeometry(w,l,12,14); geo.rotateX(-PI/2); const p=geo.attributes.position; for(let i=0;i<p.count;i++){ const px=p.getX(i),pz=p.getZ(i); const e=clamp(Math.min((w/2-Math.abs(px))/0.15,(l/2-Math.abs(pz))/0.15),0,1); p.setY(i,0.012+0.05*e+0.022*noise(px*6+x*3,pz*6+z*3)); } geo.computeVertexNormals(); const m=sh(new THREE.Mesh(geo,std({color:col,roughness:1,side:THREE.DoubleSide}))); m.position.set(x,0.105,z); return m; }
 function buildSleep(){
  const g=new THREE.Group(); const beds=new THREE.Group();
- const bA=rbox(2.0,0.1,1.32,0.05,M.mattress); bA.position.set(0,0.03,-0.95); beds.add(bA); const pA=box(0.06,0.04,0.12,M.black,0.95,0.13,-1.5); pA.castShadow=false; beds.add(pA);
- const bB=rbox(1.32,0.1,2.0,0.05,M.mattress); bB.position.set(-0.54,0.03,-2.65); beds.add(bB); const pB=box(0.12,0.04,0.06,M.black,-0.05,0.13,-3.55); pB.castShadow=false; beds.add(pB);
- tag(beds,{cat:'睡眠',name:'挪客羽骨奶酪自充氣床墊 x2 (200x132x10)',dim:'200x132x10 cm/張; 收納 33x33x60 cm, 3.9 kg/張',spec:'CNK2550WS036; 16D 羽骨鏤空海綿, R 4.5, 承重 300 kg; 內建可抽取泵 7.4V 1200 mAh; L 形擺: 一張橫放帳尾 (200 沿寬), 一張直放左側 (200 沿長), 右側留 1.08x2 m 走道通側門; 兩張並排 264 > 帳寬 240 放不下',status:'已買 2026-10-21 (雙 11 價約 ¥674/張)',car:'主艙第 1 層並排靠椅背',view:V(1,0,0.3),dist:1.4,inside:true}); g.add(beds);
+ [-0.67,0.67].forEach(x=>{ const b=rbox(1.32,0.1,2.0,0.05,M.mattress); b.position.set(x,0.03,-0.1); beds.add(b); const pump=box(0.12,0.04,0.06,M.black,x+0.5,0.13,0.85); pump.castShadow=false; beds.add(pump); });
+ tag(beds,{cat:'睡眠',name:'挪客羽骨奶酪自充氣床墊 x2 (200x132x10)',dim:'200x132x10 cm/張; 收納 33x33x60 cm, 3.9 kg/張',spec:'CNK2550WS036; 16D 羽骨鏤空海綿 (Unique Foam Cutting), R 4.5, 承重 300 kg; 內建可抽取泵 7.4V 1200 mAh (充 3.34 / 抽 6 kPa); 收納 33x33x60 cm (廠標, 到貨實量), 約 3.9 kg 含泵/張; 表面顏色與泵/閥位置未查到, 模型為示意',status:'已買 2026-10-21 (雙 11 價約 ¥674/張)',car:'主艙第 1 層並排靠椅背',view:V(0,0,1),dist:1.15,inside:true}); g.add(beds);
  const soft=new THREE.Group();
- [[-0.55,-0.5],[0.45,-0.5],[-0.54,-1.9]].forEach(([x,z])=>{ const p=rbox(0.45,0.11,0.3,0.05,M.white); p.position.set(x,0.13,z); soft.add(p); });
- soft.add(duvet(1.4,1.05,0,-1.1,0xa9c5e8)); soft.add(duvet(1.15,1.4,-0.54,-2.75,0xefe3c9));
- tag(soft,{cat:'睡眠',name:'枕頭 x3, 被子 x2',dim:'枕頭約 40x30x12 cm; 被子收納約 30x30x15 cm',spec:'枕頭估各 40x30x12 cm, 被子估各 30x30x15 cm (收納); 第 4 顆枕頭與 4 人份被子待補',status:'既有',car:'前車廂',view:V(1,0,0.3),dist:1.4,inside:true}); g.add(soft);
- const lamp=new THREE.Group(); const ly=1.5;
- lamp.add(bar(V(0,1.88,0),V(0,ly+0.2,0),0.003,M.black));
+ [[-1.0,-0.85],[-0.36,-0.85],[0.67,-0.85]].forEach(([x,z])=>{ const p=rbox(0.45,0.11,0.3,0.05,M.white); p.position.set(x,0.13,z); soft.add(p); });
+ soft.add(duvet(1.25,1.4,-0.67,0.2,0xa9c5e8)); soft.add(duvet(1.25,1.4,0.67,0.2,0xefe3c9));
+ tag(soft,{cat:'睡眠',name:'枕頭 x3, 被子 x2',dim:'枕頭約 40x30x12 cm; 被子收納約 30x30x15 cm',spec:'枕頭估各 40x30x12 cm, 被子估各 30x30x15 cm (收納); 第 4 顆枕頭與 4 人份被子待補',status:'既有',car:'前車廂',view:V(0,0,1),dist:1.2,inside:true}); g.add(soft);
+ const lamp=new THREE.Group(); const ly=1.78;
+ lamp.add(bar(V(0,2.12,0),V(0,ly+0.2,0),0.003,M.black));
  const hd=new THREE.Mesh(new THREE.TorusGeometry(0.055,0.003,6,16,PI),M.steelBlack); hd.position.y=ly+0.145; lamp.add(hd);
  lamp.add(cyl(0.05,0.055,0.028,M.steelBlack,0,ly-0.1,0,16)); lamp.add(cyl(0.028,0.03,0.085,M.lampGlass,0,ly-0.035,0,16)); lamp.add(cyl(0.045,0.03,0.03,M.steelBlack,0,ly+0.025,0,16)); lamp.add(cyl(0.018,0.02,0.04,M.steelBlack,0,ly+0.06,0,12)); lamp.add(cyl(0.03,0.03,0.012,M.steelBlack,0,ly+0.086,0,12));
  for(let i=0;i<4;i++){ const a=i*PI/2; const b=bar(V(Math.cos(a)*0.036,ly-0.086,Math.sin(a)*0.036),V(Math.cos(a)*0.036,ly+0.012,Math.sin(a)*0.036),0.0025,M.steelBlack); b.castShadow=false; lamp.add(b); }
- const pl=new THREE.PointLight(0xffe0b0,0,8,1); pl.position.set(0,ly,0); lamp.add(pl); NIGHT.push([pl,'intensity',0,1.1]);
- lamp.position.set(0,0,-2.25);
- tag(lamp,{cat:'電力照明',name:'KINYO CP28 復古 LED 金屬露營燈 9W 350 lm 3600 mAh',dim:'尺寸未查到; 9W, 350 lm, 3600 mAh',spec:'馬燈造型, 掛車尾帳屋脊當臥室主燈; 尺寸與顏色頁面未載',status:'既有',car:'下層置物槽',view:V(1,0,0.3),dist:1.6,inside:true}); g.add(lamp);
+ const pl=new THREE.PointLight(0xffe0b0,0,9,1); pl.position.set(0,ly,0); lamp.add(pl); NIGHT.push([pl,'intensity',0,1.1]);
+ tag(lamp,{cat:'電力照明',name:'KINYO CP28 復古 LED 金屬露營燈 9W 350 lm 3600 mAh',dim:'尺寸未查到; 9W, 350 lm, 3600 mAh',spec:'馬燈造型 (復古金屬), 掛內帳頂當帳內主燈; 尺寸與顏色頁面未載, 模型為示意',status:'既有',car:'下層置物槽',view:V(0,0,1),dist:1.6,inside:true}); g.add(lamp);
  return g;
 }
 
@@ -484,88 +504,43 @@ function buildCar(){
  [-1,1].forEach(s=>{ const hl=box(0.06,0.06,0.46,M.headlight,4.56,0.83,s*0.6); hl.rotation.y=s*0.4; g.add(hl); const tl=box(0.06,0.09,0.44,M.taillight,0.1,0.98,s*0.62); tl.rotation.y=-s*0.35; g.add(tl); });
  [-1,1].forEach(s=>{ g.add(box(0.09,0.06,0.17,paint,3.45,1.08,s*0.99)); g.add(box(0.03,0.04,0.08,trim,3.47,1.03,s*0.92)); });
  g.add(box(1.5,0.78,0.5,M.darkMatte,0.2,1.0,0));
- const hatch=new THREE.Group(); hatch.position.set(0.32,1.46,0); hatch.add(box(0.95,0.035,1.4,paint,-0.47,0,0)); hatch.add(box(0.55,0.03,1.25,glass,-0.3,0.02,0)); hatch.rotation.z=-0.16; g.add(hatch); // 尾門只開約 9 度: 190 cm 帳內全開 (約 2 m) 會頂到屋頂, 需設定尾門開啟高度
+ const hatch=new THREE.Group(); hatch.position.set(0.32,1.46,0); hatch.add(box(0.95,0.035,1.4,paint,-0.47,0,0)); hatch.add(box(0.55,0.03,1.25,glass,-0.3,0.02,0)); hatch.rotation.z=-0.5; g.add(hatch);
  const il=new THREE.PointLight(0xffd9a0,0,6,1); il.position.set(0.8,1.1,0); g.add(il); NIGHT.push([il,'intensity',0,0.9]);
  g.position.set(0,0,-3.85); g.rotation.y=PI/2;
- tag(g,{cat:'車輛',name:'Tesla Model Y RWD (2024, 露營模式)',dim:'4751x1921x1624 mm, 軸距 2890; 後廂 108x94.5x69 cm 約 500 L',spec:'2024 年式 (改款前) RWD, 19 吋 Gemini 鋁圈; 全玻璃車頂、隱藏式門把、黑色窗框; 後車廂主艙約 500 L + 下層置物槽 120 L + 前車廂 117 L; 尾門伸進車尾帳內, 尾門全開約 2 m 高會頂到 190 cm 的帳頂, 要先設定尾門開啟高度 (手動停在想要的高度, 長按尾門按鈕 3 秒); 露營模式一晚耗電約 10~15%',status:'既有',car:'裝備全部放後車廂與前車廂',view:V(1,0,-1),dist:5.5});
+ tag(g,{cat:'車輛',name:'Tesla Model Y RWD (2024, 露營模式)',dim:'4751x1921x1624 mm, 軸距 2890; 後廂 108x94.5x69 cm 約 500 L',spec:'2024 年式 (改款前) RWD, 19 吋 Gemini 鋁圈; 全玻璃車頂、隱藏式門把、黑色窗框; 後車廂主艙約 500 L + 下層置物槽 120 L + 前車廂 117 L; 尾門開啟接車尾連接件; 露營模式一晚耗電約 10~15%',status:'既有',car:'裝備全部放後車廂與前車廂',view:V(1,0,-1),dist:5.5});
  return g;
 }
-
-/* ---------- Sky Expan 屋脊自動車尾帳 380x240x190 (臥室, 接 Model Y 尾門; 外型/門窗為推估) ---------- */
-const SKY={W:2.4,zA:-4.15,zB:-0.35,he:1.35,hr:1.9,doorZ:-2.6};
-function buildSkyExpan(){
- const g=new THREE.Group(); const W=SKY.W,hw=W/2,zA=SKY.zA,zB=SKY.zB,he=SKY.he,hr=SKY.hr,L=zB-zA;
- const fl=box(W,0.02,L,M.innerFloor,0,0.01,(zA+zB)/2); fl.castShadow=false; g.add(fl);
- // roof: two slopes with 10 cm overhang, black inner
- [-1,1].forEach(s=>{ const o=0.1; const pts=[V(0,hr+0.01,zA-o),V(0,hr+0.01,zB+o),V(s*(hw+o),he-0.04,zB+o),V(s*(hw+o),he-0.04,zA-o)]; g.add(poly(pts,M.skyex,8,true,V(s*0.5,1,0))); const inn=poly(pts,M.sandIn,8,false,V(s*0.5,1,0)); inn.position.y=-0.012; g.add(inn); });
- const ridge=bar(V(0,hr+0.02,zA-0.1),V(0,hr+0.02,zB+0.1),0.012,M.black); g.add(ridge);
- // -x wall (window) and +x wall (side door toward 雲界)
- { const sp=new THREE.Shape(); sp.moveTo(zA,0.02); sp.lineTo(zB,0.02); sp.lineTo(zB,he); sp.lineTo(zA,he); sp.closePath();
-   const win=new THREE.Path(); win.moveTo(-3.3,0.7); win.lineTo(-1.5,0.7); win.lineTo(-1.5,1.25); win.lineTo(-3.3,1.25); win.closePath(); sp.holes.push(win);
-   const geo=new THREE.ShapeGeometry(sp,8); scaleUV(geo,8); geo.rotateY(-PI/2); geo.translate(-hw,0,0); g.add(sh(new THREE.Mesh(geo,M.skyexD)));
-   g.add(poly([V(-hw,0.7,-3.3),V(-hw,0.7,-1.5),V(-hw,1.25,-1.5),V(-hw,1.25,-3.3)],M.mesh,45,false,V(-1,0,0))); }
- { // +x wall: shape u = -z so that rotateY(+90deg) maps u -> world z
-   const sp=new THREE.Shape(); sp.moveTo(-zB,0.02); sp.lineTo(-zA,0.02); sp.lineTo(-zA,he); sp.lineTo(-zB,he); sp.closePath();
-   const dz=-SKY.doorZ; const door=new THREE.Path(); door.moveTo(dz-0.5,0.02); door.lineTo(dz+0.5,0.02); door.lineTo(dz+0.5,1.25); door.lineTo(dz-0.5,1.25); door.closePath(); sp.holes.push(door);
-   const win=new THREE.Path(); win.moveTo(0.6,0.7); win.lineTo(1.3,0.7); win.lineTo(1.3,1.25); win.lineTo(0.6,1.25); win.closePath(); sp.holes.push(win);
-   const geo=new THREE.ShapeGeometry(sp,8); scaleUV(geo,8); geo.rotateY(PI/2); geo.translate(hw,0,0); g.add(sh(new THREE.Mesh(geo,M.skyexD)));
-   g.add(poly([V(hw,0.7,-1.3),V(hw,0.7,-0.6),V(hw,1.25,-0.6),V(hw,1.25,-1.3)],M.mesh,45,false,V(1,0,0)));
-   const roll=cyl(0.06,0.06,1.0,M.skyex,hw+0.02,1.3,dz); roll.rotation.x=PI/2; g.add(roll);
-   const sill=box(0.04,0.03,1.0,M.black,hw,0.03,dz); sill.castShadow=false; g.add(sill); }
- // +z end wall (gable) with closed far door + small window
- { const sp=new THREE.Shape(); sp.moveTo(-hw,0.02); sp.lineTo(hw,0.02); sp.lineTo(hw,he); sp.lineTo(0,hr); sp.lineTo(-hw,he); sp.closePath();
-   const win=new THREE.Path(); win.moveTo(-0.45,0.95); win.lineTo(0.45,0.95); win.lineTo(0.45,1.35); win.lineTo(-0.45,1.35); win.closePath(); sp.holes.push(win);
-   const geo=new THREE.ShapeGeometry(sp,8); scaleUV(geo,8); geo.translate(0,0,zB); g.add(sh(new THREE.Mesh(geo,M.skyexD)));
-   g.add(poly([V(-0.45,0.95,zB),V(0.45,0.95,zB),V(0.45,1.35,zB),V(-0.45,1.35,zB)],M.mesh,45,false,V(0,0,1)));
-   [-0.5,0.5].forEach(x=>{ const zz=box(0.012,1.2,0.012,M.dark,x,0.62,zB+0.004); zz.castShadow=false; g.add(zz); }); const zt=box(1.0,0.012,0.012,M.dark,0,1.22,zB+0.004); zt.castShadow=false; g.add(zt); }
- // -z end: gable above the car sleeve + sleeve hugging the car rear (car rear at z=-3.85, sleeve to -4.45)
- { const zc=-4.45, cw=0.95, ct=1.48, cb=0.5;
-   g.add(poly([V(-hw,he,zA),V(hw,he,zA),V(0,hr,zA)],M.skyexD,8,true,V(0,0,-1)));
-   g.add(poly([V(-hw,he,zA),V(0,hr,zA),V(0,1.52,zc),V(-cw,ct,zc)],M.skyexD,8,true,V(-0.3,1,-0.3))); g.add(poly([V(0,hr,zA),V(hw,he,zA),V(cw,ct,zc),V(0,1.52,zc)],M.skyexD,8,true,V(0.3,1,-0.3)));
-   [-1,1].forEach(s=>{ g.add(poly([V(s*hw,0.02,zA),V(s*hw,he,zA),V(s*cw,ct,zc),V(s*cw,cb,zc)],M.skyexD,8,true,V(s,0,0))); guy(g,V(s*cw,ct,zc),s*1.9,zc-0.5); const sk=ribbon([V(s*hw,0.012,zA),V(s*(cw+0.05),0.012,zc)],[V(s*(hw+0.12),0.012,zA),V(s*(cw+0.17),0.012,zc)],M.skirt,1,1,false); g.add(sk); });
-   const hem=ribbon([V(-cw,ct,zc),V(0,1.52,zc),V(cw,ct,zc)],[V(-cw,ct-0.03,zc),V(0,1.49,zc),V(cw,ct-0.03,zc)],M.dark,1,1,false); g.add(hem); }
- // auto-tent frame: corner legs, eave rails, gable struts, hub at ridge ends
- [[-1,zA],[1,zA],[-1,zB],[1,zB]].forEach(([s,z])=>{ g.add(bar(V(s*(hw+0.01),0,z),V(s*(hw+0.01),he,z),0.012,M.black)); g.add(cyl(0.035,0.04,0.012,M.black,s*(hw+0.01),0.006,z)); g.add(bar(V(s*(hw+0.01),he,z),V(0,hr+0.01,z),0.01,M.black)); });
- [-1,1].forEach(s=>g.add(bar(V(s*(hw+0.01),he,zA),V(s*(hw+0.01),he,zB),0.01,M.black)));
- [zA,zB].forEach(z=>g.add(mesh(new THREE.SphereGeometry(0.03,8,6),M.black,0,hr+0.01,z)));
- [[-1,zB],[1,zB]].forEach(([s,z])=>guy(g,V(s*(hw+0.01),he,z),s*2.0,z+0.8));
- tag(g,{cat:'帳篷系統',name:'Sky Expan 屋脊自動車尾帳 380x240x190',dim:'380x240x190 cm; 約 15 kg',spec:'鈦黑膠; 車尾套接 Model Y 尾門當臥室 (冷氣直接吹進帳內); 2 張 200x132 床墊 L 形擺 (一橫一直, 332 ≤ 380); 側門朝雲界客廳; 門窗位置、外型、連接方式網路未查到, 模型為推估',status:'已買 (蝦皮 約 NT$10,499)',car:'主艙 (收納尺寸待量)',view:V(-1,0,0.2),dist:4.5});
- return g;
-}
-
 
 /* ---------- power & lights ---------- */
 const NIGHT=[]; // [object,key,day,night]
 function buildPower(){
  const g=new THREE.Group();
  g.add(box(0.1,1.3,0.1,M.woodD,9,0.65,3)); const bx=box(0.26,0.34,0.12,M.sockBox,9,1.0,3.07); g.add(bx); g.add(box(0.2,0.06,0.02,M.black,9,0.9,3.14)); const lab=signPlane(labelTex('電',128,128,'#e9e4d6','#1e2a36',80),0.12,0.12); lab.position.set(9,1.08,3.135); g.add(lab);
- tag(bx,{cat:'營地設施',name:'營地電箱 (營位供電)',dim:'營地設施',spec:'營地 110V 插座; 15 m 動力線從這拉到客廳 (約 7 m 直線), 整條拉開不捲繞',status:'營地設施',car:'-',view:V(0,0,1),dist:2});
- const pts=[V(9,0.9,3.14),V(9,0.5,3.28),V(9.1,0.02,2.6),V(9.8,0.02,1.4),V(8.9,0.02,0.2),V(9.6,0.02,-1.0),V(8.6,0.02,-2.0),V(9.2,0.02,-3.2),V(8.0,0.02,-4.4),V(6.9,0.02,-5.3),V(5.9,0.02,-4.6),V(5.3,0.03,-4.4),V(5.0,0.035,-4.3)];
+ tag(bx,{cat:'營地設施',name:'營地電箱 (營位供電)',dim:'營地設施',spec:'營地 110V 插座; 15 m 動力線從這拉到天幕下, 整條拉開不捲繞',status:'營地設施',car:'-',view:V(0,0,1),dist:2});
+ const pts=[V(9,0.9,3.14),V(9,0.5,3.28),V(8.85,0.02,3.5),V(8.1,0.02,4.6),V(7.2,0.02,3.5),V(6.4,0.02,4.8),V(5.5,0.02,3.6),V(4.8,0.02,4.9),V(4.1,0.02,3.7),V(3.5,0.02,4.4),V(3.0,0.02,3.4),V(2.5,0.02,3.1),V(2.14,0.035,2.98)];
  const cordTube=sh(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),180,0.0045,8,false),M.cord)); g.add(cordTube);
- const sock=new THREE.Group(); sock.position.set(4.92,0,-4.23); sock.rotation.y=-1.2;
+ const sock=new THREE.Group(); sock.position.set(2.0,0,2.92); sock.rotation.y=0.3;
  sock.add(rbox(0.13,0.045,0.075,0.012,M.cordD)); for(let i=0;i<3;i++){ const c=box(0.028,0.004,0.024,M.black,-0.04+i*0.04,0.047,0.012); c.castShadow=false; sock.add(c); }
  sock.add(box(0.03,0.01,0.018,M.black,0.0,0.05,-0.022)); const led=mesh(new THREE.SphereGeometry(0.004,6,6),M.ledRed,0.02,0.056,-0.022); led.castShadow=false; sock.add(led);
- const bag=rbox(0.22,0.12,0.14,0.04,M.cord); bag.position.set(5.3,0,-4.6); bag.rotation.y=-0.4; g.add(bag);
+ const bag=rbox(0.22,0.12,0.14,0.04,M.cord); bag.position.set(2.35,0,2.6); bag.rotation.y=-0.4; g.add(bag);
  g.add(sock);
- const lead=bar(V(4.86,0.03,-4.2),V(4.36,0.03,-3.8),0.003,M.black); lead.castShadow=false; g.add(lead); const up=bar(V(4.36,0.03,-3.8),V(4.3,TENT.hC-0.03,-3.74),0.003,M.black); up.castShadow=false; g.add(up);
+ const lead=bar(V(1.94,0.03,2.88),V(0.05,0.03,1.4),0.003,M.black); lead.castShadow=false; g.add(lead); const up=bar(V(0.03,0.03,1.37),V(0.02,2.3,1.36),0.003,M.black); up.castShadow=false; g.add(up);
  const cordG=new THREE.Group(); cordG.add(cordTube); cordG.add(sock); cordG.add(bag); g.add(cordG);
  tag(cordG,{cat:'電力照明',name:'SYNCO 新格 動力延長線 軍綠 15 m (SY-123L15G-AU)',dim:'15 m, 2x2.0 mm², 15A/1650W, 1.92 kg',spec:'軍綠粗線 VCTF 2x2.0 mm², 15A/125V/1650W; 線端是深綠黑「一擴三」小插座頭 (2 孔 1 切 3 座, 開關附 LED, 防水防塵蓋), 過載自動斷電, 1.92 kg, 台製, 附軍綠拉鍊收納袋; 接點放防水盒並離地 (防水盒待補)',status:'2026-10-23 PChome 下單 NT$729',car:'下層置物槽',view:V(0.3,0,1),dist:2.2});
  return g;
 }
-function buildStringLights(){
- const g=new THREE.Group(); const S=TENT.S; const path=[];
- for(let i=0;i<=10;i++){ const t=1-i/10; path.push(V(t*(S-0.05),archY(t)-0.04,S+0.03)); }
- for(let i=1;i<=10;i++){ path.push(new THREE.Vector3().lerpVectors(V(0,TENT.hM-0.04,S+0.03),V(EXT.apex.x,EXT.apex.y-0.04,EXT.apex.z),i/10)); }
- for(let i=EXT.left.length-2;i>=0;i--){ const p=EXT.left[i]; path.push(V(p.x,p.y-0.04,p.z)); }
+function buildStringLights(){ // G40 7.6 m: 沿蝶形天幕脊線 (5.2 m) 再順遠端桿下來
+ const g=new THREE.Group(); const z1=SKT.zc-SKT.L, z2=SKT.zc+SKT.L; const path=[];
+ for(let i=0;i<=20;i++){ const z=z1+(z2-z1)*i/20; path.push(V(0,sktRidge(Math.abs(z-SKT.zc))-0.03,z)); }
+ for(let i=1;i<=6;i++){ path.push(V(0.03,SKT.H-0.05-(SKT.H-0.45)*i/6,z2+0.03)); }
  const curve=new THREE.CatmullRomCurve3(path); const Ltot=curve.getLength(); const Lstr=7.6; const uEnd=Math.min(1,Lstr/Ltot);
  const wp=[]; for(let i=0;i<=80;i++) wp.push(curve.getPointAt(uEnd*i/80)); const wire=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(wp),160,0.0025,6,false),M.black); g.add(wire);
- const bulbs=[]; for(let i=0;i<25;i++){ const s=0.46+i*0.29; if(s>Lstr) break; const p=curve.getPointAt(Math.min(uEnd,s/Ltot)); const b=new THREE.Mesh(new THREE.SphereGeometry(0.02,10,8),M.bulb[i%3]); b.position.set(p.x,p.y-0.05,p.z); g.add(b); const sk=cyl(0.009,0.011,0.03,M.black,p.x,p.y-0.017,p.z,8); sk.castShadow=false; g.add(sk); bulbs.push(b); }
- for(let s=0.4;s<Lstr;s+=1.0){ const p=curve.getPointAt(Math.min(uEnd,s/Ltot)); const c=cyl(0.006,0.006,0.03,M.black,p.x,p.y+0.016,p.z,6); c.castShadow=false; g.add(c); }
+ const bulbs=[]; for(let i=0;i<25;i++){ const s=0.46+i*0.29; if(s>Lstr) break; const p=curve.getPointAt(Math.min(uEnd,s/Ltot)); const onPole=p.z>z2-0.05; const b=new THREE.Mesh(new THREE.SphereGeometry(0.02,10,8),M.bulb[i%3]); b.position.set(p.x+(onPole?0.05:0),p.y-(onPole?0:0.05),p.z); g.add(b); const sk=cyl(0.009,0.011,0.03,M.black,p.x+(onPole?0.03:0),p.y-(onPole?0:0.017),p.z,8); sk.castShadow=false; g.add(sk); bulbs.push(b); }
+ for(let s=0.4;s<5.1;s+=1.0){ const p=curve.getPointAt(Math.min(uEnd,s/Ltot)); const c=cyl(0.006,0.006,0.03,M.black,p.x,p.y+0.016,p.z,6); c.castShadow=false; g.add(c); }
  [2,7,12,17,22].forEach(i=>{ if(!bulbs[i]) return; const pl=new THREE.PointLight(0xffc877,0,5.5,1); pl.position.copy(bulbs[i].position); pl.position.y-=0.1; g.add(pl); NIGHT.push([pl,'intensity',0,0.55]); });
- tag(g,{cat:'電力照明',name:'逐露天下 G40 LED 復古串燈 7 m 25 燈',dim:'總長 7.6 m, 25 燈, 燈泡 ⌀4 cm, 560 g',spec:'黑線 + 黑色 E12 燈座 + 透明 ⌀40 mm 圓燈泡 (暖白燈絲 LED 0.7W x25, 整組 18W), 總長約 7.6 m, 燈距約 29 cm, 2500K, PC 防摔燈殼, IP44, 560 g, 附泡棉收納盒; 掛法: 從天幕前拱邊沿拓展天幕脊線到桿頂, 再沿邊緣下來',status:'2026-10-23 PChome 下單 NT$329',car:'下層置物槽',view:V(0,0,1),dist:2.6});
+ tag(g,{cat:'電力照明',name:'逐露天下 G40 LED 復古串燈 7 m 25 燈',dim:'總長 7.6 m, 25 燈, 燈泡 ⌀4 cm, 560 g',spec:'黑線 + 黑色 E12 燈座 + 透明 ⌀40 mm 圓燈泡 (暖白燈絲 LED 0.7W x25, 整組 18W), 燈距約 29 cm, 2500K, IP44, 附泡棉收納盒; 掛法: 沿蝶形天幕脊線掛到遠端桿, 剩餘順桿垂下',status:'2026-10-23 PChome 下單 NT$329',car:'下層置物槽',view:V(0.6,0,1),dist:3});
  return g;
 }
-
 /* ---------- small items ---------- */
 function buildTableItems(tx,ty,tz){
  const g=new THREE.Group();
@@ -584,10 +559,10 @@ function buildTableItems(tx,ty,tz){
  return g;
 }
 function buildBags(){ const g=new THREE.Group();
- const b1=rbox(1.1,0.25,0.25,0.1,M.olive); b1.position.set(-2.4,0,-5.0); b1.rotation.y=0.25; g.add(b1);
- const b2=rbox(0.6,0.33,0.33,0.12,M.gray); b2.position.set(-2.3,0,-5.9); g.add(b2); const b3=rbox(0.6,0.33,0.33,0.12,M.gray); b3.position.set(-2.3,0,-6.3); g.add(b3);
- const b4=rbox(0.45,0.22,0.3,0.08,M.beige); b4.position.set(-2.8,0,-6.2); b4.rotation.y=-0.4; g.add(b4);
- const b5=rbox(0.5,0.3,0.35,0.1,M.moss); b5.position.set(-2.9,0,-5.6); b5.rotation.y=0.6; g.add(b5);
+ const b1=rbox(1.1,0.25,0.25,0.1,M.olive); b1.position.set(2.6,0,-5.2); b1.rotation.y=0.25; g.add(b1);
+ const b2=rbox(0.6,0.33,0.33,0.12,M.gray); b2.position.set(2.25,0,-6.1); g.add(b2); const b3=rbox(0.6,0.33,0.33,0.12,M.gray); b3.position.set(2.25,0,-6.5); g.add(b3);
+ const b4=rbox(0.45,0.22,0.3,0.08,M.beige); b4.position.set(2.75,0,-6.3); b4.rotation.y=-0.4; g.add(b4);
+ const b5=rbox(0.5,0.3,0.35,0.1,M.moss); b5.position.set(2.9,0,-5.75); b5.rotation.y=0.6; g.add(b5);
  tag(g,{cat:'其他',name:'收納袋 (天幕袋 110 cm, 床袋 x2, 備用網紗門簾, 衣物袋)',dim:'天幕袋 110x25x25, 床袋 33x33x60, 門簾袋 44.5x22 cm',spec:'天幕袋 110x25x25 只能沿後車廂縱深斜放貼左壁; 床袋 33x33x60 並排靠椅背',status:'既有/隨裝備',car:'主艙第 1 層 + 下層置物槽剩餘約 50 L',view:V(1,0,0),dist:2.2}); return g; }
 function buildCartContents(cart){ const u=cyl(0.03,0.025,0.6,M.dark,0.05,0.42,0.1); u.rotation.z=1.2; cart.add(u); const tp=rbox(0.35,0.12,0.28,0.04,M.doorBlue); tp.position.set(-0.12,0.3,-0.05); cart.add(tp); const cl=rbox(0.3,0.16,0.22,0.06,M.beige); cl.position.set(0.2,0.3,-0.08); cl.rotation.y=0.4; cart.add(cl); }
 
@@ -598,43 +573,43 @@ function buildPavilion(){ const g=new THREE.Group(); [[-2,-2],[2,-2],[2,2],[-2,2
 function buildTap(){ const g=new THREE.Group(); g.add(box(0.7,0.8,0.5,M.concrete,0,0.4,0)); g.add(box(0.66,0.04,0.46,M.steel,0,0.82,0)); g.add(bar(V(0,0.8,-0.2),V(0,1.15,-0.2),0.014,M.steel)); g.add(bar(V(0,1.15,-0.2),V(0,1.15,0.0),0.012,M.steel)); g.add(bar(V(0,1.15,0.0),V(0,1.05,0.0),0.012,M.steel)); g.position.set(10.5,0,-3); return g; }
 function buildSign(){ const g=new THREE.Group(); g.add(box(0.08,1.3,0.08,M.woodD,0,0.65,0)); const sg=signPlane(labelTex('A-3 營位',512,224,'#f7f1e4','#2b4a2e',120),0.62,0.28); sg.position.set(0,1.15,-0.05); sg.rotation.y=PI; g.add(sg); g.add(box(0.7,0.34,0.03,M.wood,0,1.15,-0.03)); g.position.set(3.4,0,-9.6); return g; }
 
-/* ---------- assemble site: L 形配置 (車 → Sky Expan 臥室 → 側門接雲界客廳 → 拓展天幕朝外) ---------- */
+/* ---------- assemble site ---------- */
 const site=new THREE.Group(); scene.add(site);
 const ground=(()=>{ const geo=new THREE.PlaneGeometry(260,260,110,110); geo.rotateX(-PI/2); const p=geo.attributes.position; for(let i=0;i<p.count;i++) p.setY(i,hAt(p.getX(i),p.getZ(i))); geo.computeVertexNormals(); const m=new THREE.Mesh(geo,M.ground); m.receiveShadow=true; return m; })();
 scene.add(ground);
-const pad=box(6.4,0.016,6.0,M.gravel,0,0.008,-7.0); pad.castShadow=false; scene.add(pad);
+const pad=box(6.4,0.016,7.2,M.gravel,0,0.008,-6.4); pad.castShadow=false; scene.add(pad);
 const drive=box(3.4,0.016,5.4,M.gravel,0,0.008,-12.4); drive.castShadow=false; scene.add(drive);
 const road=box(260,0.02,7,M.dirt,0,0.004,-18); road.castShadow=false; scene.add(road);
 
-const LIV=new THREE.Group(); LIV.position.set(2.8,0,-2.25); LIV.rotation.y=PI/2; site.add(LIV); // 雲界 local +z (拓展天幕) → world +x; local -z (原車尾口) → world -x 朝 Sky Expan 側門
-LIV.add(buildMainTent());
-const connector=buildConnector(); LIV.add(connector);
-LIV.add(buildExtTarp());
-const innerTent=buildInnerTent(); LIV.add(innerTent);
-LIV.add(buildStringLights());
-site.add(buildSkyExpan());
+site.add(buildMainTent());
+site.add(buildConnector());
+site.add(buildExtTarp());
+site.add(buildSkyTarp());
+site.add(buildInnerTent());
 site.add(buildSleep());
 site.add(buildCar());
 site.add(buildPower());
+site.add(buildStringLights());
 site.add(buildBags());
 
-const table=makeTable(); table.position.set(0,0,2.75); tag(table,{cat:'桌椅推車',name:'ShineTrip 山趣 05 系列 輕量化戰術桌 (既有)',dim:'60x40x39 cm; 折起約 60x40x6 cm, 2.67 kg',spec:'單片 3 mm 黑化鋁合金桌板 60x41 (邊緣雷切鏤空孔可吊掛), 兩側 V 形快拆桌腳 + 中橫桿',status:'既有',car:'尾門視角最右側貼壁立放',view:V(0,0,1),dist:1.5}); LIV.add(table);
-LIV.add(buildTableItems(0,0.39,2.75));
-const table2=makeTable({plate:M.plateGreen,lampPost:true,h:0.45}); table2.position.set(-1.25,0,3.05); table2.rotation.y=PI/2; tag(table2,{cat:'桌椅推車',name:'ShineTrip 山趣 05 系列 輕量化戰術桌 (風隱綠, 含燈架)',dim:'60x40x39 cm (桌腳伸縮 30~60); 折起估 60x40x6 cm, 2.67 kg',spec:'2026-10-23 酷澎 NT$720 新購; 鋁板 2.5 mm 開孔可吊掛, 伸縮桌腳, 附燈架',status:'配送中',car:'床後空位立放',view:V(1,0,0.3),dist:1.6}); LIV.add(table2);
-const shelf=makeShelf(); shelf.position.set(-1.36,0.45,3.05); shelf.rotation.y=PI/2; tag(shelf,{cat:'桌椅推車',name:'山趣 05 戰術桌 層架 (上層板)',dim:'49.3x10x27 cm, 鋁板 2 mm, 承重 20 kg; 收納 49.3x10x1.9 cm, 0.305 kg',spec:'2026-10-23 酷澎 NT$390; 架在桌面上當第 2 層置物, 腳可拆可調高',status:'準備中',car:'隨桌',view:V(1,0,0.3),dist:1.3}); LIV.add(shelf);
-const igt=makeIGTFrame(); igt.position.set(-1.25,0.45,3.05+0.45); tag(igt,{cat:'桌椅推車',name:'山趣 05 戰術桌 IGT 連接板 (一單位框)',dim:'尺寸未載 (估 40x30 外框), 鋁合金霧面粉體',spec:'2026-10-23 酷澎 NT$255; 一側搭在桌邊延伸桌面, 放一單位 IGT 配件 (爐/桌板)',status:'配送中',car:'隨桌',view:V(1,0,0.6),dist:1.3}); LIV.add(igt);
-const lr40=makeLR40(); { const lt=table2.userData.lampTip.clone(); table2.updateMatrixWorld(true); table2.localToWorld(lt); LIV.worldToLocal(lt); lr40.position.set(lt.x,lt.y-0.15,lt.z); } tag(lr40,{cat:'電力照明',name:'NITECORE 奈特科爾 LR40 復古露營燈',dim:'117x96x96 mm (不含提把), 222 g; 100 lm, 4000 mAh',spec:'2026-10-23 酷澎 NT$623; 三色光無極調光, USB-C 可反充, 金屬罩 + 籠形護罩, 掛桌上燈架',status:'配送中',car:'下層置物槽',view:V(1,0,0.3),dist:1.1}); LIV.add(lr40);
-const pig1=makePigtail(); pig1.position.set(-1.25-0.15,0.45,3.05+0.17); tag(pig1,{cat:'電力照明',name:'山趣 ST-豬尾巴燈掛 A065 x2',dim:'細鐵桿 + 螺旋掛鉤, 全長估 23 cm',spec:'2026-10-23 酷澎 NT$36 x2; 插桌面孔掛卡片燈',status:'配送中',car:'隨桌',view:V(1,0,0.3),dist:1}); LIV.add(pig1);
-const pig2=makePigtail(); pig2.position.set(0.22,0.39,2.75-0.15); LIV.add(pig2); pig2.traverse(o=>{ o.userData.gear=pig1.userData.gear; });
-const card1=makeCardLight(M.cardGray); card1.position.set(-1.25-0.15+0.005,0.45+0.236-0.06,3.05+0.17); card1.rotation.z=PI/2; card1.rotation.y=PI/2; tag(card1,{cat:'電力照明',name:'山趣 卡片燈 x2 (灰 1, 沙 1)',dim:'卡片式扁燈, 估 11x7x2 cm',spec:'2026-10-23 酷澎 NT$299 x2; 多段無極調光, 可掛可磁吸; 掛在豬尾巴燈掛上',status:'配送中',car:'下層置物槽',view:V(1,0,0.3),dist:1}); LIV.add(card1);
-const card2=makeCardLight(M.cardSand); card2.position.set(0.22+0.005,0.39+0.236-0.06,2.75-0.15); card2.rotation.z=PI/2; LIV.add(card2); card2.traverse(o=>{ o.userData.gear=card1.userData.gear; });
+const table=makeTable(); table.position.set(0,0,3.5); tag(table,{cat:'桌椅推車',name:'ShineTrip 山趣 05 系列 輕量化戰術桌 (既有)',dim:'60x40x39 cm; 折起約 60x40x6 cm, 2.67 kg',spec:'單片 3 mm 黑化鋁合金桌板 60x41 (邊緣雷切鏤空孔可吊掛), 兩側 V 形快拆桌腳 + 中橫桿; 折起估 60x40x6 cm, 2.67 kg (賣場頁 2.2 kg, 可能含袋差異)',status:'既有',car:'尾門視角最右側貼壁立放',view:V(0,0,1),dist:1.5}); site.add(table);
+site.add(buildTableItems(0,0.39,3.5));
+const table2=makeTable({plate:M.plateGreen,lampPost:true,h:0.45}); table2.position.set(-1.5,0,3.8); table2.rotation.y=PI/2; tag(table2,{cat:'桌椅推車',name:'ShineTrip 山趣 05 系列 輕量化戰術桌 (風隱綠, 含燈架)',dim:'60x40x39 cm (桌腳伸縮 30~60); 折起估 60x40x6 cm, 2.67 kg',spec:'2026-10-23 酷澎 NT$720 新購; 鋁板 2.5 mm 開孔可吊掛, 伸縮桌腳, 附燈架',status:'配送中',car:'床後空位立放',view:V(1,0,0.3),dist:1.6}); site.add(table2);
+const shelf=makeShelf(); shelf.position.set(-1.61,0.45,3.8); shelf.rotation.y=PI/2; tag(shelf,{cat:'桌椅推車',name:'山趣 05 戰術桌 層架 (上層板)',dim:'49.3x10x27 cm, 鋁板 2 mm, 承重 20 kg; 收納 49.3x10x1.9 cm, 0.305 kg',spec:'2026-10-23 酷澎 NT$390; 架在桌面上當第 2 層置物, 腳可拆可調高',status:'準備中',car:'隨桌',view:V(1,0,0.3),dist:1.3}); site.add(shelf);
+const igt=makeIGTFrame(); igt.position.set(-1.5,0.45,3.8+0.45); tag(igt,{cat:'桌椅推車',name:'山趣 05 戰術桌 IGT 連接板 (一單位框)',dim:'尺寸未載 (估 40x30 外框), 鋁合金霧面粉體',spec:'2026-10-23 酷澎 NT$255; 接在桌邊延伸桌面, 放一單位 IGT 配件',status:'配送中',car:'隨桌',view:V(1,0,0.6),dist:1.3}); site.add(igt);
+const lr40=makeLR40(); const lt=table2.userData.lampTip.clone(); table2.updateMatrixWorld(true); table2.localToWorld(lt); lr40.position.set(lt.x,lt.y-0.15,lt.z); tag(lr40,{cat:'電力照明',name:'NITECORE 奈特科爾 LR40 復古露營燈',dim:'117x96x96 mm (不含提把), 222 g; 100 lm, 4000 mAh',spec:'2026-10-23 酷澎 NT$623; 三色光無極調光, USB-C 可反充, 金屬罩 + 籠形護罩, 掛桌上燈架',status:'配送中',car:'下層置物槽',view:V(1,0,0.3),dist:1.1}); site.add(lr40);
+const pig1=makePigtail(); pig1.position.set(-1.5-0.15,0.45,3.8+0.17); tag(pig1,{cat:'電力照明',name:'山趣 ST-豬尾巴燈掛 A065 x2',dim:'細鐵桿 + 螺旋掛鉤, 全長估 23 cm',spec:'2026-10-23 酷澎 NT$36 x2; 插桌面孔掛卡片燈',status:'配送中',car:'隨桌',view:V(1,0,0.3),dist:1}); site.add(pig1);
+const pig2=makePigtail(); pig2.position.set(0.22,0.39,3.5-0.15); site.add(pig2); pig2.traverse(o=>{ o.userData.gear=pig1.userData.gear; });
+const card1=makeCardLight(M.cardGray); card1.position.set(-1.5-0.15+0.005,0.45+0.236-0.06,3.8+0.17); card1.rotation.z=PI/2; card1.rotation.y=PI/2; tag(card1,{cat:'電力照明',name:'山趣 卡片燈 x2 (灰 1, 沙 1)',dim:'卡片式扁燈, 估 11x7x2 cm',spec:'2026-10-23 酷澎 NT$299 x2; 多段無極調光, 可掛可磁吸; 掛在豬尾巴燈掛上',status:'配送中',car:'下層置物槽',view:V(1,0,0.3),dist:1}); site.add(card1);
+const card2=makeCardLight(M.cardSand); card2.position.set(0.22+0.005,0.39+0.236-0.06,3.5-0.15); card2.rotation.z=PI/2; site.add(card2); card2.traverse(o=>{ o.userData.gear=card1.userData.gear; });
 [card1,card2].forEach(c=>{ const pl=new THREE.PointLight(0xfff0d0,0,2.5,1); c.add(pl); NIGHT.push([pl,'intensity',0,0.35]); });
-const chairA=makeLounger({w:0.53,d:0.52,seatH:0.4,backH:0.5,backTilt:0.3,sidePocket:true,fabric:M.oxBlack,frame:M.steelBlack}); chairA.position.set(-0.8,0,2.75); chairA.rotation.y=PI/2; tag(chairA,{cat:'桌椅推車',name:'樂活不露 秒收戰地椅 三段 CHA-01',dim:'53x52x88 cm; 收納 81x30x21 cm, 4.4 kg',spec:'黑色 600D 牛津布 + 5 mm EPE, 側面 X 交叉鋁腳, 平板黑化扶手, 三段椅背, 秒收快折, 側邊大網袋, 承重 120 kg',status:'既有',car:'第 2 層橫放在床袋上 (深 0~30)',view:V(0,0,1),dist:1.6}); LIV.add(chairA);
-const chairB=makeLounger({w:0.73,d:0.64,seatH:0.42,backH:0.62,backTilt:0.42,headrest:true,pocket:true,bigFeet:true,fabric:M.oxBlack,frame:M.steelBlack}); chairB.position.set(0.85,0,2.75); chairB.rotation.y=-PI/2; tag(chairB,{cat:'桌椅推車',name:'樂活不露 銀河椅 七段高背 CHA-02',dim:'73x64x100 cm; 收納 91x28x18 cm, 5.4 kg',spec:'黑色 600D 牛津布 + 5 mm EPE, 側面 X 交叉鋁腳 + 萬向地形大腳座, 戰術風黑化扶手, 七段椅背可躺, 可拆可調頭枕, 椅背大網袋, 承重 120 kg',status:'既有',car:'第 2 層橫放在床袋上 (深 32~60)',view:V(0,0,1),dist:1.8}); LIV.add(chairB);
-const chairC=makeMoonChair({w:0.64,d:0.47,seatH:0.35,fabric:M.olive,fabricD:M.oliveD,frame:M.steelBlack}); chairC.position.set(-0.35,0,3.65); chairC.rotation.y=PI; tag(chairC,{cat:'桌椅推車',name:'KZM 極簡時尚休閒折疊椅',dim:'64x47x66 cm (座高 35); 收納 ø13x71 cm, 2.6 kg',spec:'桶形包覆椅背 (軍綠), 黑色鋼管 X 交叉腳, 承重 80 kg',status:'既有',car:'第 3 層橫放在戰地椅上 (高到 67)',view:V(0,0,1),dist:1.5}); LIV.add(chairC);
-const chairD=makeQuadChair({w:0.38,d:0.38,seatH:0.3,backH:0.3,backTilt:0.3,pocket:true,fabric:M.moss,frame:M.steelBlack}); chairD.position.set(0.45,0,3.7); chairD.rotation.y=PI; tag(chairD,{cat:'桌椅推車',name:'KZM N350 輕巧折疊椅 (K23T1C13)',dim:'38x38x58 cm; 收納 61x13x13 cm, 1.8 kg',spec:'經典四面 X 交叉鋼管折疊椅, 方形座面, 側邊小物袋, 承重 100 kg; 黑/軍綠',status:'既有',car:'第 3 層橫放在銀河椅上 (高到 64)',view:V(0,0,1),dist:1.4}); LIV.add(chairD);
-const cart=makeCart(); buildCartContents(cart); cart.position.set(-2.6,0,4.3); cart.rotation.y=0.35; tag(cart,{cat:'桌椅推車',name:'探險者 征川AL 鋁合金 300L 經典款推車',dim:'80x51x49 cm (內兜 73x44x29); 聚攏 27x23x56 cm, 5 kg',spec:'12x5 cm 可拆減震輪 (有軸承), 承重 175 kg; 網路查不到外觀, 配色依探險者 300L 系列曜石黑; 車內放雨傘 + 防水布 + 衣物袋; 停拓展天幕外側',status:'已訂 TWD 1,210 (淘寶, 下單管道待確認)',car:'床後空位橫放在底 (寬 25~81, 深 60~87)',view:V(0,0,1),dist:1.8}); LIV.add(cart);
-const fan=makeFan(); fan.position.set(1.65,0,-2.05); fan.rotation.y=-PI/2+0.25; tag(fan,{cat:'電力照明',name:'艾美特 AIRMATE UD3052R 12 吋 USB 充電摺疊立扇',dim:'30x30x55~99 cm; 收納 30x30x15 cm, 2.75 kg',spec:'黑色圓形扇頭 (7 葉) + 玫瑰金伸縮管 + ⌀30 cm 黑圓盤底座, 左右自動擺頭, 5000 mAh 約 6 h; 放雲界與車尾帳側門之間, 把冷氣往臥室推',status:'既有',car:'天幕上方立放 (寬 0~15, 深 62~92)',view:V(0.3,0,1),dist:1.6}); site.add(fan);
+const chairA=makeLounger({w:0.53,d:0.52,seatH:0.4,backH:0.5,backTilt:0.3,sidePocket:true,fabric:M.oxBlack,frame:M.steelBlack}); chairA.position.set(-0.85,0,3.5); chairA.rotation.y=PI/2; tag(chairA,{cat:'桌椅推車',name:'樂活不露 秒收戰地椅 三段 CHA-01',dim:'53x52x88 cm; 收納 81x30x21 cm, 4.4 kg',spec:'展開 53x52x88 cm; 黑色 600D 牛津布 + 5 mm EPE, 側面 X 交叉鋁腳, 平板黑化扶手, 三段椅背 (坐/放鬆/半躺), 秒收快折, 側邊大網袋, 承重 120 kg; 收納 81x30x21 cm, 4.4 kg; 顏色 夜幕黑/大地沙, 模型用夜幕黑',status:'既有',car:'第 2 層橫放在床袋上 (深 0~30)',view:V(0,0,1),dist:1.6}); site.add(chairA);
+const chairB=makeLounger({w:0.73,d:0.64,seatH:0.42,backH:0.62,backTilt:0.42,headrest:true,pocket:true,bigFeet:true,fabric:M.oxBlack,frame:M.steelBlack}); chairB.position.set(0.9,0,3.5); chairB.rotation.y=-PI/2; tag(chairB,{cat:'桌椅推車',name:'樂活不露 銀河椅 七段高背 CHA-02',dim:'73x64x100 cm; 收納 91x28x18 cm, 5.4 kg',spec:'展開 73x64x100 cm; 黑色 600D 牛津布 + 5 mm EPE, 側面 X 交叉鋁腳 + 萬向地形大腳座, 戰術風黑化扶手, 七段椅背可躺, 可拆可調頭枕, 椅背大網袋, 反光條, 承重 120 kg; 收納 91x28x18 cm, 5.4 kg; 顏色 夜幕黑/大地沙, 模型用夜幕黑 (賣場主圖為黑)',status:'既有',car:'第 2 層橫放在床袋上 (深 32~60)',view:V(0,0,1),dist:1.8}); site.add(chairB);
+const chairC=makeMoonChair({w:0.64,d:0.47,seatH:0.35,fabric:M.olive,fabricD:M.oliveD,frame:M.steelBlack}); chairC.position.set(-0.35,0,4.5); chairC.rotation.y=PI; tag(chairC,{cat:'桌椅推車',name:'KZM 極簡時尚休閒折疊椅',dim:'64x47x66 cm (座高 35); 收納 ø13x71 cm, 2.6 kg',spec:'展開 64x47x66 cm, 座高約 35; 桶形包覆椅背 (軍綠布, KZM 印字), 黑色鋼管 X 交叉腳, 承重 80 kg; 收納 ø13x71 cm 圓筒袋, 2.6 kg',status:'既有',car:'第 3 層橫放在戰地椅上 (高到 67)',view:V(0,0,1),dist:1.5}); site.add(chairC);
+const chairD=makeQuadChair({w:0.38,d:0.38,seatH:0.3,backH:0.3,backTilt:0.3,pocket:true,fabric:M.moss,frame:M.steelBlack}); chairD.position.set(0.5,0,4.55); chairD.rotation.y=PI; tag(chairD,{cat:'桌椅推車',name:'KZM N350 輕巧折疊椅 (K23T1C13)',dim:'38x38x58 cm; 收納 61x13x13 cm, 1.8 kg',spec:'展開 38x38x58 cm; 經典四面 X 交叉鋼管折疊椅, 方形座面, 椅背有 N350 印字, 側邊小物袋, 高密度聚酯纖維防潑水, 承重 100 kg; 收納 61x13x13 cm, 1.8 kg; 黑/軍綠, 模型用軍綠',status:'既有',car:'第 3 層橫放在銀河椅上 (高到 64)',view:V(0,0,1),dist:1.4}); site.add(chairD);
+const cart=makeCart(); buildCartContents(cart); cart.position.set(-3.2,0,5.3); cart.rotation.y=0.35; tag(cart,{cat:'桌椅推車',name:'探險者 征川AL 鋁合金 300L 經典款推車',dim:'80x51x49 cm (內兜 73x44x29); 聚攏 27x23x56 cm, 5 kg',spec:'車架展開 80x51x49 cm, 內兜 73x44x29; 12x5 cm 可拆減震輪 (有軸承, 賣家確認); 聚攏 27x23x56 cm; 標示 5 kg (待驗是否含輪子與底板), 承重 175 kg; 網路查不到征川AL 外觀, 配色依探險者 300L 系列曜石黑; 車內放雨傘 + 防水布 + 衣物袋',status:'已訂 TWD 1,210 (淘寶, 下單管道待確認)',car:'床後空位橫放在底 (寬 25~81, 深 60~87)',view:V(0,0,1),dist:1.8}); site.add(cart);
+const fan=makeFan(); fan.position.set(-1.75,0,2.3); fan.rotation.y=0.9; tag(fan,{cat:'電力照明',name:'艾美特 AIRMATE UD3052R 12 吋 USB 充電摺疊立扇',dim:'30x30x55~99 cm; 收納 30x30x15 cm, 2.75 kg',spec:'黑色圓形扇頭 (細環網罩, 7 葉) + 玫瑰金伸縮管 (5 節, 高 55~99 cm) + ⌀30 cm 黑色圓盤底座; 前網可拆, 上下手動 + 左右自動擺頭, 觸控環狀面板, 5000 mAh 滿電約 6 h, 附遙控, 約 2.75 kg; 收納 30x30x15 cm',status:'既有',car:'天幕上方立放 (寬 0~15, 深 62~92)',view:V(0,0,1),dist:1.6}); site.add(fan);
+
 
 /* ---------- vegetation (instanced) ---------- */
 const treeSpots=[]; const avoid=[[-15,-4],[17,-8],[-13,13],[10.5,-3],[9,3],[3.4,-9.6]];
@@ -689,8 +664,8 @@ applyNight(0);
 
 /* ---------- controls: orbit (default) + walk, tap-to-focus, tap-to-go, viewpoints ---------- */
 const EYE=1.55; let mode='orbit';
-const orb={target:V(2.6,0.8,-2.6),yaw:0.9,pitch:0.5,dist:19}, orbGoal={target:V(2.6,0.8,-2.6),yaw:0.9,pitch:0.5,dist:19};
-const pos=V(7.3,EYE,0.4), posGoal=pos.clone(); let yaw=0,pitch=-0.04,yawGoal=0,pitchGoal=-0.04; let autoSpin=true;
+const orb={target:V(0,0.8,0.5),yaw:0.7,pitch:0.5,dist:17}, orbGoal={target:V(0,0.8,0.5),yaw:0.7,pitch:0.5,dist:17};
+const pos=V(0.3,EYE,9.8), posGoal=pos.clone(); let yaw=0,pitch=-0.04,yawGoal=0,pitchGoal=-0.04; let autoSpin=true;
 const keys={};
 window.addEventListener('keydown',e=>{ keys[e.code]=true; if(e.code==='Space'||e.code.startsWith('Arrow')) e.preventDefault(); if(e.code==='KeyN') toggleNight(); if(e.code==='KeyV') toggleMode(); if(e.code==='Escape'){ $('card').hidden=true; $('list').hidden=true; } });
 window.addEventListener('keyup',e=>{ keys[e.code]=false; });
@@ -712,7 +687,7 @@ function tap(cx,cy){ ndc.set(cx/innerWidth*2-1,-(cy/innerHeight)*2+1); ray.setFr
 function walkTo(pt){ if(blocked(pt.x,pt.z)) return; ring.position.set(pt.x,hAt(pt.x,pt.z)+0.03,pt.z); ring.visible=true; ring.scale.setScalar(1); ring.material.opacity=1; ringT=performance.now(); if(mode==='orbit'){ orbGoal.target.set(pt.x,0.8,pt.z); } else { posGoal.set(pt.x,EYE,pt.z); } }
 function lookGoal(c,from){ const dx=c.x-from.x,dz=c.z-from.z; yawGoal=Math.atan2(-dx,-dz); pitchGoal=Math.atan2(Math.min(c.y,1.4)-from.y,Math.hypot(dx,dz)); }
 function focus(info){ const b=new THREE.Box3().setFromObject(info.obj); const c=b.getCenter(new THREE.Vector3()); const s=b.getSize(new THREE.Vector3());
-  const under=c.y<2.0&&Math.max(s.x,s.y,s.z)<2.5&&((c.x>1.2&&c.x<8.6&&c.z>-5.2&&c.z<0.7)||(Math.abs(c.x)<1.3&&c.z>-4.2&&c.z<-0.3)); // 雲界/拓展天幕下或車尾帳內的小物件: 環繞鏡頭會卡在布面, 改步行視角
+  const under=c.y<2.3&&c.z>1.3&&c.z<6.6&&Math.abs(c.x)<3.5&&Math.max(s.x,s.y,s.z)<2.5; // 天幕下的小物件: 環繞鏡頭會卡在布面, 改步行視角
   if((info.inside||under)&&mode==='orbit') setMode('walk',false);
   if(mode==='orbit'){ orbGoal.target.copy(c); orbGoal.dist=clamp(Math.max(s.x,s.y,s.z)*1.3+0.9,1.8,40); orbGoal.pitch=clamp(orbGoal.pitch,0.12,1.2); autoSpin=false; }
   else { const dir=(info.view||V(0,0,1)).clone().setY(0).normalize(); const r=info.dist||(Math.max(s.x,s.z)*0.55+1.4); posGoal.copy(c).addScaledVector(dir,r); posGoal.y=EYE; lookGoal(c,posGoal); }
@@ -729,7 +704,7 @@ buildList();
 GEAR.forEach(info=>{ if(/預設隱藏/.test(info.name)) setVisible(info,false); });
 $('bList').onclick=()=>{ $('list').hidden=!$('list').hidden; };
 $('listX').onclick=()=>{ $('list').hidden=true; };
-const VIEWS={'全景':{mode:'orbit',target:[2.6,0.8,-2.6],yaw:0.9,pitch:0.5,dist:19},'客廳':{mode:'walk',pos:[7.3,EYE,0.4],look:[5.2,0.8,-2.3]},'門口':{mode:'walk',pos:[3.9,EYE,-2.3],look:[0.8,1.0,-2.6]},'帳內':{mode:'walk',pos:[0.6,1.4,-0.75],look:[-0.3,0.4,-3.2]},'車尾':{mode:'walk',pos:[-2.8,EYE,-6.0],look:[0,1.0,-3.4]}};
+const VIEWS={'全景':{mode:'orbit',target:[0,0.8,0.5],yaw:0.7,pitch:0.5,dist:17},'客廳':{mode:'walk',pos:[1.4,EYE,6.9],look:[-0.2,0.8,3.6]},'門口':{mode:'walk',pos:[0,EYE,3.0],look:[0,1.0,-0.5]},'帳內':{mode:'walk',pos:[0.05,1.5,1.0],look:[0,0.5,-0.9]},'車尾':{mode:'walk',pos:[-3.0,EYE,-6.8],look:[0,1.0,-3.6]}};
 function gotoView(name){ const v=VIEWS[name]; if(!v) return; if(v.mode==='orbit'){ setMode('orbit',false); orbGoal.target.set(v.target[0],v.target[1],v.target[2]); orbGoal.yaw=v.yaw; orbGoal.pitch=v.pitch; orbGoal.dist=v.dist; autoSpin=true; } else { setMode('walk',false); posGoal.set(v.pos[0],v.pos[1],v.pos[2]); lookGoal(V(v.look[0],v.look[1],v.look[2]),posGoal); } $('card').hidden=true; }
 document.querySelectorAll('#views .chip').forEach(b=>{ b.onclick=()=>gotoView(b.dataset.v); });
 function setMode(m,place){ if(mode===m){ updateUI(); return; } mode=m;
