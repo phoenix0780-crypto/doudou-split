@@ -1,0 +1,9 @@
+01	img	https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/rs_quotation_api/bcgycmgo/680e4e83015d4e6cb781c834a7be383a.jpg	1854938 bytes image/jpeg
+02	img	https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/retail/images/2026/05/29/14/3/95f1386d-4090-4ea1-987b-306f51556b71.jpg	315441 bytes image/jpeg
+03	img	https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/retail/images/2026/05/29/14/1/494773d4-7a92-41ef-ab2e-2e9b3bf75aa7.jpg	231239 bytes image/jpeg
+04	img	https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/retail/images/2026/05/29/14/3/492ebe2d-3fc5-4ff2-8453-00afbab891db.jpg	355010 bytes image/jpeg
+05	img	https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/rs_quotation_api/zp9qzftt/e16b21899a08471789360d4095b074e4.jpg	273818 bytes image/jpeg
+06	img	https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/rs_quotation_api/khhqgrch/944bdb95bed64d018d6c07935f763087.jpg	382115 bytes image/jpeg
+07	img	https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/rs_quotation_api/t3knyict/ecbaad276fe74a95aa4df4b4c48460a9.jpg	322683 bytes image/jpeg
+08	img	https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/retail/images/2026/05/29/14/1/b2c60198-2796-4efe-bc29-b09db86c28dd.jpg	355865 bytes image/jpeg
+09	img	https://thumbnail.coupangcdn.com/thumbnails/remote/q89/image/retail/images/2026/05/29/14/8/60cf0959-7327-4913-851e-335a11da7f97.jpg	166424 bytes image/jpeg
